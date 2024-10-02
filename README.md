@@ -1,3 +1,3 @@
-my personal project
-the code is almost unreadable kekw
-try if you want
+need fixing:
+-z index dare pop
+-preload content / fix image sizes to make sense.

@@ -2086,10 +2086,26 @@ function updateRow() {
 document.getElementById('textarea1').addEventListener('input', updateRow);
 
 //preload images for smooth experience
-function preloadImages(imageArray) {
+function preloadImages(imageArray, callback) {
+    let loadedImagesCount = 0;  // Counter to track the number of loaded images
+    const totalImages = imageArray.length;  // Total number of images to load
+
+    // Loop through each image and preload
     imageArray.forEach(function(imageUrl) {
-        var img = new Image();
-        img.src = imageUrl; // Preloads each image by setting its src property
+        const img = new Image();
+        
+        // When an image is successfully loaded
+        img.onload = function() {
+            loadedImagesCount++;  // Increment the counter when an image is loaded
+
+            // Check if all images have been loaded
+            if (loadedImagesCount === totalImages) {
+                callback();  // Call the callback function when all images are loaded
+            }
+        };
+
+        // Set the image source to start loading
+        img.src = imageUrl;
     });
 }
 var backgroundList = ['./Images/backgrounds/cyberpunk_bg.png', './Images/backgrounds/dare_shot.png', './Images/backgrounds/default_bg.png', './Images/backgrounds/environment_border.png', './Images/backgrounds/memes_bg.png', './Images/backgrounds/no_enemies_bg.png', './Images/backgrounds/no_pain_bg.png', './Images/backgrounds/no_sitting_bg.png']
@@ -2097,4 +2113,6 @@ var iconList = ['./Images/icons/absinthe_icon.png', './Images/icons/add_dare_ico
 var imagesToPreload = backgroundList.concat(iconList)
 
 // Preload all images
-preloadImages(imagesToPreload);
+preloadImages(imagesToPreload, function() {
+    alert('All images have been loaded!');
+});

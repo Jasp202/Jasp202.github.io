@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokernight app</title>
+    <!---------------  CSS  --------------------->
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="./Images/icons/favicon.png">
+    <!---------------  Font Aewsome  --------------------->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" 
+    integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!---------------  Chart JS  --------------------->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!---------------  Chart JS Plugin  --------------------->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script> 
+    <!---------------  jQuery  --------------------->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    
+</head>
+<body>
+  <h1 id="HeaderElement1">
+    <p style="text-align: center;">ENVIRONMENT: </p>
+    <p id="textE" contentEditable="true" spellcheck="false" style="text-align: center;">none yet...</p>
+    </h1>
+  <div class="container" id="containerTest">
+     <div class="wheel_box">
+      <img id="spinImage"  />
+      <canvas id="spinWheel"></canvas>
+      <button id="spin_btn">Spin</button>
+    <div class="triangle-down" style="scale: 0.6; border-top: 55px solid rgb(37, 37, 37); padding-top: 5px;"></div> <!-- this is a shodow for the shape -->
+      <div id="triangleCSS" class="triangle-down"></div>   <!-- this is the shape itself -->
+     </div> 
+    <div id="text"><p class="text">Pokernight never ends </p></div>
+  </div>
+
+  <div id="draggableDiv">
+    <div id="draggableDivheader"><i class="fa-solid fa-up-down-left-right"></i></div>
+  <textarea id="notes" rows="7" cols="40" placeholder='For Notes.'spellcheck="false"></textarea>
+  
+  </div>
+
+    <!-- dare popup starts -->
+    
+  <div id="myPopup" class="popup">
+    
+      <div id="myPopupContent" class="popup-content">
+          <h2 id="text2" style="color:green;">
+            <p>default error</p>
+            </h2>
+      </div>
+  </div>
+  <div id="popupbackground"></div>
+
+  <script>
+      
+      window.addEventListener("click", function (event) {
+          if (event.target == myPopup) {
+              myPopup.classList.remove("show");
+              document.getElementById("popupbackground").style.display = "none";
+          }
+      });
+  </script>
+ 
+    <!-- dare popup ends -->
+
+    <!-- wheel button starts -->
+
+
+    <button id="wheelButton">
+        <img src="./Images\icons\wheel_icon.png" width="100">
+        <div id="wheelNameIcon"> 
+            default  
+        </div>
+      </button>
+    <div id="wheelPopup" class="wheelpopup">
+        <div class="wheelpopup-content">
+                <p id="wheelPara1" style="display: none;"></p>
+                <p id="wheelPara2" style="text-align: center; display: none;">Choose a Themed Wheel to swap into:</p>
+                <p id="wheelPara3" style="display: none;"></p>
+            <button id="wheelChooseDefault">
+                <img src="./Images\icons/default_icon.png" width="100">
+                <div> 
+                    default  
+                </div>
+                <div class="wheelOverlay showPara" style="display: none;">
+                    <img src="Images\icons\current_icon.png">
+                </div>
+            </button>
+            <button id="wheelChoosePain">
+                <img src="./Images\icons\no_pain_icon.png" width="100">
+                <div> 
+                    no pain  
+                </div>
+                <div class="wheelOverlay" style="display: none;">
+                    <img src="Images\icons\current_icon.png">
+                </div>
+            </button>
+            <button id="wheelChooseEnemies">
+                <img src="./Images\icons\no_enemies_jesus_icon.png" width="100">
+                <div> 
+                    no enemies  
+                </div>
+                <div class="wheelOverlay" style="display: none;">
+                    <img src="Images\icons\current_icon.png">
+                </div>
+            </button>
+            <button id="wheelChooseVergi">
+                <img src="./Images\icons\vergi_icon.png" width="100">
+                <div> 
+                    vergipsycho  
+                </div>
+                <div class="wheelOverlay" style="display: none;">
+                    <img src="Images\icons\current_icon.png">
+                </div>
+            </button>
+            <button id="wheelChooseSitting">
+                <img src="./Images\icons\no_sitting_icon.png" width="100">
+                <div> 
+                    no sitting  
+                </div>
+                <div class="wheelOverlay" style="display: none;">
+                    <img src="Images\icons\current_icon.png">
+                </div>
+            </button>
+            <button id="wheelChooseMemes">
+                <img src="./Images\icons\memes_icon.png" width="100">
+                <div> 
+                    box of memes  
+                </div>
+                <div class="wheelOverlay" style="display: none;">
+                    <img src="Images\icons\current_icon.png">
+                </div>
+            </button>
+            
+        </div>
+    </div>
+ 
+    <script>
+        wheelButton.addEventListener("click", function () {
+            wheelPopup.classList.add("show");
+            
+        });
+        window.addEventListener("click", function (event) {
+            if (event.target == wheelPopup) {
+                wheelPopup.classList.remove("show");
+                wheelPara1.classList.remove("showPara");
+                wheelPara2.classList.remove("showPara");
+                wheelPara3.classList.remove("showPara");
+            }
+        });
+    </script>
+    <!-- wheel button ends add dare starts-->
+    <button id="addDareButton">
+        <img src="./Images\icons\add_dare_icon.png" width="50">
+
+      </button>
+
+    <div id="addDarePopup" class="adddarepopup">
+        <div class="adddarepopup-content">
+            <input type="text" id="AddDareText" size="auto" placeholder='Write the dare here and submit'spellcheck="false"/>
+            <button id="addDareSubmitOne">
+                <div> 
+                    Add to THIS Wheel 
+                </div>
+            </button>
+            <button id="addDareSubmitAll">
+                <div> 
+                    Add to ALL Wheels 
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        addDareButton.addEventListener("click", function () {
+            addDarePopup.classList.add("show");
+        });
+        window.addEventListener("click", function (event) {
+            if (event.target == addDarePopup) {
+                addDarePopup.classList.remove("show");
+                AddDareText.value = '';
+            }
+        });
+    
+    </script>
+
+<!---------------  shotbutton --------------------->
+    <button id="shotButton"  name="e-h1" >
+        <img src="./Images\icons\shot_icon.png" width="50">
+    </button>
+    <div id="editor">
+        
+    </div>
+    
+    <div id="shotClass" class="shotclass">
+        
+    <button id="shotButton1" >
+        <img src="./Images\icons\shot_icon.png" width="100">
+        <div id = "shotterName" width="100"> 
+            naem  
+        </div>
+        <div id = "shotCount"> 
+            0  
+        </div>
+        
+    </button>
+    
+    
+</div>
+
+<map id="workmap">
+    <area shape="rect" coords="0,0,40,47" onclick="mapfunc1()">
+    <area shape="rect" coords="0,48,40,90" onclick="mapfunc2()">
+    <area shape="rect" coords="0,91,40,140" onclick="mapfunc3()">
+</map>
+<script>//for workmap functions
+    function mapfunc1(){
+        console.log('you clicked area 1')
+    };
+    function mapfunc2(){
+        console.log('you clicked area 2')
+    };
+    function mapfunc3(){
+        console.log('you clicked area 3')
+    };
+    
+</script>
+
+<div id="shotPopup" class="shotpopup">
+    <div class="shotpopup-content">
+        <input type="text" id="shotText" size="20" placeholder='Name of the mentalist'spellcheck="false" style = "padding: 15px 1px;" autocomplete="off"/>
+
+          <div class="dropdown">
+            <button class="dropdown-toggle" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false">
+                Shot glass
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropDownMenuId">
+
+                <!-- Shot glasses -->
+                <div class="dropdown-item dropdown2 selected" data-value="shotglassesmenu">
+                    <div clickable id="drop2toggle"class="dropdown-toggle2">Shot glasses</div>
+                    <div class="dropdown-menuR"> 
+                        <div class="dropdown-item selected" data-value="Shot glass">Shot glass</div>
+                        <div class="dropdown-item" data-value="Shot glass 2">Shot glass 2</div>
+                        <div class="dropdown-item" data-value="Cactus glass">Cactus glass</div>
+                        <div class="dropdown-item" data-value="Red cup">Red cup</div>
+
+                    </div>
+                </div>
+                
+                <!-- Coctail glasses -->
+                <div class="dropdown-item dropdown2" data-value="coctailglassesmenu">
+                    <div clickable id="drop2toggle"class="dropdown-toggle2">Coctail glasses</div>
+                    <div class="dropdown-menuR"> 
+                        <div class="dropdown-item" data-value="Coctail glass">Coctail glass</div>
+                        <div class="dropdown-item" data-value="Coctail glass 2">Coctail glass 2</div>
+                        <div class="dropdown-item" data-value="Copper mug">Copper mug</div>
+                        <div class="dropdown-item" data-value="Whiskey ice">Whiskey ice</div>
+                    </div>
+                </div>
+
+                <!-- Bottles -->
+                <div class="dropdown-item dropdown2" data-value="bottlesmenu">
+                    <div clickable id="drop2toggle"class="dropdown-toggle2">Bottles</div>
+                    <div class="dropdown-menuR"> 
+                        <div class="dropdown-item" data-value="Vergi bottle">Vergi bottle</div>
+                        <div class="dropdown-item" data-value="Jägermeister">Jägermeister</div>
+                        <div class="dropdown-item" data-value="Mansikkavodka">Mansikkavodka</div>
+                        <div class="dropdown-item" data-value="Absentti">Absentti</div>
+                        <div class="dropdown-item" data-value="Whiskey bottle">Whiskey bottle</div>
+                        <div class="dropdown-item" data-value="Wine bottle">Wine bottle</div>
+                        <div class="dropdown-item" data-value="Gin bottle">Gin bottle</div>
+
+                    </div>
+                </div>
+
+                <!-- Wine varieties -->
+                <div class="dropdown-item dropdown2" data-value="winemenu">
+                    <div clickable id="drop2toggle"class="dropdown-toggle2">Wine varieties</div>
+                    <div class="dropdown-menuR"> 
+                        <div class="dropdown-item" data-value="Wine glass">Wine glass</div>
+                        <div class="dropdown-item" data-value="White wine">White wine</div>
+                        <div class="dropdown-item" data-value="Champagne">Champagne</div>
+                        <div class="dropdown-item" data-value="Sake">Sake</div>
+                        
+                    </div>
+                </div>
+
+                <!-- Cans -->
+                <div class="dropdown-item dropdown2" data-value="canmenu">
+                    <div clickable id="drop2toggle"class="dropdown-toggle2">Cans</div>
+                    <div class="dropdown-menuR"> 
+                        <div class="dropdown-item" data-value="Lonkero">Lonkero</div>
+                        <div class="dropdown-item" data-value="Lonkero red">Lonkero red</div>
+                        <div class="dropdown-item" data-value="Lonkero yellow">Lonkero yellow</div>
+                        <div class="dropdown-item" data-value="Koff lonkero">Koff lonkero</div>
+                        <div class="dropdown-item" data-value="Koff beer">Koff beer</div>
+                    </div>
+                </div>
+
+                <!-- Beers -->
+                <div class="dropdown-item dropdown2" data-value="beermenu">
+                    <div clickable id="drop2toggle"class="dropdown-toggle2">Beers</div>
+                    <div class="dropdown-menuR"> 
+                        <div class="dropdown-item" data-value="Beer glass">Beer glass</div>
+                        <div class="dropdown-item" data-value="Beer bottle">Beer bottle</div>
+                        <div class="dropdown-item" data-value="Beer mug">Beer mug</div>
+                        <div class="dropdown-item" data-value="Ahma beer">Ahma beer</div>
+                    </div>
+                </div>
+                
+                <!-- Cartoon drinks -->
+                <div class="dropdown-item dropdown2" data-value="cartoonmenu">
+                    <div clickable id="drop2toggle"class="dropdown-toggle2">Cartoon drinks</div>
+                    <div class="dropdown-menuR"> 
+                        <div class="dropdown-item" data-value="Cartoon">Cartoon</div>
+                        <div class="dropdown-item" data-value="Whiskey anime">Whiskey anime</div>
+                        <div class="dropdown-item" data-value="Green coctail">Green coctail</div>
+                        <div class="dropdown-item" data-value="Blue coctail">Blue coctail</div>
+                        <div class="dropdown-item" data-value="Screwdriver">Screwdriver</div>
+                        <div class="dropdown-item" data-value="Spiritus">&#128128;&#128128;&#128128;</div>
+                    
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+
+          <img id="selectImg" src = "./Images\icons\shot_icon.png" width="80" height="104">
+
+        <button id="shotSubmitOne">
+            <div> 
+                Create shot counter 
+            </div>
+        </button>
+
+        
+        
+        <form>
+            <select  id="mySelect" 
+            style = "display: none;">
+              <option id="defaultSelect" value="./Images/icons/shot_icon.png">Shot glass</option>
+              <option value="./Images/icons/coctail_glass_icon.png">Coctail glass</option>
+              <option value="./Images/icons/copper_mug_icon.png">Copper mug</option>
+              <option value="./Images/icons/lonkero_icon.png">Lonkero</option>
+              <option value="./Images/icons/wine_glass_icon.png">Wine glass</option>
+              <option value="./Images/icons/vergi_icon.png">Vergi bottle</option>
+              <option value="./Images/icons/beer_icon.png">Beer glass</option>
+              <option value="./Images/icons/absinthe_icon.png">Absentti</option>
+              <option value="./Images/icons/shot2_icon.png">Shot glass 2</option>
+              <option value="./Images/icons/jager_icon.png">Jägermeister</option>
+              <option value="./Images/icons/koskekorva_mansikka_icon.png">Mansikkavodka</option>
+              <option value="./Images/icons/champagne_icon.png">Champagne</option>
+              <option value="./Images/icons/sake_icon.png">Sake</option>
+              <option value="./Images/icons/coctail_glass_2_icon.png">Coctail glass 2</option>
+              <option value="./Images/icons/cactus_glass_icon.png">Cactus glass</option>
+              <option value="./Images/icons/cartoon_coctail_icon.png">Cartoon</option>
+              <option value="./Images/icons/lonkero_red_icon.png">Lonkero red</option>
+              <option value="./Images/icons/lonkero_yellow_icon.png">Lonkero yellow</option>
+              <option value="./Images/icons/koff_beer_icon.png">Koff beer</option>
+              <option value="./Images/icons/koff_lonkero_icon.png">Koff lonkero</option>
+              <option value="./Images/icons/wine_bottle_icon.png">Wine bottle</option>
+              <option value="./Images/icons/white_wine_icon.png">White wine</option>
+              <option value="./Images/icons/whiskey_bottle_icon.png">Whiskey bottle</option>
+              <option value="./Images/icons/whiskey_rocks_icon.png">Whiskey ice</option>
+              <option value="./Images/icons/beer_bottle_icon.png">Beer bottle</option>
+              <option value="./Images/icons/beer_mug_icon.png">Beer mug</option>
+              <option value="./Images/icons/whiskey_anime_icon.png">Whiskey anime</option>
+              <option value="./Images/icons/screw_anime_icon.png">Screwdriver</option>
+              <option value="./Images/icons/lemon_anime_icon.png">Green coctail</option>
+              <option value="./Images/icons/blue_anime_icon.png">Blue coctail</option>
+              <option value="./Images/icons/spiritus_anime_icon.png">Spiritus</option>
+              <option value="./Images/icons/ahma_icon.png">Ahma beer</option>
+              <option value="./Images/icons/red_cup_icon.png">Red cup</option>
+              <option value="./Images/icons/gin_bottle_icon.png">Gin bottle</option>
+            </select>
+          </form>
+    </div>
+</div>
+
+
+<script>
+    
+    shotButton.addEventListener("click", function () {
+        shotPopup.classList.add("show");
+    });
+    window.addEventListener("click", function (event) {
+        if (event.target == shotPopup) {
+            shotPopup.classList.remove("show");
+            counterTextInput.value = ''
+        }
+    });
+</script>
+
+<div id="contextMenu" class="context-menu" style="display: none"> 
+    <ul class="menu"> 
+        <button id="trashButton" class="trash"> <i class="fa fa-trash" aria-hidden="true"></i> Delete</button> 
+        <button id="removeButton" class="remove"> <i class="fa fa-minus" aria-hidden="true"></i> remove shot</button>
+        <button id="powerReset" class="repeat"> <i class="fa fa-repeat" aria-hidden="true"></i> reset powers</button> 
+    </ul> 
+</div> 
+
+<!--hide menu hides the contextmenu but also removes all eventlisteners associated with it so it can be reuced for other elemetns-->
+<script>
+    document.onclick = hideMenu; 
+    function hideMenu() { 
+        document.getElementById("contextMenu") 
+                .style.display = "none" 
+
+        var old_element = document.getElementById("trashButton");
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+
+        var old_element2 = document.getElementById("removeButton");
+        var new_element2 = old_element2.cloneNode(true);
+        old_element2.parentNode.replaceChild(new_element2, old_element2);
+
+        var old_elementP = document.getElementById("powerReset");
+        var new_elementP = old_elementP.cloneNode(true);
+        old_elementP.parentNode.replaceChild(new_elementP, old_elementP);
+
+        document.getElementById("contextMenu2") 
+                .style.display = "none" 
+
+        var old_element3 = document.getElementById("trashButton2");
+        var new_element3 = old_element3.cloneNode(true);
+        old_element3.parentNode.replaceChild(new_element3, old_element3);
+
+        document.getElementById("contextMenu3") 
+                .style.display = "none"         
+    } 
+
+    function rightClick(e) { 
+        e.preventDefault(); 
+
+        if (document.getElementById("contextMenu") .style.display == "block"){ 
+            hideMenu(); 
+            return false;
+        }else{ 
+            var menu = document.getElementById("contextMenu")      
+            menu.style.display = 'block'; 
+            menu.style.left = e.pageX + "px"; 
+            menu.style.top = e.pageY + "px"; 
+            return true;
+        } 
+    } 
+</script>
+
+ <!---------------  clock  --------------------->
+ <button id="clockButton" >
+    <img src="./Images\icons\clock_icon.png" width="50">
+</button>
+<div id="clockPopup" class="clockpopup">
+    <div class="clockpopup-content">
+        
+        <p id="10mintext">
+            select a preset timer
+        </p>
+        
+        <button id="10min">
+            10 min
+        </button>
+        <button id="5min">
+            5 min
+        </button>
+        <button id="4min">
+            4 min
+        </button>
+        <button id="3min">
+            3 min
+        </button>
+        <button id="1min">
+            1 min
+        </button>
+        <button id="30sec">
+            30 sec
+        </button>
+        <button id="5sec">
+            5 sec
+        </button>
+
+        <p id="10sectext">
+            or create a custom timer
+        </p>
+
+        <input type="text" id="clockText" size="5" placeholder='Minutes'spellcheck="false" 
+        style="position: relative;
+        left: 25px;"/>
+        <div id="colon">:</div>
+        <input type="text" id="clockText2" size="5" placeholder='Seconds'spellcheck="false"
+        style="position: relative;
+        right: 25px;"/>
+        
+        <button id="clockSubmitOne" style="position: relative; top: 10px">
+            <div> 
+                Create timer 
+            </div>
+        </button>
+    </div>
+</div>
+
+<script>
+    clockButton.addEventListener("click", function () {
+        clockPopup.classList.add("show");
+    });
+    window.addEventListener("click", function (event) {
+        if (event.target == clockPopup) {
+            clockPopup.classList.remove("show");
+            clockText.value = ''
+        }
+    });
+</script>
+
+<div id="app"></div>
+<div id="app2"></div>
+
+<div id="contextMenu2" class="context-menu2" style="display: none"> 
+    <ul class="menu2"> 
+        <button id="trashButton2" class="trash2"> <i class="fa fa-trash" aria-hidden="true"></i> Delete</button> 
+    </ul> 
+</div> 
+
+<script>
+
+    function rightClick2(e) { 
+        e.preventDefault(); 
+
+        if (document.getElementById("contextMenu2") .style.display == "block"){ 
+            hideMenu(); 
+            return false;
+        }else{ 
+            var menu2 = document.getElementById("contextMenu2")      
+            menu2.style.display = 'block'; 
+            menu2.style.left = e.pageX + "px"; 
+            menu2.style.top = e.pageY + "px"; 
+            return true;
+        } 
+    } 
+</script>
+
+<div id="contextMenu3" class="context-menu3" style="display: none"> 
+    <ul class="menu3"> 
+        <button id="repeatButton" class="repeat"> <i class="fa fa-repeat" aria-hidden="true"></i> Reset Environment</button> 
+    </ul> 
+</div> 
+
+<script>
+
+    function rightClick3(e) { 
+        e.preventDefault(); 
+
+        if (document.getElementById("contextMenu3") .style.display == "block"){ 
+            hideMenu(); 
+            return false;
+        }else{ 
+            var menu3 = document.getElementById("contextMenu3")      
+            menu3.style.display = 'block'; 
+            menu3.style.left = e.pageX + "px"; 
+            menu3.style.top = e.pageY + "px"; 
+            return true;
+        } 
+    } 
+</script>
+
+ <!---------------  Settings  --------------------->
+
+<button id="settingsButton">
+    <img src="./Images\icons\settings_icon.png" width="40">
+  </button>
+
+  <div id="SettingsPopup" class="settingspopup">
+    <div class="settingspopup-content">
+
+          <label class="switch">
+            <input id="check2" type="checkbox" value="car">
+            <span class="slider round"></span>
+          </label>
+          <label for="check2"> Disable wheel change rolls</label><br>
+          
+
+          <label class="switch">
+            <input id="check3" type="checkbox" value="car">
+            <span class="slider round"></span>
+          </label>
+          <label for="check3"> Disable environment rolls</label><br>
+
+          <hr class="rounded">
+          <br>
+
+          <label class="switch">
+            <input id="check4" type="checkbox" value="car" checked>
+            <span class="slider round"></span>
+          </label>
+          <label for="check4"> auto change wheel</label><br>
+
+          
+          <label class="switch">
+            <input id="check5" type="checkbox" value="car">
+            <span class="slider round"></span>
+          </label>
+          <label for="check5"> fast roll</label><br>
+          <hr class="rounded">
+          <br>
+          
+          <label class="switch">
+            <input id="extraShots" type="checkbox" value="car">
+            <span class="slider round"></span>
+          </label>
+          <label for="extraShots"> extra fun for the pokernight (round of shots multiplier is active) </label>
+          <label id="sliderContainer" class="slidecontainer disabled">
+            <input id = "sliderMul" type="range" min="0" max="100" value="0" class="sliderLong" id="myRange" disabled>
+            <label id = "labelSliderMul"for="sliderMul" style = "text-align: center;"> defautl error not changed</label><br>
+          </label><br>
+
+          <hr class="rounded">
+          <br>
+
+          <label class="slidecontainer">
+            <input id="check" type="range" min="1" max="3" value="2">
+            
+          </label>
+          <label for="check" id="checklabel"> shot counter has 2 column(s)</label><br>
+
+          <hr class="rounded">
+          <br>
+
+          <label class="switch">
+            <input id="check6" type="checkbox" value="car">
+            <span class="slider round"></span>
+          </label>
+          <label for="check6">disable team jenga</label><br>
+
+          <hr class="rounded">
+          <br>
+          Volume contols:
+          <br><br>
+          <audio id="audio1"loop controls>
+            <source src="./Sounds\alarm_sound_effect.mp3">
+          </audio>
+          <p id="audio1p">timer: <span class="lava">100 %</span></p><br>
+
+          <audio id="audio2"loop controls>
+            <source src="./Sounds/spinning_sound_effect.mp3">
+          </audio>
+          <p id="audio2p">wheelspin: <span class="lava">100 %</span></p><br>
+
+          <hr class="rounded">
+          <br>
+          <button id="wheelDisButton">
+            Disable Themed Wheels
+          </button><br>
+          <hr class="rounded">
+          <br>
+    
+          <label class="switch">
+            <input id="powerDisButton" type="checkbox" value="car">
+            <span class="slider round"></span>
+          </label>
+          <label for="powerDisButton">disable power-ups</label><br>
+          <hr class="rounded">
+          <br>
+          secret menu: z + x
+          
+    </div>
+</div>
+
+
+<script>
+    settingsButton.addEventListener("click", function () {
+        SettingsPopup.classList.add("show");
+    });
+    window.addEventListener("click", function (event) {
+        if (event.target == SettingsPopup) {
+            SettingsPopup.classList.remove("show");
+            
+        }
+    });
+</script>
+  
+  <script>
+
+    const checkbox = document.getElementById('check');
+    if(localStorage.shotColumn){
+        if(localStorage.powersDisabled == "true"){
+            checkbox.value = parseInt(localStorage.shotColumn);
+            if (checkbox.value == 1) {
+                document.getElementById("shotClass").style.width = "120px";
+                checklabel.innerText = "shot counter has 1 column(s)";
+            } else if(checkbox.value == 2){
+            document.getElementById("shotClass").style.width = "200px";
+            checklabel.innerText = "shot counter has 2 column(s)";
+            }
+            else{
+                document.getElementById("shotClass").style.width = "320px";
+            checklabel.innerText = "shot counter has 3 column(s)";
+            }
+        }
+        else{
+            checkbox.value = parseInt(localStorage.shotColumn);
+            if (checkbox.value == 1) {
+                document.getElementById("shotClass").style.width = "200px";
+                checklabel.innerText = "shot counter has 1 column(s)";
+            } else if(checkbox.value == 2){
+            document.getElementById("shotClass").style.width = "280px";
+            checklabel.innerText = "shot counter has 2 column(s)";
+            }
+            else{
+                document.getElementById("shotClass").style.width = "420px";
+            checklabel.innerText = "shot counter has 3 column(s)";
+            }
+        }
+    }
+    
+    checkbox.addEventListener('input', (event) => {
+    if(powerDisButton.checked){
+        if (checkbox.value == 1) {
+            document.getElementById("shotClass").style.width = "120px";
+            checklabel.innerText = "shot counter has 1 column(s)";
+            localStorage.shotColumn = 1;
+            
+        } else if(checkbox.value == 2){
+           document.getElementById("shotClass").style.width = "200px";
+           checklabel.innerText = "shot counter has 2 column(s)";
+           localStorage.shotColumn = 2;
+        }
+        else{
+            document.getElementById("shotClass").style.width = "320px";
+           checklabel.innerText = "shot counter has 3 column(s)";
+           localStorage.shotColumn = 3;
+        }
+    }
+    else{
+        if (checkbox.value == 1) {
+            document.getElementById("shotClass").style.width = "200px";
+            checklabel.innerText = "shot counter has 1 column(s)";
+            localStorage.shotColumn = 1;
+            
+        } else if(checkbox.value == 2){
+           document.getElementById("shotClass").style.width = "280px";
+           checklabel.innerText = "shot counter has 2 column(s)";
+           localStorage.shotColumn = 2;
+        }
+        else{
+            document.getElementById("shotClass").style.width = "420px";
+           checklabel.innerText = "shot counter has 3 column(s)";
+           localStorage.shotColumn = 3;
+        }
+    }
+    });
+  </script>
+
+  
+  <button id="addDareHistory">
+    <img src="./Images\icons\history_icon.png" width="40">
+  </button>
+
+
+  <div id="historyPopup" class="historypopup">
+    <div class="historypopup-content">
+        <input type="button" id="historyDownload" value="Download" />
+        <ol id="dareHistoryList" class = "dareHistory">
+            <li>no rolls yet</li>
+           
+          </ol>
+    </div>
+</div>
+
+
+<script>
+    addDareHistory.addEventListener("click", function () {
+        historyPopup.classList.add("show");
+    });
+    window.addEventListener("click", function (event) {
+        if (event.target == historyPopup) {
+            historyPopup.classList.remove("show");
+        }
+    });
+</script>
+<!---------------  hidden menu --------------------->
+
+<!---------------  hidden menu --------------------->
+<div id="hiddenPopup" class="hiddenpopup">
+    <div class="hiddenpopup-content">
+        <div id="hiddenList">
+            <div style="display: none;">
+                <button class="buttonBlue">-</button>
+                <input id = hidden1 type="text" maxlength="4" size="4" style="text-align: center;" spellcheck="false">
+                <span id ="hiddenSpan" contenteditable="true" style="border: 1px solid black; padding: 0 10px"spellcheck="false"> Round of shots</span>
+            </div>
+        </div>
+        <div>
+            <button id="hiddenAdd" class="buttonGreen"onclick="hiddenAdd()">
+                +
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    window.addEventListener("click", function (event) {
+        if (event.target == hiddenPopup) {
+            hiddenPopup.classList.remove("show");
+        }
+    });
+    let hiddenKeys = [[" ", "none"], ["Enter", "none"]];
+    if(localStorage.hiddenKeys){
+        hiddenKeys = JSON.parse(localStorage.hiddenKeys);
+        
+    }
+    else{
+        localStorage.hiddenKeys = JSON.stringify([[" ", "none"], ["Enter", "none"]]);
+        hiddenKeys = JSON.parse(localStorage.hiddenKeys);
+        
+    }
+    for(i=2; i < hiddenKeys.length; i++){
+        
+        
+        document.getElementById("hiddenAdd").click();
+        document.getElementById("hiddenList").lastChild.getElementsByTagName("input")[0].value = hiddenKeys[i][0];
+        document.getElementById("hiddenList").lastChild.getElementsByTagName("span")[0].innerText = hiddenKeys[i][1];
+    }
+
+    
+    var hiddenPrimed = false;
+    let hiddenDare = "";
+    function hiddenAdd(){
+        const node = document.getElementById("hiddenList").getElementsByTagName("div")[0];
+        const clone = node.cloneNode(true);
+        clone.style.display = "block"
+        clone.getElementsByTagName("input")[0].value = "";
+        clone.getElementsByTagName("input")[0].addEventListener("keydown", e => {
+            
+            if(hiddenKeys.flat().includes(e.key)){
+                let indexToRemove = hiddenKeys.flat().indexOf(clone.getElementsByTagName("input")[0].value) / 2;
+                if(indexToRemove >= 0){
+                    hiddenKeys.splice(indexToRemove, 1);
+                    localStorage.hiddenKeys = JSON.stringify(hiddenKeys);
+                }
+                clone.getElementsByTagName("input")[0].value = "invalid"
+            }
+            else{
+                let indexToRemove = hiddenKeys.flat().indexOf(clone.getElementsByTagName("input")[0].value) / 2;
+                if(indexToRemove >= 0){
+                    hiddenKeys.splice(indexToRemove, 1);
+                    
+                }
+                clone.getElementsByTagName("input")[0].value = e.key;
+                hiddenKeys.push([e.key, clone.getElementsByTagName("span")[0].innerText])
+                localStorage.hiddenKeys = JSON.stringify(hiddenKeys);
+                clone.getElementsByTagName("input")[0].blur();
+                
+            }
+        });
+        clone.getElementsByTagName("button")[0].addEventListener("click", () =>{
+            let indexToRemove = hiddenKeys.flat().indexOf(clone.getElementsByTagName("input")[0].value) / 2;
+                if(indexToRemove >= 0){
+                    hiddenKeys.splice(indexToRemove, 1);
+                    localStorage.hiddenKeys = JSON.stringify(hiddenKeys);
+                }
+            document.getElementById("hiddenList").removeChild(clone);
+        });
+        clone.getElementsByTagName("span")[0].addEventListener("keyup", () => {
+            let indexToRemove = hiddenKeys.flat().indexOf(clone.getElementsByTagName("input")[0].value) / 2;
+            if (indexToRemove >= 0) {
+                hiddenKeys[indexToRemove] = [clone.getElementsByTagName("input")[0].value, clone.getElementsByTagName("span")[0].innerText];
+                localStorage.hiddenKeys = JSON.stringify(hiddenKeys);
+            }
+        });
+        document.getElementById("hiddenList").appendChild(clone);
+        
+        
+    };
+    window.addEventListener("keydown", e =>{
+        
+        switch (e.target.tagName.toLowerCase()) { // we dont want to activate the wheel when pressing space in textboxes etc.
+            case "input":
+            case "textarea":
+            case "select":
+            case "p":
+            case "span":
+            // ...and so on for other elements you want to exclude; thanks stackexchange
+              break;
+            default:
+                if(hiddenKeys.flat().includes(e.key) && e.key != " " && e.key != "Enter"){
+                    hiddenPrimed = true;
+                    hiddenDare = hiddenKeys[hiddenKeys.flat().indexOf(e.key)/2][1];
+                    document.getElementById("spin_btn").click();
+                }
+              break;
+        }
+    })
+    
+    
+</script>
+
+
+<script>
+    var slider = document.getElementById("sliderMul");
+var output = document.getElementById("labelSliderMul");
+output.innerHTML = "Amount of rolls that are rounds of shots: 10%"; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+  output.innerHTML = "Amount of rolls that are rounds of shots: " + secretShotPercent(this.value /100.0).toString().slice(2,4) + "%";
+  shotMultiplier = this.value / 100.0;
+}
+</script>
+
+
+
+
+<script>
+   function download(file) {
+
+       //creating an invisible element
+
+       var element = document.createElement('a');
+       element.setAttribute('href',
+           'data:text/plain;charset=utf-8,'
+           + dares_history.toString().replaceAll(",", ",\n"));
+       element.setAttribute('download', file);
+       document.body.appendChild(element);
+       element.click();
+
+       document.body.removeChild(element);
+   }
+
+   // Start file download.
+
+   document.getElementById("historyDownload")
+       .addEventListener("click", function () {
+           
+            // Create a Date object for the current date
+            var currentDate = new Date();
+
+            // Get individual date components
+            var day = currentDate.getDate();
+            var month = currentDate.getMonth() + 1; // Months are zero-based
+            var year = currentDate.getFullYear();
+
+            // Get individual time components
+            var hours = currentDate.getHours();
+            var minutes = currentDate.getMinutes();
+        
+
+            // Format the date as "DD.MM.YYYY"
+            var formattedDate = day.toString().padStart(2, '0') + "." + month.toString().padStart(2, '0') + "." + year;
+            var formattedTime = hours.toString().padStart(2, '0') + "." + minutes.toString().padStart(2, '0'); 
+
+           var filename = "Pokernight_" + formattedDate + "_" + formattedTime + ".txt";
+
+           download(filename);
+       }, false);
+</script>
+
+ <!---------------  TEXT EDITOR --------------------->
+ 
+ <div> 
+    <button id="editorButton">
+        <img src="./Images\icons\scroll_icon.png" width="45">
+    </button>
+    
+</div>
+
+<div id="editorPopup" class="editorpopup">
+    <div id ="editorpopupcontent" class="editorpopup-content">
+        <section class=""> 
+
+            <div class="flex-box"> 
+                <div class="row"> 
+                    <div class="col"> 
+                        <!-- Adding different buttons for 
+                             different functionality-->
+                        <!--onclick attribute is added to give  
+                            button a work to do when it is clicked-->
+                            <div class="flex-box">
+                        <button type="button" 
+                                onclick="fCommit()" 
+                                class=" shadow-sm btn btn-outline-secondary" 
+                                data-toggle="tooltip"
+                                data-placement="top" 
+                                title="Bold Text"
+                                style="background-color: white;
+                                color: black;
+                                border: 2px solid #04AA6D;
+                                padding: 15px 32px;
+                                text-align: center;
+                                text-decoration: none;
+                                display: inline-block;
+                                font-size: 16px;
+                                margin: 4px 2px;
+                                cursor: pointer;"> 
+                Commit dares to browser storage</button> 
+
+                        <button type="button" 
+                                onclick="fLoadOlds()" 
+                                class="shadow-sm btn btn-outline-success" 
+                                data-toggle="tooltip" 
+                                data-placement="top" 
+                                title="Italic Text"
+                                style="background-color: white;
+                                color: black;
+                                border: 2px solid #f44336;
+                                padding: 15px 32px;
+                                text-align: center;
+                                text-decoration: none;
+                                display: inline-block;
+                                font-size: 16px;
+                                margin: 4px 2px;
+                                cursor: pointer;"> 
+                Load old dares from files (DELETES ALL CHANGES)</button> 
+
+                        <button type="button" 
+                                onclick= 'downloadAllJS()'
+                                class=" shadow-sm btn btn-outline-primary" 
+                                data-toggle="tooltip" 
+                                data-placement="top"
+                                title="Left Align"
+                                style="background-color: white;
+                                color: black;
+                                border: 2px solid #008CBA;
+                                padding: 15px 32px;
+                                text-align: center;
+                                text-decoration: none;
+                                display: inline-block;
+                                font-size: 16px;
+                                margin: 4px 2px;
+                                cursor: pointer;"> 
+                download NEW dare files</button> 
+            </div>
+                <br>
+                        <div class="flex-box">
+                        <button type="button" 
+                                onclick="fLoadDefault()" 
+                                class="btn shadow-sm btn-outline-secondary" 
+                                data-toggle="tooltip" 
+                                data-placement="top" 
+                                title="Center Align"
+                                id ="editorDefault"> 
+                                <img src="./Images\icons/default_icon.png" style="max-width: 100px; max-height: 80px;">
+                                <div> 
+                                    default  
+                                </div>
+                                </button> 
+
+                        <button type="button" 
+                                onclick="fLoadPain()" 
+                                class="btn shadow-sm btn-outline-primary" 
+                                data-toggle="tooltip" 
+                                data-placement="top" 
+                                title="Right Align"
+                                id ="editorPain"> 
+                                <img src="./Images\icons\no_pain_icon.png" style="max-width: 100px; max-height: 80px;">
+                                <div> 
+                                    no pain  
+                                </div></button> 
+
+                        <button type="button" 
+                                onclick="fLoadEnemies()" 
+                                class="btn shadow-sm btn-outline-secondary" 
+                                data-toggle="tooltip" 
+                                data-placement="top" 
+                                title="Uppercase Text"
+                                id ="editorEnemies"> 
+                                <img src="./Images\icons\no_enemies_jesus_icon.png" style="max-width: 100px; max-height: 80px;">
+                                <div> 
+                                    no enemies  
+                                </div></button> 
+
+                        <button type="button" 
+                                onclick="fLoadVergi()" 
+                                class="btn shadow-sm btn-outline-primary" 
+                                data-toggle="tooltip" 
+                                data-placement="top" 
+                                title="Lowercase Text"
+                                id ="editorVergi"> 
+                                <img src="./Images\icons\vergi_icon.png" style="max-width: 100px; max-height: 80px;">
+                                <div> 
+                                    vergipsycho  
+                                </div></button> 
+
+                        <button type="button" 
+                                onclick="fLoadSitting()" 
+                                class="btn shadow-sm btn-outline-primary" 
+                                data-toggle="tooltip" 
+                                data-placement="top" 
+                                title="Capitalize Text"
+                                id ="editorSitting"> 
+                                <img src="./Images\icons\no_sitting_icon.png" style="max-width: 100px; max-height: 80px;">
+                                <div> 
+                                    no sitting  
+                                </div></button> 
+
+                        <button type="button" 
+                                onclick="fLoadMemes()" 
+                                class="btn shadow-sm btn-outline-primary side" 
+                                data-toggle="tooltip" 
+                                data-placement="top" 
+                                title="Tooltip on top"
+                                id ="editorMemes"> 
+                                <img src="./Images\icons\memes_icon.png" style="max-width: 100px; max-height: 80px;">
+                                <div> 
+                                    box of memes  
+                                </div></button> 
+                            </div>
+                    </div> 
+                </div> 
+            </div> 
+            <br> 
+            <div class="row"> 
+                <div class="col-md-3 col-sm-3"> 
+                </div> 
+                <div class="col-md-6 col-sm-9"> 
+                    <p style="text-align: center;">Dares:</p><br>
+                    <div class="flex-box"> 
+                        
+                                    <textarea id="textarea1" 
+                                  class="input shadow" 
+                                  name="name" 
+                                  rows="auto" 
+                                  cols="100" 
+                                  placeholder="Load some dares by clicking the buttons"
+                                  spellcheck="false"></textarea> <br>
+
+                        
+            
+                    </div><br><br>
+
+                    <p style="text-align: center;">Environments:</p><br>
+                    <div class="flex-box"> 
+                        
+                        <textarea id="textarea2" 
+                                  class="input shadow" 
+                                  name="name" 
+                                  rows="auto" 
+                                  cols="100" 
+                                  placeholder="Load some environments by clicking the buttons"
+                                  spellcheck="false"></textarea> <br>
+
+                        
+                    </div><br><br>
+
+                    <p style="text-align: center;">Wheel changes:</p><br>
+                    <div class="flex-box"> 
+                        
+                        <textarea id="textarea3" 
+                                  class="input shadow" 
+                                  name="name" 
+                                  rows="auto" 
+                                  cols="100" 
+                                  placeholder="Load some wheel changes by clicking the buttons"
+                                  spellcheck="false"></textarea> <br>
+
+                        
+                    </div>
+                    
+                </div> 
+                <div class="col-md-3"> 
+                </div> 
+            </div> 
+        </section> 
+        <br> 
+        <br> 
+      
+    </div>
+</div>
+
+
+<script>
+    editorButton.addEventListener("click", function () {
+        editorPopup.classList.add("show");
+    });
+    window.addEventListener("click", function (event) {
+        if (event.target == editorPopup) {
+            editorpopupcontent.scrollTop = 0;
+            editorPopup.classList.remove("show");
+        }
+    });
+</script>
+
+<div id="overlayWhite"></div>
+<style>
+    
+      
+      
+</style>
+
+
+<button id="coinButton">
+    <img src="./Images/icons/coin_tails_icon.png" width="50">
+
+  </button>
+
+<div id="coinPopup" class="coinpopup">
+    <div class="coinpopup-content" style = "align-items: center;" id="coinpopupcontent">
+        <div id="coin">
+
+            <div id="sideb" class="side-b"></div>
+            <div id="sidea"class="side-a"></div> 
+          </div>
+            
+          <div class="centerCoin">  
+            <button onclick="flipCoin()" class="flip-btn" id="coinflipbut">
+                FLIP AGAIN
+            </button>
+          </div>
+          <div id="coinCounter" class="centerCoin">
+            
+          </div>
+          
+</div>
+
+<script>
+    isHeads = true;
+    function flipCoin() {
+        coinflipbutton = document.getElementById("coinflipbut");
+        coinflipbutton.disabled = true;
+        var flipResult = Math.random();
+        setTimeout(function() {
+            var coinSound = new alarmSound("./Sounds/coinflip_sound.mp3", 1.0);
+            coinSound.play();
+            if (flipResult <= 0.5) { ///heads
+                document.getElementById("coin").style.transform = "rotateY(0deg)"
+                coin.style.animation = 'none'; // Reset animation to allow retriggering
+                void coin.offsetWidth; // Trigger reflow to restart animation
+                if(isHeads){
+                    coin.style.animation = 'headsToHeads 3s ease-in-out forwards';
+                }
+                else{
+                    coin.style.animation = 'tailsToHeads 3s ease-in-out forwards';
+                }
+                
+                
+                isHeads = true;
+                headsC = document.createElement("p");
+                headsC.innerHTML = "H";
+                headsC.classList.add("H-circle");
+
+                setTimeout(function(){
+                    document.getElementById("coinCounter").appendChild(headsC);
+                    coinflipbutton.disabled = false;
+                }, 3000);
+            } else { //tails
+                document.getElementById("coin").style.transform = "rotateY(-180deg)"
+                coin.style.animation = 'none'; // Reset animation to allow retriggering
+                void coin.offsetWidth; // Trigger reflow to restart animation
+                if(isHeads){
+                    coin.style.animation = 'headsToTails 3s ease-in-out forwards';
+                }
+                else{
+                    coin.style.animation = 'tailsToTails 3s ease-in-out forwards';
+                }
+                
+                
+                isHeads = false;
+                tailsC = document.createElement("p");
+                tailsC.innerHTML = "T";
+                tailsC.classList.add("T-circle");
+                setTimeout(function(){
+                    
+                    document.getElementById("coinCounter").appendChild(tailsC);
+                    coinflipbutton.disabled = false;
+                    }, 3000);
+            }
+        }, 100);
+    }
+
+    coinButton.addEventListener("click", function () {
+        coinPopup.classList.add("show");
+        flipCoin();
+    });
+    window.addEventListener("click", function (event) {
+        
+        if ((event.target == coinPopup) || (event.target == coinpopupcontent)) {
+            coinPopup.classList.remove("show");
+            
+        }
+    });
+</script>
+
+
+<!--wheel disabler-->
+<div id="wheelPopupDis" class="wheelpopup">
+    
+    <div class="wheelpopup-content">
+        <p></p>
+        <p style="text-align: center;">Choose a Themed Wheel to disable:</p>
+        <p></p>
+        <button id="wheelChooseDefaultDis">
+            <img src="./Images\icons/default_icon.png" width="100">
+            <div> 
+                default  
+            </div>
+        </button>
+        <button id="wheelChoosePainDis">
+            <img src="./Images\icons\no_pain_icon.png" width="100">
+            <div> 
+                no pain  
+            </div>
+        </button>
+        <button id="wheelChooseEnemiesDis">
+            <img src="./Images\icons\no_enemies_jesus_icon.png" width="100">
+            <div> 
+                no enemies  
+            </div>
+        </button>
+        <button id="wheelChooseVergiDis">
+            <img src="./Images\icons\vergi_icon.png" width="100">
+            <div> 
+                vergipsycho  
+            </div>
+        </button>
+        <button id="wheelChooseSittingDis">
+            <img src="./Images\icons\no_sitting_icon.png" width="100">
+            <div> 
+                no sitting  
+            </div>
+        </button>
+        <button id="wheelChooseMemesDis">
+            <img src="./Images\icons\memes_icon.png" width="100">
+            <div> 
+                box of memes  
+            </div>
+        </button>
+    </div>
+</div>
+
+<script>
+    wheelDisButton.addEventListener("click", function () {
+        wheelPopupDis.classList.add("show");
+        
+    });
+    window.addEventListener("click", function (event) {
+        if (event.target == wheelPopupDis) {
+            wheelPopupDis.classList.remove("show");
+           
+        }
+    });
+</script>
+
+
+
+  <!---------------  SCRIPT  --------------------->
+  <script src="./Dares_used/dares_pain_free.js"></script>
+  <script src="./Dares_used/dares_no_enemies.js"></script>
+  <script src="./Dares_used/dares_no_sitting.js"></script>
+  <script src="./Dares_used/dares_vergi_psycho.js"></script>
+  <script src="./Dares_used/dares_memes.js"></script>
+  <script src="./Dares_used/dares_default.js"></script>
+  
+  <script src="script.js"></script> 
+  
+  
+</body>  
+
+</html>

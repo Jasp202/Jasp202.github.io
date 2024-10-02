@@ -2087,27 +2087,30 @@ document.getElementById('textarea1').addEventListener('input', updateRow);
 
 //preload images for smooth experience
 function preloadImages(imageArray, callback) {
-    let loadedImagesCount = 0;  // Counter to track the number of loaded images
-    const totalImages = imageArray.length;  // Total number of images to load
+    let loadedImagesCount = 0;
+    const totalImages = imageArray.length;
+    const preloadContainer = document.getElementById('preload-container');
 
-    // Loop through each image and preload
     imageArray.forEach(function(imageUrl) {
         const img = new Image();
-        
-        // When an image is successfully loaded
-        img.onload = function() {
-            loadedImagesCount++;  // Increment the counter when an image is loaded
 
-            // Check if all images have been loaded
+        img.onload = function() {
+            loadedImagesCount++;
+            preloadContainer.appendChild(img); // Add the image to a hidden container
+
             if (loadedImagesCount === totalImages) {
-                callback();  // Call the callback function when all images are loaded
+                callback(); // All images loaded
             }
         };
 
-        // Set the image source to start loading
+        img.onerror = function() {
+            console.error(`Error loading image: ${imageUrl}`);
+        };
+
         img.src = imageUrl;
     });
 }
+
 var backgroundList = ['./Images/backgrounds/cyberpunk_bg.png', './Images/backgrounds/dare_shot.png', './Images/backgrounds/default_bg.png', './Images/backgrounds/environment_border.png', './Images/backgrounds/memes_bg.png', './Images/backgrounds/no_enemies_bg.png', './Images/backgrounds/no_pain_bg.png', './Images/backgrounds/no_sitting_bg.png']
 var iconList = ['./Images/icons/absinthe_icon.png', './Images/icons/add_dare_icon.png', './Images/icons/ahma_icon.png', './Images/icons/beer_bottle_icon.png', './Images/icons/beer_icon.png', './Images/icons/beer_mug_icon.png', './Images/icons/blue_anime_icon.png', './Images/icons/cactus_glass_icon.png', './Images/icons/cartoon_coctail_icon.png', './Images/icons/champagne_icon.png', './Images/icons/clock_icon.png', './Images/icons/coctail_glass_2_icon.png', './Images/icons/coctail_glass_icon.png', './Images/icons/coin_heads_icon.png', './Images/icons/coin_tails_icon.png', './Images/icons/copper_mug_icon.png', './Images/icons/current_icon.png', './Images/icons/default_d_icon.png', './Images/icons/default_icon.png', './Images/icons/favicon.png', './Images/icons/gin_bottle_icon.png', './Images/icons/history_icon.png', './Images/icons/jager_icon.png', './Images/icons/koff_beer_icon.png', './Images/icons/koff_lonkero_icon.png', './Images/icons/koskekorva_mansikka_icon.png', './Images/icons/lemon_anime_icon.png', './Images/icons/lonkero_icon.png', './Images/icons/lonkero_red_icon.png', './Images/icons/lonkero_yellow_icon.png', './Images/icons/memes_d_icon.png', './Images/icons/memes_icon.png', './Images/icons/no_enemies_jesus_d_icon.png', './Images/icons/no_enemies_jesus_icon.png', './Images/icons/no_pain_d_icon.png', './Images/icons/no_pain_icon.png', './Images/icons/no_sitting_d_icon.png', './Images/icons/no_sitting_icon.png', './Images/icons/power_icon_0.png', './Images/icons/power_icon_1.png', './Images/icons/power_icon_2.png', './Images/icons/power_icon_3.png', './Images/icons/power_icon_4.png', './Images/icons/power_icon_5.png', './Images/icons/power_icon_6.png', './Images/icons/power_icon_7.png', './Images/icons/red_cup_icon.png', './Images/icons/sake_icon.png', './Images/icons/screw_anime_icon.png', './Images/icons/scroll_icon.png', './Images/icons/settings_icon.png', './Images/icons/shot2_icon.png', './Images/icons/shot_icon.png', './Images/icons/spiritus_anime_icon.png', './Images/icons/vergi_d_icon.png', './Images/icons/vergi_icon.png', './Images/icons/wheel_icon.png', './Images/icons/whiskey_anime_icon.png', './Images/icons/whiskey_bottle_icon.png', './Images/icons/whiskey_rocks_icon.png', './Images/icons/white_wine_icon.png', './Images/icons/wine_bottle_icon.png', './Images/icons/wine_glass_icon.png']
 var imagesToPreload = backgroundList.concat(iconList)

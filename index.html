@@ -68,6 +68,7 @@
     <!-- dare popup ends -->
 
     <!-- wheel button starts -->
+     
 
 
     <button id="wheelButton">
@@ -652,8 +653,12 @@
           <hr class="rounded">
           <br>
           <button id="wheelDisButton">
-            Disable Themed Wheels
-          </button><br>
+            
+            <div> 
+                Disable Wheels 
+            </div>
+        </button>
+          <br>
           <hr class="rounded">
           <br>
     
@@ -769,7 +774,64 @@
           </ol>
     </div>
 </div>
+<!--wheel disabler-->
+<div id="wheelPopupDis" class="wheelpopup">
+    <div class="wheelpopup-content">
+        <p></p>
+        <p style="text-align: center;">Choose a Themed Wheel to disable:</p>
+        <p></p>
+        <button id="wheelChooseDefaultDis">
+            <img src="./Images\icons/default_icon.png" width="100">
+            <div> 
+                default  
+            </div>
+        </button>
+        <button id="wheelChoosePainDis">
+            <img src="./Images\icons\no_pain_icon.png" width="100">
+            <div> 
+                no pain  
+            </div>
+        </button>
+        <button id="wheelChooseEnemiesDis">
+            <img src="./Images\icons\no_enemies_jesus_icon.png" width="100">
+            <div> 
+                no enemies  
+            </div>
+        </button>
+        <button id="wheelChooseVergiDis">
+            <img src="./Images\icons\vergi_icon.png" width="100">
+            <div> 
+                vergipsycho  
+            </div>
+        </button>
+        <button id="wheelChooseSittingDis">
+            <img src="./Images\icons\no_sitting_icon.png" width="100">
+            <div> 
+                no sitting  
+            </div>
+        </button>
+        <button id="wheelChooseMemesDis">
+            <img src="./Images\icons\memes_icon.png" width="100">
+            <div> 
+                box of memes  
+            </div>
+        </button>
+    </div>
+</div>
 
+<script>
+    wheelDisButton.addEventListener("click", function () {
+        wheelPopupDis.classList.add("show")
+        SettingsPopup.classList.remove("show")
+        
+    });
+    window.addEventListener("click", function (event) {
+        if (event.target == wheelPopupDis) {
+            wheelPopupDis.classList.remove("show");
+           
+        }
+    });
+</script>
 
 <script>
     addDareHistory.addEventListener("click", function () {
@@ -1216,6 +1278,7 @@ slider.oninput = function() {
           
 </div>
 
+
 <script>
     isHeads = true;
     function flipCoin() {
@@ -1285,64 +1348,7 @@ slider.oninput = function() {
 </script>
 
 
-<!--wheel disabler-->
-<div id="wheelPopupDis" class="wheelpopup">
-    
-    <div class="wheelpopup-content">
-        <p></p>
-        <p style="text-align: center;">Choose a Themed Wheel to disable:</p>
-        <p></p>
-        <button id="wheelChooseDefaultDis">
-            <img src="./Images\icons/default_icon.png" width="100">
-            <div> 
-                default  
-            </div>
-        </button>
-        <button id="wheelChoosePainDis">
-            <img src="./Images\icons\no_pain_icon.png" width="100">
-            <div> 
-                no pain  
-            </div>
-        </button>
-        <button id="wheelChooseEnemiesDis">
-            <img src="./Images\icons\no_enemies_jesus_icon.png" width="100">
-            <div> 
-                no enemies  
-            </div>
-        </button>
-        <button id="wheelChooseVergiDis">
-            <img src="./Images\icons\vergi_icon.png" width="100">
-            <div> 
-                vergipsycho  
-            </div>
-        </button>
-        <button id="wheelChooseSittingDis">
-            <img src="./Images\icons\no_sitting_icon.png" width="100">
-            <div> 
-                no sitting  
-            </div>
-        </button>
-        <button id="wheelChooseMemesDis">
-            <img src="./Images\icons\memes_icon.png" width="100">
-            <div> 
-                box of memes  
-            </div>
-        </button>
-    </div>
-</div>
 
-<script>
-    wheelDisButton.addEventListener("click", function () {
-        wheelPopupDis.classList.add("show");
-        
-    });
-    window.addEventListener("click", function (event) {
-        if (event.target == wheelPopupDis) {
-            wheelPopupDis.classList.remove("show");
-           
-        }
-    });
-</script>
 
 
 

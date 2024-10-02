@@ -2117,5 +2117,5 @@ var imagesToPreload = backgroundList.concat(iconList)
 
 // Preload all images
 preloadImages(imagesToPreload, function() {
-    alert('All images have been loaded!');
+    return;
 });

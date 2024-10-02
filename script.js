@@ -2113,6 +2113,6 @@ var iconList = ['./Images/icons/absinthe_icon.png', './Images/icons/add_dare_ico
 var imagesToPreload = backgroundList.concat(iconList)
 
 // Preload all images
-preloadImages(imagesToPreload, function() {
+preloadImages(backgroundList, function() {
     alert('All images have been loaded!');
 });

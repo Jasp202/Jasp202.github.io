@@ -1030,6 +1030,8 @@ slider.oninput = function() {
     
 </div>
 
+
+
 <div id="editorPopup" class="editorpopup">
     <div id ="editorpopupcontent" class="editorpopup-content">
         <section class=""> 
@@ -1247,11 +1249,8 @@ slider.oninput = function() {
 </script>
 
 <div id="overlayWhite"></div>
-<style>
+
     
-      
-      
-</style>
 
 
 <button id="coinButton">
@@ -1276,8 +1275,8 @@ slider.oninput = function() {
             
           </div>
           
+    </div>
 </div>
-
 
 <script>
     isHeads = true;
@@ -1347,6 +1346,60 @@ slider.oninput = function() {
     });
 </script>
 
+<!---------------  YOUTUBE API DOWNLOAD --------------------->
+
+<script src="https://apis.google.com/js/client.js?onload=googleApiClientReady">   </script>
+
+
+    <button id="ytbutton" style="font-size: 50px;"> hello </button>
+    <div id="ytPopup" class="ytpopup">
+        <div class="ytpopup-content">
+            <div id="buttons">
+                <label> <input id="query" value='cats' type="text"/><button id="search-button"    onclick="keyWordsearch()">Search</button></label>    
+                <div id="container">
+                <h1>Search Results</h1>
+                <ul id="results"></ul>
+                </div>  
+        </div>
+    </div>
+    
+
+<script>
+    ytbutton.addEventListener("click", function () {
+        ytPopup.classList.add("show");
+    });
+    function keyWordsearch(){
+        
+        gapi.client.setApiKey('AIzaSyDFmmtvaShc4ADiWtDmQEl-UYwqH5ZiEvc');
+        gapi.client.load('youtube', 'v3', function(){
+                makeRequest();
+        });
+    }
+    function makeRequest(){
+        console.log(2)
+        var q = $('#query').val();
+        var request = gapi.client.youtube.search.list({
+                q: q,
+                part: 'snippet', 
+                maxResults: 10
+        });
+        request.execute(function(response)  {                                                                                    
+                $('#results').empty()
+                var srchItems = response.result.items;                      
+                $.each(srchItems, function(index, item){
+                vidTitle = item.snippet.title;  
+                vidThumburl =  item.snippet.thumbnails.default.url;                 
+                vidThumbimg = '<pre><img id="thumb" src="'+vidThumburl+'" alt="No  Image  Available." style="width:204px;height:128px"></pre>';                   
+    
+                $('#results').append('<pre>' + vidTitle + vidThumbimg +   '</pre>');                      
+        })  
+      })  
+    }
+     </script> 
+     <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady">   </script>
+ 
+
+  <!---------------  PRELOADING IMAGES  --------------------->
 <div id="preload-container" style="display:none;"></div>
 
 

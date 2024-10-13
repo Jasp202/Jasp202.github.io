@@ -1622,3 +1622,30 @@ section {
 .flip-btn:hover {
     transform: scale(1.05); /* Slightly enlarge the button on hover */
 }
+
+.ytpopup {
+    position: fixed;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+    
+}
+.ytpopup-content {
+    background-color: none;
+    margin: 10% auto;
+    padding: 20px;
+    margin-top: 20%;
+    width: 30%;
+    font-weight: bolder;
+    align-items: center;
+    
+
+}
+.show {
+    display: block;
+}

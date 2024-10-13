@@ -1354,12 +1354,20 @@ slider.oninput = function() {
     <button id="ytbutton" style="font-size: 50px;"> hello </button>
     <div id="ytPopup" class="ytpopup">
         <div class="ytpopup-content">
+
+            <div> hello this is texr</div>
+
             <div id="buttons">
+
                 <label> <input id="query" value='cats' type="text"/><button id="search-button"    onclick="keyWordsearch()">Search</button></label>    
                 <div id="container">
-                <h1>Search Results</h1>
+                <p>Search Results</p>
                 <ul id="results"></ul>
                 </div>  
+
+            </div>
+            
+
         </div>
     </div>
     
@@ -1380,7 +1388,7 @@ slider.oninput = function() {
         var q = $('#query').val();
         var request = gapi.client.youtube.search.list({
                 q: q,
-                part: 'snippet', 
+                part: 'snippet, videoid', 
                 maxResults: 10
         });
         request.execute(function(response)  {                                                                                    
@@ -1389,7 +1397,8 @@ slider.oninput = function() {
                 $.each(srchItems, function(index, item){
                 vidTitle = item.snippet.title;  
                 vidThumburl =  item.snippet.thumbnails.default.url;                 
-                vidThumbimg = '<pre><img id="thumb" src="'+vidThumburl+'" alt="No  Image  Available." style="width:204px;height:128px"></pre>';                   
+                vidThumbimg = '<pre><img id="thumb" src="'+vidThumburl+'" alt="No  Image  Available." style="width:204px;height:128px"></pre>';  
+                vidId = item.videoid                 
     
                 $('#results').append('<pre>' + vidTitle + vidThumbimg +   '</pre>');                      
         })  

@@ -1636,13 +1636,14 @@ section {
     
 }
 .ytpopup-content {
-    background-color: none;
+    background-color: white;
     margin: 10% auto;
     padding: 20px;
-    margin-top: 20%;
+    border: 1px solid #888888;
+    border-radius: 1rem;
     width: 30%;
     font-weight: bolder;
-    align-items: center;
+    background-size: 100% 100%;
     
 
 }

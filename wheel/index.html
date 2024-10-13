@@ -1388,7 +1388,7 @@ slider.oninput = function() {
         var q = $('#query').val();
         var request = gapi.client.youtube.search.list({
                 q: q,
-                part: 'snippet, videoid', 
+                part: "snippet,videoid", 
                 maxResults: 10
         });
         request.execute(function(response)  {                                                                                    
@@ -1398,9 +1398,9 @@ slider.oninput = function() {
                 vidTitle = item.snippet.title;  
                 vidThumburl =  item.snippet.thumbnails.default.url;                 
                 vidThumbimg = '<pre><img id="thumb" src="'+vidThumburl+'" alt="No  Image  Available." style="width:204px;height:128px"></pre>';  
-                vidId = item.videoid                 
+                vidId = item.id.videoId                 
     
-                $('#results').append('<pre>' + vidTitle + vidThumbimg +   vidId+'</pre>');                      
+                $('#results').append('<pre>' + vidTitle + vidThumbimg +  vidId+'</pre>');                      
         })  
       })  
     }

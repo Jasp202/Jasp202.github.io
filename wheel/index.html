@@ -1388,7 +1388,7 @@ slider.oninput = function() {
         var q = $('#query').val();
         var request = gapi.client.youtube.search.list({
                 q: q,
-                part: "snippet,videoid", 
+                part: "snippet", 
                 maxResults: 10
         });
         request.execute(function(response)  {                                                                                    

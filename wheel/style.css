@@ -26,6 +26,15 @@ body {
   
   
 }
+#video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto; 
+    display: none;
+}
 /*-----------------  Styling Start  -----------------*/
 h1 {
   position: absolute;
@@ -1649,4 +1658,20 @@ section {
 }
 .show {
     display: block;
+}
+
+#ytbutton {
+    position: absolute;
+    top: 5px;
+    left: 140px;
+    background: none;
+    border: none;
+    padding: 0;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+}
+#ytbutton:hover {
+    opacity: 1.0;
 }

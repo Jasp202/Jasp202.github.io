@@ -22,6 +22,13 @@
     
 </head>
 <body>
+    <iframe id="video-background" 
+    src="" 
+    frameborder="0" allow="autoplay; fullscreen">
+    </iframe>
+
+    
+
   <h1 id="HeaderElement1">
     <p style="text-align: center;">ENVIRONMENT: </p>
     <p id="textE" contentEditable="true" spellcheck="false" style="text-align: center;">none yet...</p>
@@ -1351,17 +1358,24 @@ slider.oninput = function() {
 <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady">   </script>
 
 
-    <button id="ytbutton" style="font-size: 50px;"> hello </button>
+    <button id="ytbutton" >
+        <img src="./Images/icons/youtube_icon.png" width="50">
+    </button>
     <div id="ytPopup" class="ytpopup">
         <div class="ytpopup-content">
 
-            <div> hello this is texr</div>
-
+            <label><span>Search youtube videos</span></label><br><br>
+            <label class="switch">
+                <input id="checkyt" type="checkbox" value="car">
+                <span class="slider round"></span>
+              </label>
+              <label for="checkyt"> Video player active</label><br><br>
+              
             <div id="buttons">
 
-                <label> <input id="query" value='cats' type="text"/><button id="search-button"    onclick="keyWordsearch()">Search</button></label>    
+                <label> <input id="query" value='' autocomplete="off" type="text"/><button id="search-button"  onclick="keyWordsearch()">Search</button></label>    
                 <div id="container">
-                <p>Search Results</p>
+                <p>Search Results:</p>
                 <ul id="results"></ul>
                 </div>  
 
@@ -1374,8 +1388,27 @@ slider.oninput = function() {
 
 <script>
     ytbutton.addEventListener("click", function () {
+        
         ytPopup.classList.add("show");
+        
     });
+
+    window.addEventListener('click', function () {
+        if ((event.target == ytPopup)) {
+            ytPopup.classList.remove("show");
+            
+        }
+    });
+    checkyt.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+            document.getElementById("video-background").style.display = "block"
+
+        } else {
+            document.getElementById("video-background").style.display = "none"
+            document.getElementById("video-background").src = ""
+            
+        }})
+
     function keyWordsearch(){
         
         gapi.client.setApiKey('AIzaSyDFmmtvaShc4ADiWtDmQEl-UYwqH5ZiEvc');
@@ -1384,7 +1417,7 @@ slider.oninput = function() {
         });
     }
     function makeRequest(){
-        console.log(2)
+        
         var q = $('#query').val();
         var request = gapi.client.youtube.search.list({
                 q: q,
@@ -1398,11 +1431,20 @@ slider.oninput = function() {
                 vidTitle = item.snippet.title;  
                 vidThumburl =  item.snippet.thumbnails.default.url;                 
                 vidThumbimg = '<pre><img id="thumb" src="'+vidThumburl+'" alt="No  Image  Available." style="width:204px;height:128px"></pre>';  
-                vidId = item.id.videoId                 
+                vidId = '<pre><a href="#" onclick="loadVideo(\'' + item.id.videoId + '\')">Play this video</a></pre><br>'                 
     
-                $('#results').append('<pre>' + vidTitle + vidThumbimg +  vidId+'</pre>');                      
+                $('#results').append(
+                    '<pre>' + vidTitle + vidThumbimg +  vidId+'</pre>'
+                    );                      
         })  
       })  
+    }
+     // Function to update the video iframe's source
+     function loadVideo(videoId) {
+        document.getElementById("video-background").src = "https://www.youtube.com/embed/" + videoId + "?&autoplay=1&controls=1&loop=1";
+        document.getElementById("ytPopup").classList.remove("show");
+        document.getElementById("video-background").style.display = "block"
+        document.getElementById('checkyt').checked = true
     }
      </script> 
      <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady">   </script>

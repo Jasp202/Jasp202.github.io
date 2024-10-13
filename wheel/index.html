@@ -1422,7 +1422,9 @@ slider.oninput = function() {
         var request = gapi.client.youtube.search.list({
                 q: q,
                 part: "snippet", 
-                maxResults: 10
+                maxResults: 10,
+                videoEmbeddable: "true",
+                type: "video"
         });
         request.execute(function(response)  {                                                                                    
                 $('#results').empty()

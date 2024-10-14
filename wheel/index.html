@@ -1430,7 +1430,7 @@ slider.oninput = function() {
                 $('#results').empty()
                 var srchItems = response.result.items;                      
                 $.each(srchItems, function(index, item){
-                vidTitle = item.snippet.title;  
+                vidTitle = '<pre style="width: 100%; white-space: pre-wrap; word-wrap: break-word;">'+item.snippet.title+'</pre>';  
                 vidThumburl =  item.snippet.thumbnails.default.url;                 
                 vidThumbimg = '<pre><img id="thumb" src="'+vidThumburl+'" alt="No  Image  Available." style="width:204px;height:128px"></pre>';  
                 vidId = '<pre><a href="#" onclick="loadVideo(\'' + item.id.videoId + '\')">Play this video</a></pre><br>'                 

@@ -1081,6 +1081,9 @@ let secret = false;
 function secretShotPercent(x){
     return (0.226416 *x*x*x -  0.672193*x*x + 0.845255*x + 0.101609)
 }
+function inverseSecretShotPercent(x){ // polynomial ivese made with machine learning fitting ofr range 0.1, 0.5
+    return -0.050716-0.207709*x+9.451340*x*x-26.148516*x*x*x+32.922510*x*x*x*x
+}
 let shotMultiplier = 0.0;
 const extraShots = document.getElementById('extraShots');
 
@@ -1126,6 +1129,25 @@ window.addEventListener("keydown", (event) => {
       keys.p_key = false;
     }
   });
+
+  window.addEventListener("keydown", e => {
+    if (e.key == "ArrowUp"){
+        switch (e.target.tagName.toLowerCase()) { // we dont want to activate the wheel when pressing space in textboxes etc.
+            case "input":
+            case "textarea":
+            case "select":
+            case "p":
+            case "span":
+            // ...and so on for other elements you want to exclude; thanks stackexchange
+              break;
+            default:
+                btnArr = Array.from(document.querySelectorAll('.shotclass > button')).slice(1);
+                btnArr.forEach( (b) => b.click());
+              break;
+        }
+    
+    }
+  })
 
 /* --------------- button controls --------------------- */
 window.addEventListener("keydown", (e) => {

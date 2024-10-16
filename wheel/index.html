@@ -621,7 +621,7 @@
           </label>
           <label for="extraShots"> extra fun for the pokernight (round of shots multiplier is active) </label>
           <label id="sliderContainer" class="slidecontainer disabled">
-            <input id = "sliderMul" type="range" min="0" max="100" value="0" class="sliderLong" id="myRange" disabled>
+            <input id = "sliderMul" type="range" min="10" max="50" value="10" class="sliderLong" id="myRange" disabled>
             <label id = "labelSliderMul"for="sliderMul" style = "text-align: center;"> defautl error not changed</label><br>
           </label><br>
 
@@ -976,8 +976,8 @@ output.innerHTML = "Amount of rolls that are rounds of shots: 10%"; // Display t
 
 // Update the current slider value (each time you drag the slider handle)
 slider.oninput = function() {
-  output.innerHTML = "Amount of rolls that are rounds of shots: " + secretShotPercent(this.value /100.0).toString().slice(2,4) + "%";
-  shotMultiplier = this.value / 100.0;
+  output.innerHTML = "Amount of rolls that are rounds of shots: " + (this.value) + "%";
+  shotMultiplier = inverseSecretShotPercent(this.value / 100.0);
 }
 </script>
 
@@ -1387,6 +1387,7 @@ slider.oninput = function() {
     
 
 <script>
+    
     ytbutton.addEventListener("click", function () {
         
         ytPopup.classList.add("show");

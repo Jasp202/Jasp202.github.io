@@ -1753,6 +1753,7 @@ function f1Load(givenEditor) {
     textArea2.style.height = textArea2.scrollHeight -8 + "px";
     textArea3.style.height = "";
     textArea3.style.height = textArea3.scrollHeight -8 + "px";
+    plusText3.style.height = textArea3.scrollHeight -8 + "px";
     
 };
 
@@ -1998,6 +1999,7 @@ textArea3.addEventListener("input", function() {
     let scrollHeightVar = editorpopupcontent.scrollTop;
     textArea3.style.height = "";
     textArea3.style.height = textArea3.scrollHeight -8+ "px";
+    plusText3.style.height = textArea3.scrollHeight -8 + "px";
     editorpopupcontent.scrollTop = scrollHeightVar;
 
     

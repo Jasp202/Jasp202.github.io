@@ -1106,7 +1106,7 @@ slider.oninput = function() {
                 download NEW dare files</button> 
             </div>
                 <br>
-                        <div class="flex-box">
+                        <div class="flex-box" style="margin-left: 40px;">
                         <button type="button" 
                                 onclick="fLoadDefault()" 
                                 class="btn shadow-sm btn-outline-secondary" 
@@ -1179,6 +1179,12 @@ slider.oninput = function() {
                                 <div> 
                                     box of memes  
                                 </div></button> 
+
+                                <div class="float-image">
+                                    <img src="./Images/icons/q_icon.png" width="50px">
+                                    <div class="hover-text">No changes become active until you press "commit dares button".</div>
+                                </div>
+                                
                             </div>
                     </div> 
                 </div> 
@@ -1191,42 +1197,81 @@ slider.oninput = function() {
                     <p style="text-align: center;">Dares:</p><br>
                     <div class="flex-box"> 
                         
-                                    <textarea id="textarea1" 
+                        <div class="textAreaColumn" style="margin-left: 170px!important;">
+                            <div  id="buttonsMinus" class="wrapperB minus" >
+                                
+                                   
+                            </div>
+                            
+                               
+                               <textarea class="input shadow" id="plusText" style="text-align: center;">
+                               </textarea>
+                               <div id="buttonsPlus" class="wrapperB plus">
+                                
+                               </div>
+                               
+                                <div style="width: 80%!important;">
+                                <textarea id="textarea1" 
                                   class="input shadow" 
-                                  name="name" 
-                                  rows="auto" 
-                                  cols="100" 
+                                  
                                   placeholder="Load some dares by clicking the buttons"
-                                  spellcheck="false"></textarea> <br>
-
+                                  spellcheck="false"></textarea> 
+                                </div>
+                                
+                        </div>
                         
             
                     </div><br><br>
 
                     <p style="text-align: center;">Environments:</p><br>
                     <div class="flex-box"> 
-                        
-                        <textarea id="textarea2" 
-                                  class="input shadow" 
-                                  name="name" 
-                                  rows="auto" 
-                                  cols="100" 
-                                  placeholder="Load some environments by clicking the buttons"
-                                  spellcheck="false"></textarea> <br>
 
+                        <div class="textAreaColumn" style="margin-left: 170px!important;">
+                            <div  id="buttonsMinus2" class="wrapperB minus env" >
+                                
+                                   
+                            </div>
+                            
+                               
+                               <textarea class="input shadow" id="plusText2" style="text-align: center;">
+                               </textarea>
+                               <div id="buttonsPlus2" class="wrapperB plus env">
+                                
+                               </div>
+                               
+                                <div style="width: 80%!important;">
+                                <textarea id="textarea2" 
+                                  class="input shadow" 
+                                  
+                                  placeholder="Load some environments by clicking the buttons"
+                                  spellcheck="false"></textarea> 
+                                </div>
+                                
+                        </div>
+                        
                         
                     </div><br><br>
 
                     <p style="text-align: center;">Wheel changes:</p><br>
                     <div class="flex-box"> 
-                        
-                        <textarea id="textarea3" 
+                        <div class="textAreaColumn" style="margin-left: 170px!important;">
+                            <div  id="buttonsMinus3" class="wrapperB minus whl"></div>
+                            <textarea class="input" id="plusText3" style="text-align: center;"></textarea>
+                            <div id="buttonsPlus3" class="wrapperB plus whl"></div>
+                               <div style="width: 80%!important; height: 10px;">
+                                <textarea id="textarea3" 
                                   class="input shadow" 
-                                  name="name" 
-                                  rows="auto" 
-                                  cols="100" 
                                   placeholder="Load some wheel changes by clicking the buttons"
-                                  spellcheck="false"></textarea> <br>
+                                  spellcheck="false"></textarea> 
+                                </div>     
+                        </div> 
+                    </div>
+                    
+                    <div class="flex-box"> 
+
+                        <img src="./Images/icons/ahma_icon.png" style="margin: 1rem;">
+                                
+                        </div>
 
                         
                     </div>
@@ -1243,9 +1288,12 @@ slider.oninput = function() {
 </div>
 
 
+
 <script>
+    plusText.value = "a\nb\nc"
     editorButton.addEventListener("click", function () {
         editorPopup.classList.add("show");
+        fLoadDefault();
     });
     window.addEventListener("click", function (event) {
         if (event.target == editorPopup) {

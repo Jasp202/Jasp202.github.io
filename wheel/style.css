@@ -1675,3 +1675,141 @@ section {
 #ytbutton:hover {
     opacity: 1.0;
 }
+.textAreaColumn{
+    position: relative;
+    width:80%;    
+    margin: 0!important;
+    padding: 0!important;
+    
+}
+
+.textAreaColumn div{
+    float:left;
+    box-sizing: border-box;
+    margin: 0!important;
+    padding: 0!important;
+}
+
+.textAreaColumn div button{
+    float:left;
+    width: 20px;
+    height: 100%;
+    margin: 0!important;
+    padding: 0!important;
+    border-width: thin;
+    box-sizing: border-box;
+}
+
+
+.textAreaColumn div span{
+    display:block;
+}
+.textAreaColumn div textarea{
+    float: left;
+    box-sizing: border-box;
+    width:100%;
+    border-color: #957dad; 
+    border-width: thin!important; 
+    overflow: hidden;
+    resize: none;
+    padding-top: 0%!important;
+    background: transparent!important;
+    padding-bottom: 0%;
+    
+}
+
+.textAreaColumn textarea{
+    float: left;
+    box-sizing: border-box;
+    width:2%;
+    border-color: #957dad; 
+    border-width: thin; 
+    overflow: hidden;
+    resize: none;
+    height: 100%;
+    line-height: 20px;
+    background: transparent!important;
+    
+    
+}
+.wrapperB{
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 1px);
+    padding-top: 0% !important;
+    margin-top: 0% !important;
+    padding-bottom: 0%!important;
+    margin-bottom: 0% !important;
+}
+.wrapperB button{
+    margin: 0 !important;
+    padding: 0 !important; 
+    display: flex; /* For centering content */
+    align-items: center; /* Vertically center the content */
+    justify-content: center; 
+    color: #000;
+}
+
+.minus button{
+    background-color: lightblue;
+}
+.plus button{
+    background-color: lightgreen;
+}
+
+    
+
+
+.textAreaColumn::before {
+    content: '';
+    position:absolute;
+    
+    left: 0px; /* Adjust this based on your padding */
+    right: 0px; /* Adjust this based on your padding */
+    height: 100%;
+    width:calc(40px + 82%);
+    background: repeating-linear-gradient(
+        transparent,
+        transparent 19px, /* Gap before the line */
+        #000000 19px, /* Line color */
+        #000000 20px /* Line thickness */
+    );
+    pointer-events: none;
+}
+.wrapperB.minus button.zero::before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    left: 20px; /* Adjust as needed */
+    height: 20px;
+    width: calc(20px + 82%);
+    background-color: rgba(255, 0, 0, 0.412);
+    pointer-events: none;
+  }
+
+.highlight {
+    position: relative;
+    padding: 0 10px;
+  }
+
+.float-image{
+    position: relative;
+   
+}
+.hover-text {
+    position: absolute;    /* Position it over the image */
+    top: 50%;
+    left: 50%;
+    transform: translate(15%, -100%); /* Center the text */
+    background-color: rgba(0, 0, 0, 0.5);  /* A semi-transparent background */
+    color: white;          /* Text color */
+    padding: 10px;
+    border-radius: 5px;
+    display: none;         /* Hide the text by default */
+    width: 200px;
+  }
+
+  /* Show the text on hover */
+  .float-image:hover .hover-text {
+    display: block;
+  }

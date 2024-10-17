@@ -339,9 +339,62 @@ function calculateTimeFraction(timeLeftV, TIME_LIMITV) {
     return rawTimeFraction - (1 / TIME_LIMITV) * (1 - rawTimeFraction);
 }
  
+function parseOrDefault(input) {
+    // Use parseInt to attempt converting the input to a number
+    const parsed = parseInt(input);
+
+    // Check if the result is NaN (not a valid number)
+    if (isNaN(parsed)) {
+        return 1;  // Return 1 if the input is invalid
+    }
+
+    return parsed;  // Return the parsed number if valid
+}
+
 // load dare sets from local storage or js file jsons
 if(localStorage.defaultJSON){
     wheeldata_Default = JSON.parse(localStorage.defaultJSON)
+
+    if(localStorage.plusdefaultDare){
+        dareNums = localStorage.plusdefaultDare.split("\n");
+        dareNames = wheeldata_Default.dares;
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Default.dares = arrr;
+        
+    };
+    if(localStorage.plusdefaultEnvironment){
+        dareNums = localStorage.plusdefaultEnvironment.split("\n");
+        dareNames = wheeldata_Default.environments;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Default.environments = arrr;
+        
+    };
+    if(localStorage.plusdefaultWheel){
+        dareNums = localStorage.plusdefaultWheel.split("\n");
+        dareNames = wheeldata_Default.wheel_changes;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Default.wheel_changes = arrr;
+        
+    };
+
+
 }
 else{
     wheeldata_Default = json_default;
@@ -349,6 +402,45 @@ else{
 
 if(localStorage.painJSON){
     wheeldata_Pain_Free = JSON.parse(localStorage.painJSON)
+
+    if(localStorage.pluspainDare){
+        dareNums = localStorage.pluspainDare.split("\n");
+        dareNames = wheeldata_Pain_Free.dares;
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Pain_Free.dares = arrr;
+        
+    };
+    if(localStorage.pluspainEnvironment){
+        dareNums = localStorage.pluspainEnvironment.split("\n");
+        dareNames = wheeldata_Pain_Free.environments;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Pain_Free.environments = arrr;
+        
+    };
+    if(localStorage.pluspainWheel){
+        dareNums = localStorage.pluspainWheel.split("\n");
+        dareNames = wheeldata_Pain_Free.wheel_changes;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Pain_Free.wheel_changes = arrr;
+        
+    };
 }
 else{
     wheeldata_Pain_Free = json_pain_free;
@@ -356,6 +448,45 @@ else{
 
 if(localStorage.enemiesJSON){
     wheeldata_No_Enemies = JSON.parse(localStorage.enemiesJSON)
+
+    if(localStorage.plusenemiesDare){
+        dareNums = localStorage.plusenemiesDare.split("\n");
+        dareNames = wheeldata_No_Enemies.dares;
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_No_Enemies.dares = arrr;
+        
+    };
+    if(localStorage.plusenemiesEnvironment){
+        dareNums = localStorage.plusenemiesEnvironment.split("\n");
+        dareNames = wheeldata_No_Enemies.environments;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_No_Enemies.environments = arrr;
+        
+    };
+    if(localStorage.plusenemiesWheel){
+        dareNums = localStorage.plusenemiesWheel.split("\n");
+        dareNames = wheeldata_No_Enemies.wheel_changes;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_No_Enemies.wheel_changes = arrr;
+        
+    };
 }
 else{
     wheeldata_No_Enemies = json_no_enemies;
@@ -363,6 +494,45 @@ else{
 
 if(localStorage.vergiJSON){
     wheeldata_Vergi_psycho = JSON.parse(localStorage.vergiJSON)
+
+    if(localStorage.plusvergiDare){
+        dareNums = localStorage.plusvergiDare.split("\n");
+        dareNames = wheeldata_Vergi_psycho.dares;
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Vergi_psycho.dares = arrr;
+        
+    };
+    if(localStorage.plusvergiEnvironment){
+        dareNums = localStorage.plusvergiEnvironment.split("\n");
+        dareNames = wheeldata_Vergi_psycho.environments;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Vergi_psycho.environments = arrr;
+        
+    };
+    if(localStorage.plusvergiWheel){
+        dareNums = localStorage.plusvergiWheel.split("\n");
+        dareNames = wheeldata_Vergi_psycho.wheel_changes;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Vergi_psycho.wheel_changes = arrr;
+        
+    };
 }
 else{
     wheeldata_Vergi_psycho = json_vergi_psycho;
@@ -370,6 +540,45 @@ else{
 
 if(localStorage.sittingJSON){
     wheeldata_No_Sitting = JSON.parse(localStorage.sittingJSON)
+
+    if(localStorage.plussittingDare){
+        dareNums = localStorage.plussittingDare.split("\n");
+        dareNames = wheeldata_No_Sitting.dares;
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_No_Sitting.dares = arrr;
+        
+    };
+    if(localStorage.plussittingEnvironment){
+        dareNums = localStorage.plussittingEnvironment.split("\n");
+        dareNames = wheeldata_No_Sitting.environments;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_No_Sitting.environments = arrr;
+        
+    };
+    if(localStorage.plussittingWheel){
+        dareNums = localStorage.plussittingWheel.split("\n");
+        dareNames = wheeldata_No_Sitting.wheel_changes;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_No_Sitting.wheel_changes = arrr;
+        
+    };
 }
 else{
     wheeldata_No_Sitting = json_no_sitting;
@@ -377,6 +586,45 @@ else{
 
 if(localStorage.memesJSON){
     wheeldata_Memes = JSON.parse(localStorage.memesJSON)
+
+    if(localStorage.plusmemesDare){
+        dareNums = localStorage.plusmemesDare.split("\n");
+        dareNames = wheeldata_Memes.dares;
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Memes.dares = arrr;
+        
+    };
+    if(localStorage.plusmemesEnvironment){
+        dareNums = localStorage.plusmemesEnvironment.split("\n");
+        dareNames = wheeldata_Memes.environments;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Memes.environments = arrr;
+        
+    };
+    if(localStorage.plusmemesWheel){
+        dareNums = localStorage.plusmemesWheel.split("\n");
+        dareNames = wheeldata_Memes.wheel_changes;
+        
+        arrr = [];
+        for(i=0; i < dareNames.length; i++){
+            for(j=0; j < parseOrDefault(dareNums[i]); j++){
+                arrr.push(dareNames[i]);
+            }
+        }
+        wheeldata_Memes.wheel_changes = arrr;
+        
+    };
 }
 else{
     wheeldata_Memes = json_memes;
@@ -1416,6 +1664,10 @@ const textArea1 = document.getElementById("textarea1");
 const textArea2 = document.getElementById("textarea2");
 const textArea3 = document.getElementById("textarea3");
 
+const plusText1 = document.getElementById("plusText");
+const plusText2 = document.getElementById("plusText2");
+const plusText3 = document.getElementById("plusText3");
+
 const editorDefault = document.getElementById("editorDefault");
 const editorPain = document.getElementById("editorPain");
 const editorSitting = document.getElementById("editorSitting");
@@ -1423,32 +1675,60 @@ const editorEnemies = document.getElementById("editorEnemies");
 const editorVergi = document.getElementById("editorVergi");
 const editorMemes = document.getElementById("editorMemes");
 
+
 let textArea1Obj = {
-    default: wheeldata_Default.dares.join("\n"),
-    pain: wheeldata_Pain_Free.dares.join("\n"),
-    enemies: wheeldata_No_Enemies.dares.join("\n"),
-    vergi: wheeldata_Vergi_psycho.dares.join("\n"),
-    memes: wheeldata_Memes.dares.join("\n"),
-    sitting: wheeldata_No_Sitting.dares.join("\n")
+    default: localStorage.defaultJSON ? JSON.parse(localStorage.defaultJSON).dares.join("\n") : json_default.dares.join("\n"),
+    pain: localStorage.painJSON ? JSON.parse(localStorage.painJSON).dares.join("\n") : json_pain_free.dares.join("\n"),
+    enemies: localStorage.enemiesJSON ? JSON.parse(localStorage.enemiesJSON).dares.join("\n") : json_no_enemies.dares.join("\n"),
+    vergi: localStorage.vergiJSON ? JSON.parse(localStorage.vergiJSON).dares.join("\n") : json_vergi_psycho.dares.join("\n"),
+    memes: localStorage.memesJSON ? JSON.parse(localStorage.memesJSON).dares.join("\n") : json_memes.dares.join("\n"),
+    sitting: localStorage.sittingJSON ? JSON.parse(localStorage.sittingJSON).dares.join("\n") : json_no_sitting.dares.join("\n"),
 } 
 
 let textArea2Obj = {
-    default: wheeldata_Default.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
-    pain: wheeldata_Pain_Free.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
-    enemies: wheeldata_No_Enemies.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
-    vergi: wheeldata_Vergi_psycho.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
-    memes: wheeldata_Memes.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
-    sitting: wheeldata_No_Sitting.environments.join("\n").replaceAll("ENVIRONMENT : ", "")
+    default: localStorage.defaultJSON ? JSON.parse(localStorage.defaultJSON).environments.join("\n").replaceAll("ENVIRONMENT : ", "") : json_default.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
+    pain: localStorage.painJSON ? JSON.parse(localStorage.painJSON).environments.join("\n").replaceAll("ENVIRONMENT : ", "") : json_pain_free.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
+    enemies: localStorage.enemiesJSON ? JSON.parse(localStorage.enemiesJSON).environments.join("\n").replaceAll("ENVIRONMENT : ", "") : json_no_enemies.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
+    vergi: localStorage.vergiJSON ? JSON.parse(localStorage.vergiJSON).environments.join("\n").replaceAll("ENVIRONMENT : ", "") : json_vergi_psycho.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
+    memes: localStorage.memesJSON ? JSON.parse(localStorage.memesJSON).environments.join("\n").replaceAll("ENVIRONMENT : ", "") : json_memes.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
+    sitting: localStorage.sittingJSON ? JSON.parse(localStorage.sittingJSON).environments.join("\n").replaceAll("ENVIRONMENT : ", "") : json_no_sitting.environments.join("\n").replaceAll("ENVIRONMENT : ", ""),
 } 
 
 let textArea3Obj = {
-    default: wheeldata_Default.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
-    pain: wheeldata_Pain_Free.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
-    enemies: wheeldata_No_Enemies.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
-    vergi: wheeldata_Vergi_psycho.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
-    memes: wheeldata_Memes.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
-    sitting: wheeldata_No_Sitting.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", "")
+    default: localStorage.defaultJSON ? JSON.parse(localStorage.defaultJSON).wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", "") : json_default.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
+    pain: localStorage.painJSON ? JSON.parse(localStorage.painJSON).wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", "") : json_pain_free.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
+    enemies: localStorage.enemiesJSON ? JSON.parse(localStorage.enemiesJSON).wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", "") : json_no_enemies.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
+    vergi: localStorage.vergiJSON ? JSON.parse(localStorage.vergiJSON).wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", "") : json_vergi_psycho.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
+    memes: localStorage.memesJSON ? JSON.parse(localStorage.memesJSON).wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", "") : json_memes.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
+    sitting: localStorage.sittingJSON ? JSON.parse(localStorage.sittingJSON).wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", "") : json_no_sitting.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
 } 
+
+let plusText1Obj = {
+    default:   localStorage.plusdefaultDare ? localStorage.plusdefaultDare : "1\n".repeat(((textArea1Obj.default).split("\n")).length),
+    pain:  localStorage.pluspainDare ? localStorage.pluspainDare : "1\n".repeat(((textArea1Obj.pain).split("\n")).length),
+    memes:  localStorage.plusmemesDare ? localStorage.plusmemesDare : "1\n".repeat(((textArea1Obj.memes).split("\n")).length),
+    enemies:  localStorage.plusenemiesDare ? localStorage.plusenemiesDare : "1\n".repeat(((textArea1Obj.enemies).split("\n")).length),
+    sitting: localStorage.plussittingDare ? localStorage.plussittingDare : "1\n".repeat(((textArea1Obj.sitting).split("\n")).length),
+    vergi:  localStorage.plusvergiDare ? localStorage.plusvergiDare : "1\n".repeat(((textArea1Obj.vergi).split("\n")).length)
+}
+
+let plusText2Obj = {
+    default:   localStorage.plusdefaultEnvironment ? localStorage.plusdefaultEnvironment : "1\n".repeat(((textArea2Obj.default).split("\n")).length),
+    pain:  localStorage.pluspainEnvironment ? localStorage.pluspainEnvironment : "1\n".repeat(((textArea2Obj.pain).split("\n")).length),
+    memes:  localStorage.plusmemesEnvironment ? localStorage.plusmemesEnvironment : "1\n".repeat(((textArea2Obj.memes).split("\n")).length),
+    enemies:  localStorage.plusenemiesEnvironment ? localStorage.plusenemiesEnvironment : "1\n".repeat(((textArea2Obj.enemies).split("\n")).length),
+    sitting: localStorage.plussittingEnvironment ? localStorage.plussittingEnvironment : "1\n".repeat(((textArea2Obj.sitting).split("\n")).length),
+    vergi:  localStorage.plusvergiEnvironment ? localStorage.plusvergiEnvironment : "1\n".repeat(((textArea2Obj.vergi).split("\n")).length)
+}
+
+let plusText3Obj = {
+    default:   localStorage.plusdefaultWheel ? localStorage.plusdefaultWheel :"1\n".repeat(((textArea3Obj.default).split("\n")).length),
+    pain:  localStorage.pluspainWheel ? localStorage.pluspainWheel : "1\n".repeat(((textArea3Obj.pain).split("\n")).length),
+    memes:  localStorage.plusmemesWheel ? localStorage.plusmemesWheel : "1\n".repeat(((textArea3Obj.memes).split("\n")).length),
+    enemies:  localStorage.plusenemiesWheel ? localStorage.plusenemiesWheel : "1\n".repeat(((textArea3Obj.enemies).split("\n")).length),
+    sitting: localStorage.plussittingWheel ? localStorage.plussittingWheel : "1\n".repeat(((textArea3Obj.sitting).split("\n")).length),
+    vergi:  localStorage.plusvergiWheel ? localStorage.plusvergiWheel : "1\n".repeat(((textArea3Obj.vergi).split("\n")).length)
+}
 
 const editorpopupcontent = document.getElementById("editorpopupcontent");
 
@@ -1457,15 +1737,23 @@ function f1Load(givenEditor) {
     textArea1.value = textArea1Obj[givenEditor];
     textArea2.value = textArea2Obj[givenEditor];
     textArea3.value = textArea3Obj[givenEditor];
+
+    plusText1.value = plusText1Obj[givenEditor];
+    plusText2.value = plusText2Obj[givenEditor];
+    plusText3.value = plusText3Obj[givenEditor];
+    newButtons(countNewlines(textArea1Obj[givenEditor]) + 1);
+    newButtons2(countNewlines(textArea2Obj[givenEditor]) + 1);
+    newButtons3(countNewlines(textArea3Obj[givenEditor]) + 1);
     buttonSelected(givenEditor);
 
 
     textArea1.style.height = "";
-    textArea1.style.height = textArea1.scrollHeight + "px";
+    textArea1.style.height = textArea1.scrollHeight -8 + "px";
     textArea2.style.height = "";
-    textArea2.style.height = textArea2.scrollHeight + "px";
+    textArea2.style.height = textArea2.scrollHeight -8 + "px";
     textArea3.style.height = "";
-    textArea3.style.height = textArea3.scrollHeight + "px";
+    textArea3.style.height = textArea3.scrollHeight -8 + "px";
+    
 };
 
 function fLoadDefault() {
@@ -1476,6 +1764,10 @@ function fLoadDefault() {
         textArea1Obj[currentEditor] = textArea1.value;
         textArea2Obj[currentEditor] = textArea2.value;
         textArea3Obj[currentEditor] = textArea3.value;
+
+        plusText1Obj[currentEditor] = plusText1.value;
+        plusText2Obj[currentEditor] = plusText2.value;
+        plusText3Obj[currentEditor] = plusText3.value;
     }
     currentEditor = "default";
     f1Load(currentEditor);
@@ -1488,6 +1780,10 @@ function fLoadPain() {
         textArea1Obj[currentEditor] = textArea1.value;
         textArea2Obj[currentEditor] = textArea2.value;
         textArea3Obj[currentEditor] = textArea3.value;
+
+        plusText1Obj[currentEditor] = plusText1.value;
+        plusText2Obj[currentEditor] = plusText2.value;
+        plusText3Obj[currentEditor] = plusText3.value;
     }
     currentEditor = "pain";
     f1Load(currentEditor);
@@ -1500,6 +1796,10 @@ function fLoadEnemies() {
         textArea1Obj[currentEditor] = textArea1.value;
         textArea2Obj[currentEditor] = textArea2.value;
         textArea3Obj[currentEditor] = textArea3.value;
+
+        plusText1Obj[currentEditor] = plusText1.value;
+        plusText2Obj[currentEditor] = plusText2.value;
+        plusText3Obj[currentEditor] = plusText3.value;
     }
     currentEditor = "enemies";
     f1Load(currentEditor);
@@ -1512,6 +1812,10 @@ function fLoadVergi() {
         textArea1Obj[currentEditor] = textArea1.value;
         textArea2Obj[currentEditor] = textArea2.value;
         textArea3Obj[currentEditor] = textArea3.value;
+
+        plusText1Obj[currentEditor] = plusText1.value;
+        plusText2Obj[currentEditor] = plusText2.value;
+        plusText3Obj[currentEditor] = plusText3.value;
     }
     currentEditor = "vergi";
     f1Load(currentEditor);
@@ -1524,6 +1828,10 @@ function fLoadSitting() {
         textArea1Obj[currentEditor] = textArea1.value;
         textArea2Obj[currentEditor] = textArea2.value;
         textArea3Obj[currentEditor] = textArea3.value;
+
+        plusText1Obj[currentEditor] = plusText1.value;
+        plusText2Obj[currentEditor] = plusText2.value;
+        plusText3Obj[currentEditor] = plusText3.value;
     }
     currentEditor = "sitting";
     f1Load(currentEditor);
@@ -1536,6 +1844,10 @@ function fLoadMemes() {
         textArea1Obj[currentEditor] = textArea1.value;
         textArea2Obj[currentEditor] = textArea2.value;
         textArea3Obj[currentEditor] = textArea3.value;
+
+        plusText1Obj[currentEditor] = plusText1.value;
+        plusText2Obj[currentEditor] = plusText2.value;
+        plusText3Obj[currentEditor] = plusText3.value;
     }
     currentEditor = "memes";
     f1Load(currentEditor);
@@ -1598,20 +1910,130 @@ function buttonSelected(givenEditor) {
 textArea1.addEventListener("input", function() {
     let scrollHeightVar = editorpopupcontent.scrollTop;
     textArea1.style.height = "";
-    textArea1.style.height = textArea1.scrollHeight + "px";
+    textArea1.style.height = textArea1.scrollHeight -8+ "px";
     editorpopupcontent.scrollTop = scrollHeightVar;
+
+    
+    lineData = countNewlineDifference(textArea1Obj[currentEditor], textArea1.value);
+    if(lineData[1] > 0){
+        const plusArr = ((plusText1.value).split('\n')).filter(item => item !== '');
+        if(lineData[2]==0){
+            plusArr.push("1\n".repeat(lineData[1]));
+            
+            plusText1.value = plusArr.join('\n')
+        }
+        else{
+            plusArr.splice(lineData[0], 0, ...Array(lineData[1]).fill("1"));
+            plusText1.value = plusArr.join('\n')
+        }
+        
+        
+
+        newButtons(countNewlines(textArea1.value) + 1);
+    }
+    else if(lineData[1] < 0){
+        const plusArr = ((plusText1.value).split('\n')).filter(item => item !== '');
+        if(lineData[2]==0){
+            plusArr.pop();
+        }
+        else{
+            plusArr.splice(lineData[0], Math.abs(lineData[1]));
+        }
+        
+
+        plusText1.value = plusArr.join('\n')
+        
+
+        newButtons(countNewlines(textArea1.value) + 1);
+    }
+    textArea1Obj[currentEditor] = textArea1.value;
+    
 });
+
+
 textArea2.addEventListener("input", function() {
     let scrollHeightVar = editorpopupcontent.scrollTop;
     textArea2.style.height = "";
-    textArea2.style.height = textArea2.scrollHeight + "px";
+    textArea2.style.height = textArea2.scrollHeight -8+ "px";
     editorpopupcontent.scrollTop = scrollHeightVar;
+
+    
+    lineData = countNewlineDifference(textArea2Obj[currentEditor], textArea2.value);
+    if(lineData[1] > 0){
+        const plusArr = ((plusText2.value).split('\n')).filter(item => item !== '');
+        if(lineData[2]==0){
+            plusArr.push("1\n".repeat(lineData[1]));
+            
+            plusText2.value = plusArr.join('\n')
+        }
+        else{
+            plusArr.splice(lineData[0], 0, ...Array(lineData[1]).fill("1"));
+            plusText2.value = plusArr.join('\n')
+        }
+        
+        
+
+        newButtons2(countNewlines(textArea2.value) + 1);
+    }
+    else if(lineData[1] < 0){
+        const plusArr = ((plusText2.value).split('\n')).filter(item => item !== '');
+        if(lineData[2]==0){
+            plusArr.pop();
+        }
+        else{
+            plusArr.splice(lineData[0], Math.abs(lineData[1]));
+        }
+        
+
+        plusText2.value = plusArr.join('\n')
+        
+
+        newButtons2(countNewlines(textArea2.value) + 1);
+    }
+    textArea2Obj[currentEditor] = textArea2.value;
 });
+
+
 textArea3.addEventListener("input", function() {
     let scrollHeightVar = editorpopupcontent.scrollTop;
     textArea3.style.height = "";
-    textArea3.style.height = textArea3.scrollHeight + "px";
+    textArea3.style.height = textArea3.scrollHeight -8+ "px";
     editorpopupcontent.scrollTop = scrollHeightVar;
+
+    
+    lineData = countNewlineDifference(textArea3Obj[currentEditor], textArea3.value);
+    if(lineData[1] > 0){
+        const plusArr = ((plusText3.value).split('\n')).filter(item => item !== '');
+        if(lineData[2]==0){
+            plusArr.push("1\n".repeat(lineData[1]));
+            
+            plusText3.value = plusArr.join('\n')
+        }
+        else{
+            plusArr.splice(lineData[0], 0, ...Array(lineData[1]).fill("1"));
+            plusText3.value = plusArr.join('\n')
+        }
+        
+        
+
+        newButtons3(countNewlines(textArea3.value) + 1);
+    }
+    else if(lineData[1] < 0){
+        const plusArr = ((plusText3.value).split('\n')).filter(item => item !== '');
+        if(lineData[2]==0){
+            plusArr.pop();
+        }
+        else{
+            plusArr.splice(lineData[0], Math.abs(lineData[1]));
+        }
+        
+
+        plusText3.value = plusArr.join('\n')
+        
+
+        newButtons3(countNewlines(textArea3.value) + 1);
+    }
+    textArea3Obj[currentEditor] = textArea3.value;
 });
 
 function fCommit(){
@@ -1623,12 +2045,20 @@ function fCommit(){
         textArea1Obj[currentEditor] = textArea1.value;
         textArea2Obj[currentEditor] = textArea2.value;
         textArea3Obj[currentEditor] = textArea3.value;
+
+        plusText1Obj[currentEditor] = plusText1.value;
+        plusText2Obj[currentEditor] = plusText2.value;
+        plusText3Obj[currentEditor] = plusText3.value;
     }
     //now save all 6 dare sets.
     ["default", "pain", "enemies", "vergi", "sitting", "memes"].forEach(function(item){
         textArea1.value = textArea1Obj[item];
         textArea2.value = textArea2Obj[item];
         textArea3.value = textArea3Obj[item];
+
+        plusText1.value = plusText1Obj[item]; 
+        plusText2.value = plusText2Obj[item]; 
+        plusText3.value = plusText3Obj[item];
 
         saveTextArea(item);
     })
@@ -1658,6 +2088,9 @@ function saveTextArea(key){
         wheel_changes: objWheels
     };
     localStorage.setItem("" + key + "JSON", JSON.stringify(newObj));
+    localStorage.setItem("plus" + key +"Dare", plusText1.value);
+    localStorage.setItem("plus" + key +"Environment", plusText2.value);
+    localStorage.setItem("plus" + key +"Wheel", plusText3.value);
 }
 
 function fLoadOlds(){
@@ -1687,6 +2120,33 @@ function fLoadOlds(){
         memes: json_memes.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", ""),
         sitting: json_no_sitting.wheel_changes.join("\n").replaceAll("WHEEL CHANGE : ", "")
     } 
+    plusText1Obj = {
+        default:   "1\n".repeat((json_default.dares).length),
+        pain:  "1\n".repeat((json_pain_free.dares).length),
+        memes:  "1\n".repeat((json_memes.dares).length),
+        enemies:  "1\n".repeat((json_no_enemies.dares).length),
+        sitting: "1\n".repeat(( json_no_sitting.dares).length),
+        vergi:  "1\n".repeat((json_vergi_psycho.dares).length)
+    }
+    
+    plusText2Obj = {
+        default: "1\n".repeat((json_default.environments).length),
+        pain: "1\n".repeat((json_pain_free.environments).length),
+        enemies: "1\n".repeat((json_no_enemies.environments).length),
+        vergi: "1\n".repeat((json_vergi_psycho.environments).length),
+        memes: "1\n".repeat((json_memes.environments).length),
+        sitting: "1\n".repeat((json_no_sitting.environments).length),
+    }
+    
+    plusText3Obj = {
+        default: "1\n".repeat((json_default.wheel_changes).length),
+        pain: "1\n".repeat((json_pain_free.wheel_changes).length),
+        enemies: "1\n".repeat((json_no_enemies.wheel_changes).length),
+        vergi: "1\n".repeat((json_vergi_psycho.wheel_changes).length),
+        memes: "1\n".repeat((json_memes.wheel_changes).length),
+        sitting: "1\n".repeat((json_no_sitting.wheel_changes).length),
+    }
+    
     currentEditor = "default";
     f1Load(currentEditor);
     document.getElementById("overlayWhite").style.display = "block";
@@ -2098,14 +2558,6 @@ defaultButtonDis.addEventListener("click", function () {
 
 // BUTTONS FOR TEXTEDITORS 
 
-function updateRow() {
-    const textarea = document.getElementById('textarea1');
-    const textBeforeCursor = textarea.value.slice(0, textarea.selectionStart);
-    const currentRow = textBeforeCursor.split('\n').length;
-    console.log(currentRow);
-}
-
-document.getElementById('textarea1').addEventListener('input', updateRow);
 
 //preload images for smooth experience
 function preloadImages(imageArray, callback) {
@@ -2141,3 +2593,278 @@ var imagesToPreload = backgroundList.concat(iconList)
 preloadImages(imagesToPreload, function() {
     return;
 });
+
+
+
+//monesko nappi on painettu
+function handleButtonClickM(event) {
+    // Get the clicked button
+    const clickedButton = event.target;
+
+    // Get all buttons in the wrapper
+    const buttons = document.querySelectorAll('.wrapperB.minus > button');
+
+    // Find the index of the clicked button
+    const index = Array.from(buttons).indexOf(clickedButton);
+
+    // Display the result
+    const textBut = document.getElementById("plusText").value;
+    const lines = textBut.split('\n');
+    const newVal = Math.max(parseInt(lines[index]) - 1, 0);
+    lines[index] = newVal;
+    if(newVal == 0){
+        clickedButton.classList.add("zero");
+    }
+    document.getElementById("plusText").value = lines.join('\n') + '\n'
+
+}
+//monesko nappi on painettu
+function handleButtonClickP(event) {
+    // Get the clicked button
+    const clickedButton = event.target;
+
+    // Get all buttons in the wrapper
+    const buttons = document.querySelectorAll('.wrapperB.plus > button');
+
+    // Find the index of the clicked button
+    const index = Array.from(buttons).indexOf(clickedButton);
+    Mbut = Array.from(document.querySelectorAll('.wrapperB.minus > button'))[index]
+    Mbut.classList.remove("zero");
+
+    // Display the result
+    const textBut = document.getElementById("plusText").value;
+    const lines = textBut.split('\n');
+    lines[index] = parseInt(lines[index]) + 1
+    document.getElementById("plusText").value = lines.join('\n') + '\n'
+}
+//monesko nappi on painettu
+function handleButtonClickM2(event) {
+    // Get the clicked button
+    const clickedButton = event.target;
+
+    // Get all buttons in the wrapper
+    const buttons = document.querySelectorAll('.wrapperB.minus.env > button');
+
+    // Find the index of the clicked button
+    const index = Array.from(buttons).indexOf(clickedButton);
+
+    // Display the result
+    const textBut = document.getElementById("plusText2").value;
+    const lines = textBut.split('\n');
+    const newVal = Math.max(parseInt(lines[index]) - 1, 0);
+    lines[index] = newVal;
+    if(newVal == 0){
+        clickedButton.classList.add("zero");
+    }
+    document.getElementById("plusText2").value = lines.join('\n') + '\n'
+
+}
+//monesko nappi on painettu
+function handleButtonClickP2(event) {
+    // Get the clicked button
+    const clickedButton = event.target;
+
+    // Get all buttons in the wrapper
+    const buttons = document.querySelectorAll('.wrapperB.plus.env > button');
+
+    // Find the index of the clicked button
+    const index = Array.from(buttons).indexOf(clickedButton);
+    Mbut = Array.from(document.querySelectorAll('.wrapperB.minus.env > button'))[index]
+    Mbut.classList.remove("zero");
+
+    // Display the result
+    const textBut = document.getElementById("plusText2").value;
+    const lines = textBut.split('\n');
+    lines[index] = parseInt(lines[index]) + 1
+    document.getElementById("plusText2").value = lines.join('\n') + '\n'
+}
+//monesko nappi on painettu
+function handleButtonClickM3(event) {
+    // Get the clicked button
+    const clickedButton = event.target;
+
+    // Get all buttons in the wrapper
+    const buttons = document.querySelectorAll('.wrapperB.minus.whl > button');
+
+    // Find the index of the clicked button
+    const index = Array.from(buttons).indexOf(clickedButton);
+
+    // Display the result
+    const textBut = document.getElementById("plusText3").value;
+    const lines = textBut.split('\n');
+    const newVal = Math.max(parseInt(lines[index]) - 1, 0);
+    lines[index] = newVal;
+    if(newVal == 0){
+        clickedButton.classList.add("zero");
+    }
+    document.getElementById("plusText3").value = lines.join('\n') + '\n'
+
+}
+//monesko nappi on painettu
+function handleButtonClickP3(event) {
+    // Get the clicked button
+    const clickedButton = event.target;
+
+    // Get all buttons in the wrapper
+    const buttons = document.querySelectorAll('.wrapperB.plus.whl > button');
+
+    // Find the index of the clicked button
+    const index = Array.from(buttons).indexOf(clickedButton);
+    Mbut = Array.from(document.querySelectorAll('.wrapperB.minus.whl > button'))[index]
+    Mbut.classList.remove("zero");
+
+    // Display the result
+    const textBut = document.getElementById("plusText3").value;
+    const lines = textBut.split('\n');
+    lines[index] = parseInt(lines[index]) + 1
+    document.getElementById("plusText3").value = lines.join('\n') + '\n'
+}
+//nrebuttons for envoronments
+function newButtons2(n){
+    const buttonsDivM2 = document.getElementById('buttonsMinus2'); // Get the div
+    const buttonsDivP2 = document.getElementById('buttonsPlus2');
+
+    butText = '<button>-</button>'.repeat(n);
+    buttonsDivM2.innerHTML=butText;
+    butText = "<button>+</button>".repeat(n);
+    buttonsDivP2.innerHTML=butText;
+
+    const textBut2 = document.getElementById("plusText2").value;
+    const lines2 = textBut2.split('\n');
+
+        // Add click event listeners to all buttons
+    const buttonsqm2 = document.querySelectorAll('.wrapperB.minus.env > button');
+    const butArray2 = Array.from(buttonsqm2);
+    buttonsqm2.forEach(button => {
+        button.addEventListener('click', handleButtonClickM2);
+        index = butArray2.indexOf(button);
+        if(parseInt(lines2[index]) == 0){
+            button.classList.add("zero");
+        }
+    });
+    const buttonsqp2 = document.querySelectorAll('.wrapperB.plus.env > button');
+    buttonsqp2.forEach(button => {
+        button.addEventListener('click', handleButtonClickP2);
+        button.classList.add("highlight")
+});
+}
+
+function newButtons(n){
+    const buttonsDivM = document.getElementById('buttonsMinus'); // Get the div
+    const buttonsDivP = document.getElementById('buttonsPlus');
+
+    butText = '<button>-</button>'.repeat(n);
+    buttonsDivM.innerHTML=butText;
+    butText = "<button>+</button>".repeat(n);
+    buttonsDivP.innerHTML=butText;
+
+    const textBut = document.getElementById("plusText").value;
+    const lines = textBut.split('\n');
+
+        // Add click event listeners to all buttons
+    const buttonsqm = document.querySelectorAll('.wrapperB.minus > button');
+    const butArray = Array.from(buttonsqm);
+    buttonsqm.forEach(button => {
+        button.addEventListener('click', handleButtonClickM);
+        index = butArray.indexOf(button);
+        if(parseInt(lines[index]) == 0){
+            button.classList.add("zero");
+        }
+    });
+    const buttonsqp = document.querySelectorAll('.wrapperB.plus > button');
+    buttonsqp.forEach(button => {
+        button.addEventListener('click', handleButtonClickP);
+        button.classList.add("highlight")
+});
+}
+
+//buttons for weheel change editor
+function newButtons3(n){
+    const buttonsDivM3 = document.getElementById('buttonsMinus3'); // Get the div
+    const buttonsDivP3 = document.getElementById('buttonsPlus3');
+
+    butText = '<button>-</button>'.repeat(n);
+    buttonsDivM3.innerHTML=butText;
+    butText = "<button>+</button>".repeat(n);
+    buttonsDivP3.innerHTML=butText;
+
+    const textBut3 = document.getElementById("plusText3").value;
+    const lines3 = textBut3.split('\n');
+
+        // Add click event listeners to all buttons
+    const buttonsqm3 = document.querySelectorAll('.wrapperB.minus.whl > button');
+    const butArray3 = Array.from(buttonsqm3);
+    buttonsqm3.forEach(button => {
+        button.addEventListener('click', handleButtonClickM3);
+        index = butArray3.indexOf(button);
+        if(parseInt(lines3[index]) == 0){
+            button.classList.add("zero");
+        }
+    });
+    const buttonsqp3 = document.querySelectorAll('.wrapperB.plus.whl > button');
+    buttonsqp3.forEach(button => {
+        button.addEventListener('click', handleButtonClickP3);
+        button.classList.add("highlight")
+});
+}
+
+function countNewlines (input) {
+   // Use the regex \n to find all newline characters
+   const newlines = input.match(/\n/g);
+    
+   // If newlines are found, return the length of the array, otherwise return 0
+   return newlines ? newlines.length : 0;
+};
+
+
+
+
+
+
+//counting newlines until texts differ used to balance dare counts to make it match.
+function countNewlineDifference(text1, text2) {
+    // Function to count consecutive newlines from the start
+    function countFromStart(t1, t2) {
+        let count = 0;
+        let numNL = 0;
+        while (count < (t1.length) && count < (t2.length) && t1[count] === t2[count]) {
+            if(t1[count] === '\n'){
+                numNL++;
+            }
+            count++;
+        }
+        
+        return numNL;
+    }
+    
+    function countFromEnd(t1, t2) {
+        let count = 0;
+        let i1 = t1.length -1;
+        let i2 = t2.length -1;
+        
+        
+        while (i1 >= 0 && i2 >= 0 && t1[i1] === t2[i2]) {
+            if(t1[i1]==="\n"){
+                count++;
+            }
+                
+            
+            i1--;
+            i2--;
+        }
+        return count;
+        }
+
+    
+
+    const startCount = countFromStart(text1, text2);
+    const endCount = countFromEnd(text1, text2);
+    
+    return [
+        startCount,
+        countNewlines(text2) - countNewlines(text1),
+        endCount
+    ]
+}
+
+

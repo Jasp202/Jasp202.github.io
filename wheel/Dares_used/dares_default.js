@@ -122,7 +122,7 @@ wheel_changes: [
 'WHEEL CHANGE : Vergipsycho',
 'WHEEL CHANGE : Box of Memes',
 'WHEEL CHANGE : Box of Memes',
-'WHEEL CHANGE : Box of Memes'
+'WHEEL CHANGE : Box of Memes',
 ],
 
 environments: [

@@ -58,7 +58,7 @@ div.cal{
     text-align: center;
     font-weight: bold;
     color: black !important;
-    
+    touch-action: manipulation;
   }
   
 .input:focus {

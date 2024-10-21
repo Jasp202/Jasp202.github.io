@@ -1396,6 +1396,34 @@ window.addEventListener("keydown", (event) => {
     
     }
   })
+  window.addEventListener("keydown", e => {
+    if (e.key == "ArrowDown"){
+        switch (e.target.tagName.toLowerCase()) { // we dont want to activate the wheel when pressing space in textboxes etc.
+            case "input":
+            case "textarea":
+            case "select":
+            case "p":
+            case "span":
+            // ...and so on for other elements you want to exclude; thanks stackexchange
+              break;
+            default:
+                const eventA = new MouseEvent("contextmenu", {
+                    bubbles: true,         // The event bubbles up through the DOM
+                    cancelable: true,      // The event can be canceled
+                    view: window,          // The view is set to the window object
+                    button: 2              // Button 2 for the right-click (context menu)
+                });
+
+                btnArr = Array.from(document.querySelectorAll('.shotclass > button')).slice(1);
+                btnArr.forEach( (b) => {
+                    b.dispatchEvent(eventA);
+                    document.getElementById("removeButton").click();
+                });
+              break;
+        }
+    
+    }
+  })
 
 /* --------------- button controls --------------------- */
 window.addEventListener("keydown", (e) => {

@@ -649,15 +649,18 @@
           <br>
           Volume contols:
           <br><br>
-          <audio id="audio1"loop controls>
+          <audio id="audio1"loop controls preload="auto">
             <source src="./Sounds\alarm_sound_effect.mp3">
           </audio>
           <p id="audio1p">timer: <span class="lava">100 %</span></p><br>
 
-          <audio id="audio2"loop controls>
+          <audio id="audio2"loop controls preload="auto">
             <source src="./Sounds/spinning_sound_effect.mp3">
           </audio>
           <p id="audio2p">wheelspin: <span class="lava">100 %</span></p><br>
+          <audio id="sound1" preload="auto" style="display: none;">
+            <source src="./Sounds/coinflip_sound.mp3" type="audio/mp3">
+        </audio>
 
           <hr class="rounded">
           <br>
@@ -678,8 +681,13 @@
           <label for="powerDisButton">disable power-ups</label><br>
           <hr class="rounded">
           <br>
-          secret menu: z + x
-          
+          <p>
+          Controls:<br><br>
+          <span style="color: red;">z + x</span>  : secret menu,<br>
+          <span style="color: red;">Enter</span>, <span style="color: red;">Spacebar</span> : SpinWheel / disable menu,<br>
+          <span style="color: red; font-size: large">↑</span> (arrow up) : add 1 shot to all shotcounters,<br>
+          <span style="color: red; font-size: large">↓</span> (arrow down) : remove 1 shot from all shotcounters
+        </p>
     </div>
 </div>
 

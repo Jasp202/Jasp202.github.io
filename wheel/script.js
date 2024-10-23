@@ -1621,6 +1621,7 @@ spinBtn.addEventListener("click", () => {
             document.getElementById("myPopupContent").style.backgroundImage = "url('./Images/backgrounds/dare_shot.png')";
             text2.style.color = "black";
             document.getElementById("popupbackground").style.display = "block";
+            vineBoom();
         }
         else if(test_dare.includes("Disable") && test_dare.includes("Wheel")){
             myPopup.classList.remove("show");
@@ -2899,3 +2900,20 @@ function countNewlineDifference(text1, text2) {
 }
 
 
+function vineBoom() {
+    // Remove flash-screen after 1 second
+    setTimeout(function() {
+        document.querySelector('.flash-screen').style.display = 'block';
+        // Fade in the image
+        document.querySelector('.fade-image').style.display = 'block';
+        var mySound = new alarmSound("./Sounds/vineboom.mp3", alertVolume);
+            
+            mySound.play();
+        
+        // Remove the image after the fade-in is complete (2 seconds)
+        setTimeout(function() {
+            document.querySelector('.fade-image').style.display = 'none';
+            document.querySelector('.flash-screen').style.display = 'none';
+        }, 3000); // fade out after 1 second
+    }, 500); // flash lasts 1 second
+}

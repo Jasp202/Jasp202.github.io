@@ -1813,3 +1813,33 @@ section {
   .float-image:hover .hover-text {
     display: block;
   }
+
+  .flash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    animation: flash 3s forwards;
+    z-index: 10;
+}
+
+@keyframes flash {
+    0% { opacity: 1; }
+    100% { opacity: 0; display: none; }
+}
+
+.fade-image {
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+    z-index: 15;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: flash 3s forwards;
+    display: none;
+    width: 30vw;
+}
+

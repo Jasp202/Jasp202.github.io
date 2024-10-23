@@ -214,3 +214,106 @@ async function processCalories() {
     document.getElementById("avgMeter").innerHTML = "&nbsp" + Math.round(AVG);
     
 }
+// Custom Plugin to draw a horizontal line at the baseline
+const baselineValue = 1500; // Adjust this value to where you want the line
+        
+const horizontalLinePlugin = {
+    id: 'horizontalLine',
+    afterDraw: (chart) => {
+        const ctx = chart.ctx;
+        const yScale = chart.scales.y;
+        const xScale = chart.scales.x;
+
+        const yValue = yScale.getPixelForValue(baselineValue);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(xScale.left, yValue); // Start from left of the chart
+        ctx.lineTo(xScale.right, yValue); // Draw to the right of the chart
+        ctx.strokeStyle = 'black'; // Line color
+        ctx.lineWidth = 2; // Line width
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.restore();
+    }
+};
+
+// Register the plugin with Chart.js
+Chart.register(horizontalLinePlugin);
+
+
+async function drawChart(){
+
+    const promises = [];
+    const labels = [getDateString(1),getDateString(2),getDateString(3),getDateString(4),getDateString(5),getDateString(6),getDateString(7)];
+    const data = []
+    for (let i = 1; i <= 7; i++) {
+        // Store each promise in an array
+        const promise = getPreviousCalories(i);
+        promises.push(promise);
+    }
+
+    // Wait for all promises to resolve
+    const allResults = await Promise.all(promises);
+    allResults.forEach((item) => {
+        if(item !== 0){
+            data.push(item[0]);
+        }
+        else{
+            data.push(0);
+        }
+    })
+    data.reverse();
+    labels.reverse();
+    const colorsA = (data).map(value => getColorByValue(value));
+    
+const ctx = document.getElementById('myChart').getContext('2d');
+window.myBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            data: data,
+            backgroundColor: colorsA,
+            borderColor: [
+                'rgba(0, 0, 0, 1)',
+                'rgba(0, 0, 0, 1)',
+                'rgba(0, 0, 0, 1)',
+                'rgba(0, 0, 0, 1)',
+                'rgba(0, 0, 0, 1)',
+                'rgba(0, 0, 0, 1)',
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            legend: {
+                display: false // Disable legend (since there's no label)
+            }
+        },
+    }
+});}
+
+function getColorByValue(data) {
+    if (data < 1000) {
+        return 'rgb(0, 255, 0,0.9)';  // Fully green
+    } else if (data <= 1500) {
+        // Interpolate between green (0, 255, 0) and yellow (255, 255, 0)
+        const ratio = (data - 1000) / 500;
+        const r = Math.round(255 * ratio);  // Red increases from 0 to 255
+        return `rgb(${r}, 255, 0,0.9)`;  // Green remains 255, blue stays 0
+    } else if (data <= 2000) {
+        // Interpolate between yellow (255, 255, 0) and red (255, 0, 0)
+        const ratio = (data - 1500) / 500;
+        const g = Math.round(255 * (1 - ratio));  // Green decreases from 255 to 0
+        return `rgb(255, ${g}, 0,0.9)`;  // Red remains 255, blue stays 0
+    } else {
+        return 'rgb(255, 0, 0,0.9)';  // Fully red
+    }
+}

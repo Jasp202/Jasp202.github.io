@@ -14,7 +14,8 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!---------------  jQuery  --------------------->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script> 
     
 </head>
 <html>
@@ -32,12 +33,12 @@
     <div class="cal">
         <img src="./Images/fat_icon.png" width="40px"><p id="calMeter">&nbsp0</p>
     </div>
-    <div class="avg">
+    <div class="avg" onclick="drawChart()">
         <img src="./Images/seven_days_icon.png" width="48px"><p id="avgMeter">&nbsp0</p>
     </div>
     
-
-
+    
+    <canvas id="myChart" width="50vw" height="50vh" style="margin-top: 1rem"></canvas>
     <script src="script3.js"></script> 
     
 </body>

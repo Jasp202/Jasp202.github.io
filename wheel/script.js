@@ -202,12 +202,21 @@ function myFunction() {
   }
 
 function wheelSound(src, speed, vol) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    this.sound.setAttribute("preload", "auto");
-    this.sound.setAttribute("controls", "none");
-    this.sound.style.display = "none";
-    document.body.appendChild(this.sound);
+    switch(src){
+        case "vine":
+            this.sound = document.getElementById("sound2");
+            break;
+        case "alarm":
+            this.sound = document.getElementById("audio1");
+            break;
+        case "wheel":
+            this.sound = document.getElementById("audio2");
+            break;
+        default: //coin
+            this.sound = document.getElementById("sound1");
+            break;
+    }
+    this.sound.loop = "";
     this.play = function(){
         this.sound.currentTime = 1.3;
         this.sound.playbackRate = 0.9 * speed;
@@ -220,12 +229,22 @@ function wheelSound(src, speed, vol) {
 }
 
 function alarmSound(src, vol) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    this.sound.setAttribute("preload", "auto");
-    this.sound.setAttribute("controls", "none");
-    this.sound.style.display = "none";
-    document.body.appendChild(this.sound);
+    
+    switch(src){
+        case "vine":
+            this.sound = document.getElementById("sound2");
+            break;
+        case "alarm":
+            this.sound = document.getElementById("audio1");
+            break;
+        case "wheel":
+            this.sound = document.getElementById("audio2");
+            break;
+        default: //coin
+            this.sound = document.getElementById("sound1");
+            break;
+    }
+    
     this.play = function(){
         this.sound.currentTime = 0;
         this.sound.playbackRate = 1;
@@ -1211,7 +1230,7 @@ clockMake.addEventListener("click", function () {
         }
         if (time3 <= 0) {
             document.getElementById("app2").removeChild(clone);
-            var mySound = new alarmSound("./Sounds/alarm_sound_effect.mp3", alertVolume);
+            var mySound = new alarmSound("alarm", alertVolume);
             clearInterval(timerInterval);
             mySound.play();
             setTimeout(function() {alert("Timer is done")}, 100);
@@ -1567,7 +1586,7 @@ spinBtn.addEventListener("click", () => {
     }
     
     //dare has been rolled 
-    var mySound = new wheelSound("./Sounds/spinning_sound_effect.mp3", fast_roll, wheelVolume);
+    var mySound = new wheelSound("wheel", fast_roll, wheelVolume);
     mySound.play();
 
     // roate pic 
@@ -2906,7 +2925,7 @@ function vineBoom() {
         document.querySelector('.flash-screen').style.display = 'block';
         // Fade in the image
         document.querySelector('.fade-image').style.display = 'block';
-        var mySound = new alarmSound("./Sounds/vineboom.mp3", alertVolume);
+        var mySound = new alarmSound("vine", alertVolume);
             
             mySound.play();
         

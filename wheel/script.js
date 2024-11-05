@@ -1138,7 +1138,7 @@ spinImage.src = spinChart.toBase64Image();
 let current_type = "1"; // gets number, E or W
 let current_wheel = "default"
 
-const generateValue = (OriginalangleValue) => {
+function generateValue(OriginalangleValue) {
     for (let i = 0; i < dares_count; i++) {
         angleValue =  mod(90 - OriginalangleValue, 360);
         if (angleValue >= spinValues[i][0] && angleValue <= spinValues[i][1]) {
@@ -1594,11 +1594,15 @@ spinBtn.addEventListener("click", () => {
 
     if (count < 200) {
         spinImage.style.transform = "rotate(" + 360 * Math.random() + "deg)" + "scale(1.10)";
-        generateValue(360 * Math.random());
+        if(count % 3 == 0){
+            generateValue(180 * Math.random());
+        };
     }
     else {
         spinImage.style.transform = "rotate("  +  (-100000/Math.pow(count-199, 1.5) + 12.4533 - 36000 / (1 + 10 *count)  + rolledDare + 6 - 90) + "deg)" + "scale(1.10)";
-        generateValue((-100000/Math.pow(count-199, 1.5) + 12.4533 -36000 / (1 + 10*count)  + rolledDare + 6 ));
+        if(count % 5 == 0){
+            generateValue((-100000/Math.pow(count-199, 1.5) + 12.4533 -36000 / (1 + 10*count)  + rolledDare + 6 ));
+        };
     }
 
     

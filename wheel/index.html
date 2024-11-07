@@ -682,6 +682,12 @@
             <span class="slider round"></span>
           </label>
           <label for="powerDisButton">disable power-ups</label><br>
+
+          <label class="switch">
+            <input id="BoomSetting" type="checkbox" value="car" checked="true">
+            <span class="slider round"></span>
+          </label>
+          <label for="BoomSetting"><img src="./Images/icons/teo.jpg" height="50px" width="100px"></label><br>
           <hr class="rounded">
           <br>
           <p>
@@ -972,6 +978,8 @@
                 if(hiddenKeys.flat().includes(e.key) && e.key != " " && e.key != "Enter"){
                     hiddenPrimed = true;
                     hiddenDare = hiddenKeys[hiddenKeys.flat().indexOf(e.key)/2][1];
+                    myPopup.classList.remove("show");
+                    document.getElementById("popupbackground").style.display = "none";
                     document.getElementById("spin_btn").click();
                 }
               break;

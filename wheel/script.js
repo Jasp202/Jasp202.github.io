@@ -845,6 +845,24 @@ checkbox7.addEventListener('change', (event) => {
         document.getElementById('check').dispatchEvent(new Event('input'));
     }
 })
+const checkbox8 = document.getElementById('BoomSetting');
+let BoomSetting = true;
+if(localStorage.BoomSetting == "false"){
+    checkbox8.checked = false;
+    BoomSetting = false;
+}
+else{
+    BoomSetting = true;
+}
+checkbox8.addEventListener('change', (event) => {
+    if (event.currentTarget.checked) {
+        BoomSetting = true;
+        localStorage.BoomSetting = true;
+    } else {
+        BoomSetting = false;
+        localStorage.BoomSetting = false;
+    }
+    });
 //
 
 addDare.addEventListener("click", function () {
@@ -1138,15 +1156,11 @@ spinImage.src = spinChart.toBase64Image();
 let current_type = "1"; // gets number, E or W
 let current_wheel = "default"
 
-function generateValue(OriginalangleValue) {
-    for (let i = 0; i < dares_count; i++) {
-        angleValue =  mod(90 - OriginalangleValue, 360);
-        if (angleValue >= spinValues[i][0] && angleValue <= spinValues[i][1]) {
-            text.innerHTML = `${spinValues[i][2]}`;
-            text2.innerHTML = `${spinValues[i][2]}`;
-            break;
-    }
-  }
+function generateValue(OriginalangleValue, angleValue = Math.floor(mod(90 - OriginalangleValue, 360) *dares_count / 360)){
+    
+        text.innerHTML = `${spinValues[angleValue][2]}`;
+        text2.innerHTML = `${spinValues[angleValue][2]}`;
+           
 };
 /* --------------- Timer code--------------------- */
 
@@ -1581,7 +1595,7 @@ spinBtn.addEventListener("click", () => {
     } 
     // if hidden dare is next
     if (hiddenPrimed){
-        test_dare = "101. " + hiddenDare;
+        test_dare =  "1" + String(Math.floor(Math.random() * 24) + 1).padStart(2, '0') + ". " + hiddenDare;
         current_type = "11";
     }
     
@@ -1594,13 +1608,13 @@ spinBtn.addEventListener("click", () => {
 
     if (count < 200) {
         spinImage.style.transform = "rotate(" + 360 * Math.random() + "deg)" + "scale(1.10)";
-        if(count % 3 == 0){
+        if(count % 2 == 0){
             generateValue(180 * Math.random());
         };
     }
     else {
         spinImage.style.transform = "rotate("  +  (-100000/Math.pow(count-199, 1.5) + 12.4533 - 36000 / (1 + 10 *count)  + rolledDare + 6 - 90) + "deg)" + "scale(1.10)";
-        if(count % 5 == 0){
+        if(count % 2 == 0){
             generateValue((-100000/Math.pow(count-199, 1.5) + 12.4533 -36000 / (1 + 10*count)  + rolledDare + 6 ));
         };
     }
@@ -1644,7 +1658,10 @@ spinBtn.addEventListener("click", () => {
             document.getElementById("myPopupContent").style.backgroundImage = "url('./Images/backgrounds/dare_shot.png')";
             text2.style.color = "black";
             document.getElementById("popupbackground").style.display = "block";
-            vineBoom();
+            if(BoomSetting == true){
+                vineBoom();
+            }
+    
         }
         else if(test_dare.includes("Disable") && test_dare.includes("Wheel")){
             myPopup.classList.remove("show");

@@ -697,6 +697,9 @@
           <span style="color: red; font-size: large">↑</span> (arrow up) : add 1 shot to all shotcounters,<br>
           <span style="color: red; font-size: large">↓</span> (arrow down) : remove 1 shot from all shotcounters
         </p>
+        <button id="msgbutton" >
+            New Ideas
+        </button>
     </div>
 </div>
 
@@ -1523,6 +1526,63 @@ slider.oninput = function() {
     }
      </script> 
      <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady">   </script>
+
+
+    <div id="msgPopup" class="msgpopup">
+        <div class="msgpopup-content">
+        
+            <form id="customForm">
+                <label for="message">Pokernight Wheel Ideas:</label><br><br>
+                <textarea id="message" name="message" rows="4" cols="50"></textarea><br><br>
+                <button type="button" onclick="submitToGoogleForm()">Send to Atte</button>
+            </form>
+        
+
+
+        </div>
+    </div>
+    
+    <script>
+        function submitToGoogleForm() {
+            const message = document.getElementById("message").value;
+
+            // Google Form's POST URL
+            const googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLScNLasPP4r1KALnXS9yl2KfIX7ZdjPelf9D5f6pKqdiYwb2eQ/formResponse";
+
+            // Replace "entry.XXXXXXX" with the entry ID for the Google Form question
+            const formData = new FormData();
+            formData.append("entry.1103913911", message); // Replace YOUR_ENTRY_ID with the correct entry ID for your message field
+
+            // Send the data to Google Form
+            fetch(googleFormURL, {
+                method: "POST",
+                mode: "no-cors",
+                body: formData
+            })
+            .then(() => {
+                alert("Message sent successfully!");
+                document.getElementById("customForm").reset(); // Reset form after submission
+            })
+            .catch(error => {
+                console.error("Error!", error.message);
+            });
+        }
+    </script>
+<script>
+    
+    msgbutton.addEventListener("click", function () {
+        
+        msgPopup.classList.add("show");
+        
+    });
+
+    window.addEventListener('click', function () {
+        if ((event.target == msgPopup)) {
+            msgPopup.classList.remove("show");
+            
+        }
+    });
+</script>
  
 
   <!---------------  PRELOADING IMAGES  --------------------->

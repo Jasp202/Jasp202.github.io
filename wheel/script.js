@@ -240,6 +240,12 @@ function alarmSound(src, vol) {
         case "wheel":
             this.sound = document.getElementById("audio2");
             break;
+        case "spin":
+            this.sound = document.getElementById("soundSlotSpin");
+            break;
+        case "win":
+            this.sound = document.getElementById("soundSlotWin");
+            break;
         default: //coin
             this.sound = document.getElementById("sound1");
             break;
@@ -1244,11 +1250,41 @@ clockMake.addEventListener("click", function () {
         }
         if (time3 <= 0) {
             document.getElementById("app2").removeChild(clone);
-            var mySound = new alarmSound("alarm", alertVolume);
             clearInterval(timerInterval);
-            mySound.play();
-            setTimeout(function() {alert("Timer is done")}, 100);
-            setTimeout(function() {mySound.stop()}, 105);
+            function playSoundWithAlert() {
+                var mySound = new alarmSound("alarm", alertVolume);
+            
+                // Wrap the play method in a Promise
+                return new Promise((resolve, reject) => {
+                    try {
+                        mySound.play(); // Play the sound
+                        resolve(mySound); // Resolve with the sound instance
+                    } catch (error) {
+                        reject(error); // Reject the promise if an error occurs
+                    }
+                });
+            }
+            
+            // Use the Promise structure
+            playSoundWithAlert()
+                .then((mySound) => {
+                    // Wait 100ms for the alert after playing the sound
+                    return new Promise((resolve) => {
+                        setTimeout(() => {
+                            alert("Timer is done");
+                            resolve(mySound);
+                        }, 100);
+                    });
+                })
+                .then((mySound) => {
+                    // Stop the sound 5ms after the alert
+                    setTimeout(() => {
+                        mySound.stop();
+                    }, 5);
+                })
+                .catch((error) => {
+                    console.error("An error occurred:", error);
+                });
             
         }
     
@@ -1464,6 +1500,7 @@ window.addEventListener("keydown", (e) => {
         if (myPopup.classList.toString().includes("show")){
             myPopup.classList.remove("show");
             document.getElementById("popupbackground").style.display = "none";
+            document.querySelector(".slots").style.display = "none";
         }
         else{
             switch (e.target.tagName.toLowerCase()) { // we dont want to activate the wheel when pressing space in textboxes etc.
@@ -1475,7 +1512,12 @@ window.addEventListener("keydown", (e) => {
                 // ...and so on for other elements you want to exclude; thanks stackexchange
                   break;
                 default:
-                    spinBtn.click();
+                    if(document.querySelector(".slots").style.display != "none"){
+                        document.querySelector(".slots").style.display = "none";
+                    }
+                    else{
+                        spinBtn.click();
+                    }
                   break;
             }
             
@@ -1658,9 +1700,11 @@ spinBtn.addEventListener("click", () => {
             document.getElementById("myPopupContent").style.backgroundImage = "url('./Images/backgrounds/dare_shot.png')";
             text2.style.color = "black";
             document.getElementById("popupbackground").style.display = "block";
-            if(BoomSetting == true){
+            if(BoomSetting == true && 1==2){
                 vineBoom();
             }
+            document.querySelector(".slots").style.display="flex"
+            rollAll();
     
         }
         else if(test_dare.includes("Disable") && test_dare.includes("Wheel")){
@@ -2658,7 +2702,7 @@ function preloadImages(imageArray, callback) {
 }
 
 var backgroundList = ['./Images/backgrounds/cyberpunk_bg.png', './Images/backgrounds/dare_shot.png', './Images/backgrounds/default_bg.png', './Images/backgrounds/environment_border.png', './Images/backgrounds/memes_bg.png', './Images/backgrounds/no_enemies_bg.png', './Images/backgrounds/no_pain_bg.png', './Images/backgrounds/no_sitting_bg.png']
-var iconList = ['./Images/icons/absinthe_icon.png', './Images/icons/add_dare_icon.png', './Images/icons/ahma_icon.png', './Images/icons/beer_bottle_icon.png', './Images/icons/beer_icon.png', './Images/icons/beer_mug_icon.png', './Images/icons/blue_anime_icon.png', './Images/icons/cactus_glass_icon.png', './Images/icons/cartoon_coctail_icon.png', './Images/icons/champagne_icon.png', './Images/icons/clock_icon.png', './Images/icons/coctail_glass_2_icon.png', './Images/icons/coctail_glass_icon.png', './Images/icons/coin_heads_icon.png', './Images/icons/coin_tails_icon.png', './Images/icons/copper_mug_icon.png', './Images/icons/current_icon.png', './Images/icons/default_d_icon.png', './Images/icons/default_icon.png', './Images/icons/favicon.png', './Images/icons/gin_bottle_icon.png', './Images/icons/history_icon.png', './Images/icons/jager_icon.png', './Images/icons/koff_beer_icon.png', './Images/icons/koff_lonkero_icon.png', './Images/icons/koskekorva_mansikka_icon.png', './Images/icons/lemon_anime_icon.png', './Images/icons/lonkero_icon.png', './Images/icons/lonkero_red_icon.png', './Images/icons/lonkero_yellow_icon.png', './Images/icons/memes_d_icon.png', './Images/icons/memes_icon.png', './Images/icons/no_enemies_jesus_d_icon.png', './Images/icons/no_enemies_jesus_icon.png', './Images/icons/no_pain_d_icon.png', './Images/icons/no_pain_icon.png', './Images/icons/no_sitting_d_icon.png', './Images/icons/no_sitting_icon.png', './Images/icons/power_icon_0.png', './Images/icons/power_icon_1.png', './Images/icons/power_icon_2.png', './Images/icons/power_icon_3.png', './Images/icons/power_icon_4.png', './Images/icons/power_icon_5.png', './Images/icons/power_icon_6.png', './Images/icons/power_icon_7.png', './Images/icons/red_cup_icon.png', './Images/icons/sake_icon.png', './Images/icons/screw_anime_icon.png', './Images/icons/scroll_icon.png', './Images/icons/settings_icon.png', './Images/icons/shot2_icon.png', './Images/icons/shot_icon.png', './Images/icons/spiritus_anime_icon.png', './Images/icons/vergi_d_icon.png', './Images/icons/vergi_icon.png', './Images/icons/wheel_icon.png', './Images/icons/whiskey_anime_icon.png', './Images/icons/whiskey_bottle_icon.png', './Images/icons/whiskey_rocks_icon.png', './Images/icons/white_wine_icon.png', './Images/icons/wine_bottle_icon.png', './Images/icons/wine_glass_icon.png', './Images/icons/rum_bottle_icon.png']
+var iconList = ['./Images/icons/absinthe_icon.png', './Images/icons/add_dare_icon.png', './Images/icons/ahma_icon.png', './Images/icons/beer_bottle_icon.png', './Images/icons/beer_icon.png', './Images/icons/beer_mug_icon.png', './Images/icons/blue_anime_icon.png', './Images/icons/cactus_glass_icon.png', './Images/icons/cartoon_coctail_icon.png', './Images/icons/champagne_icon.png', './Images/icons/clock_icon.png', './Images/icons/coctail_glass_2_icon.png', './Images/icons/coctail_glass_icon.png', './Images/icons/coin_heads_icon.png', './Images/icons/coin_tails_icon.png', './Images/icons/copper_mug_icon.png', './Images/icons/current_icon.png', './Images/icons/default_d_icon.png', './Images/icons/default_icon.png', './Images/icons/favicon.png', './Images/icons/gin_bottle_icon.png', './Images/icons/history_icon.png', './Images/icons/jager_icon.png', './Images/icons/koff_beer_icon.png', './Images/icons/koff_lonkero_icon.png', './Images/icons/koskekorva_mansikka_icon.png', './Images/icons/lemon_anime_icon.png', './Images/icons/lonkero_icon.png', './Images/icons/lonkero_red_icon.png', './Images/icons/lonkero_yellow_icon.png', './Images/icons/memes_d_icon.png', './Images/icons/memes_icon.png', './Images/icons/no_enemies_jesus_d_icon.png', './Images/icons/no_enemies_jesus_icon.png', './Images/icons/no_pain_d_icon.png', './Images/icons/no_pain_icon.png', './Images/icons/no_sitting_d_icon.png', './Images/icons/no_sitting_icon.png', './Images/icons/power_icon_0.png', './Images/icons/power_icon_1.png', './Images/icons/power_icon_2.png', './Images/icons/power_icon_3.png', './Images/icons/power_icon_4.png', './Images/icons/power_icon_5.png', './Images/icons/power_icon_6.png', './Images/icons/power_icon_7.png', './Images/icons/red_cup_icon.png', './Images/icons/sake_icon.png', './Images/icons/screw_anime_icon.png', './Images/icons/scroll_icon.png', './Images/icons/settings_icon.png', './Images/icons/shot2_icon.png', './Images/icons/shot_icon.png', './Images/icons/spiritus_anime_icon.png', './Images/icons/vergi_d_icon.png', './Images/icons/vergi_icon.png', './Images/icons/wheel_icon.png', './Images/icons/whiskey_anime_icon.png', './Images/icons/whiskey_bottle_icon.png', './Images/icons/whiskey_rocks_icon.png', './Images/icons/white_wine_icon.png', './Images/icons/wine_bottle_icon.png', './Images/icons/wine_glass_icon.png', './Images/icons/rum_bottle_icon.png', './Images/icons/reel_icon2.png']
 var imagesToPreload = backgroundList.concat(iconList)
 
 // Preload all images
@@ -2957,3 +3001,134 @@ function vineBoom() {
         }, 3000); // fade out after 1 second
     }, 500); // flash lasts 1 second
 }
+
+
+
+/**
+ * Setup
+ */
+
+// Mapping of indexes to icons: start from banana in middle of initial position and then upwards
+// Width of the icons
+icon_height = 158,	
+// Number of icons in the strip
+num_icons = 10,	
+// Max-speed in ms for animating one icon down
+time_per_icon = 100,
+// Holds icon indexes
+indexes = [0, 0, 0];
+
+
+/** 
+ * Roll one reel
+ */
+const roll = (reel, offset = 0, target = null) => {	
+	// Minimum of 2 + the reel offset rounds
+	let delta = (offset + 2) * num_icons + Math.round(Math.random() * num_icons); 
+	
+	const style = getComputedStyle(reel),
+					// Current background position
+					backgroundPositionY = parseFloat(style["background-position-y"]);
+	
+	// Rigged?
+	if (target) {
+		// calculate delta to target
+		const currentIndex = backgroundPositionY / icon_height;
+		delta = target - currentIndex + (offset + 2) * num_icons;
+	}
+	
+	// Return promise so we can wait for all reels to finish
+	return new Promise((resolve, reject) => {
+		
+		
+		const
+					// Target background position
+					targetBackgroundPositionY = backgroundPositionY + delta * icon_height,
+					// Normalized background position, for reset
+					normTargetBackgroundPositionY = targetBackgroundPositionY%(num_icons * icon_height);
+		
+		// Delay animation with timeout, for some reason a delay in the animation property causes stutter
+		setTimeout(() => { 
+			// Set transition properties ==> https://cubic-bezier.com/#.41,-0.01,.63,1.09
+			reel.style.transition = `background-position-y ${(8 + 1 * delta) * time_per_icon}ms cubic-bezier(.41,-0.01,.63,1.09)`;
+			// Set background position
+			reel.style.backgroundPositionY = `${backgroundPositionY + delta * icon_height}px`;
+		}, offset * 150);
+			
+		// After animation
+		setTimeout(() => {
+			// Reset position, so that it doesn't get higher without limit
+			reel.style.transition = `none`;
+			reel.style.backgroundPositionY = `${normTargetBackgroundPositionY}px`;
+			// Resolve this promise
+			resolve(delta%num_icons);
+		}, (8 + 1 * delta) * time_per_icon + offset * 150);
+		
+	});
+};
+
+
+/**
+ * Roll all reels, when promise resolves roll again
+ */
+function rollAll() {
+	
+	const reelsList = document.querySelectorAll('.slots > .reel');
+    var mySoundSpin = new alarmSound("spin", 1);
+    mySoundSpin.sound.addEventListener('timeupdate', function(){
+        var buffer = .44
+        if(this.currentTime > this.duration - buffer){
+            this.currentTime = 0
+            this.play()
+        }
+    });
+    mySoundSpin.play();
+	
+	// rig the outcome for every 3rd roll, if targets is set to null, the outcome will not get rigged by the roll function
+    const win1p = Math.random() > 0.5 ;
+    const win2p = Math.random() > 0.5;
+    var targets = [0,0,0]
+    if(win1p){
+        if(win2p){
+            const winner2p = Math.floor(Math.random() * num_icons);
+            targets =  [winner2p, winner2p, winner2p];
+        }
+        else{
+            const winner1p = Math.floor(Math.random() * num_icons);
+            targets =  [winner1p, winner1p, Math.floor(Math.random() * num_icons)];
+        }
+    }
+    else{
+        targets =  [Math.floor(Math.random() * num_icons), Math.floor(Math.random() * num_icons), Math.floor(Math.random() * num_icons)];
+    }
+	
+	
+	
+	Promise
+		
+		// Activate each reel, must convert NodeList to Array for this with spread operator
+		.all( [...reelsList].map((reel, i) => roll(reel, i, targets ? targets[i] : null)) )	
+		
+		// When all reels done animating (all promises solve)
+		.then((deltas) => {
+			// add up indexes
+			deltas.forEach((delta, i) => indexes[i] = (indexes[i] + delta)%num_icons);
+			mySoundSpin.stop();
+		
+			// Win conditions
+			if (indexes[0] == indexes[1] || indexes[1] == indexes[2]) {
+                var mySound = new alarmSound("win", 1);
+                mySound.play();
+				const winCls = indexes[0] == indexes[2] ? "win2" : "win1";
+				document.querySelector(".slots").classList.add(winCls);
+				setTimeout(function() { 
+                    document.querySelector(".slots").classList.remove(winCls);
+                }
+                , 2000)
+			}
+            
+		});
+};
+document.querySelector(".slots").addEventListener('click', (e) => {
+    document.querySelector(".slots").style.display = "none";
+})

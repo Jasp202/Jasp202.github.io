@@ -3636,7 +3636,7 @@ function ChangeDareCount(CurrentDare, N) {
           }
       
           // Final average color
-          const finalColor = `rgb(${avgR + 50}, ${avgG + 50}, ${avgB + 50})`;
+          const finalColor = `rgb(${avgR}, ${avgG}, ${avgB})`;
           callback(finalColor);
         };
       

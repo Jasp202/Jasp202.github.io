@@ -49,9 +49,18 @@ function CreateNewDom() {
     clone.getElementsByTagName('img')[0].src = document.getElementById("mySelect").value;
     clone.getElementsByTagName('img')[0].style.height = "129px";
 
+    var shadowColor = "rgb(255, 217, 0)";
+    getAverageColorFromImageSrc(clone.getElementsByTagName('img')[0].src, (avgColor) => {
+        if (avgColor) {
+            shadowColor = avgColor;
+        } else {
+            shadowColor = "rgb(255, 217, 0)";
+        }
+      });
+
+    
     clone.addEventListener('mouseover', function () {
-        
-        this.style.filter = "drop-shadow(0 0 0.75rem rgb(255, 217, 0))";
+        this.style.filter = `drop-shadow(0 0 1rem ${shadowColor})drop-shadow(0 0 1rem ${shadowColor})`
         this.style.transition = "all 0.1s ease";
         
       });
@@ -851,24 +860,56 @@ checkbox7.addEventListener('change', (event) => {
         document.getElementById('check').dispatchEvent(new Event('input'));
     }
 })
-const checkbox8 = document.getElementById('BoomSetting');
-let BoomSetting = true;
-if(localStorage.BoomSetting == "false"){
-    checkbox8.checked = false;
-    BoomSetting = false;
-}
-else{
+const checkBoom = document.getElementById('radioBoom');
+const checkDefault = document.getElementById('radioDefault');
+const checkSlots = document.getElementById('radioSlots');
+
+let BoomSetting = false;
+let SlotsSetting = false;
+
+if(localStorage.BoomSetting == "true"){
+    checkBoom.checked = true;
     BoomSetting = true;
 }
-checkbox8.addEventListener('change', (event) => {
+if(localStorage.SlotsSetting == "true"){
+    checkSlots.checked = true;
+    SlotsSetting = true;
+}
+
+checkBoom.addEventListener('change', (event) => {
     if (event.currentTarget.checked) {
         BoomSetting = true;
+        SlotsSetting = false;
         localStorage.BoomSetting = true;
+        localStorage.SlotsSetting = false;
+        
     } else {
         BoomSetting = false;
         localStorage.BoomSetting = false;
+        
     }
-    });
+});
+checkSlots.addEventListener('change', (event) => {
+    if (event.currentTarget.checked) {
+        BoomSetting = false;
+        SlotsSetting = true;
+        localStorage.BoomSetting = false;
+        localStorage.SlotsSetting = true;
+        
+    } else {
+        SlotsSetting = false;
+        localStorage.SlotsSetting = false;
+    }
+});
+checkDefault.addEventListener('change', (event) => {
+    if (event.currentTarget.checked) {
+        
+        BoomSetting = false;
+        SlotsSetting = false;
+        localStorage.BoomSetting = false;
+        localStorage.SlotsSetting = false;
+    }
+});
 //
 
 addDare.addEventListener("click", function () {
@@ -1700,11 +1741,15 @@ spinBtn.addEventListener("click", () => {
             document.getElementById("myPopupContent").style.backgroundImage = "url('./Images/backgrounds/dare_shot.png')";
             text2.style.color = "black";
             document.getElementById("popupbackground").style.display = "block";
-            if(BoomSetting == true && 1==2){
+
+            
+            if(BoomSetting == true){
                 vineBoom();
             }
-            document.querySelector(".slots").style.display="flex"
-            rollAll();
+            else if(SlotsSetting == true){
+                document.querySelector(".slots").style.display="flex"
+                rollAll();
+            }
     
         }
         else if(test_dare.includes("Disable") && test_dare.includes("Wheel")){
@@ -1761,6 +1806,10 @@ spinBtn.addEventListener("click", () => {
             spinBtn.click();
         }
 
+        //count adder starts here
+        ChangeDareCount(test_dare, 0); //used to referesh doesnt cahnge anything
+        document.getElementById("currentDareCountMinus").onclick = function() {ChangeDareCount(test_dare, -1)}
+        document.getElementById("currentDareCountPlus").onclick = function() {ChangeDareCount(test_dare, 1)}
     }
 
 
@@ -1844,6 +1893,7 @@ let plusText3Obj = {
 }
 
 const editorpopupcontent = document.getElementById("editorpopupcontent");
+
 
 function f1Load(givenEditor) {
 
@@ -2421,6 +2471,23 @@ const dropdownItems = document.querySelectorAll('.dropdown-item');
 const dropdownMenuR = document.getElementsByClassName('dropdown-menuR');
 const dropdownToggle2 = document.getElementsByClassName('dropdown-toggle2');
 
+function getRandomShotImg() {
+    const imagesKeys = Object.keys(images);
+    var rItem = imagesKeys[Math.floor(Math.random()*imagesKeys.length)];
+    if(document.getElementById("mySelect").value == images[rItem]){
+        getRandomShotImg();
+        return;
+    }
+    
+    for(let i = 0;i < dropdownItems.length; i++){
+        let dataValue = dropdownItems[i].getAttribute('data-value');
+        if(dataValue == rItem){
+            dropdownItems[i].click();
+            break;
+        }
+    }
+
+}
 // Image sources
 const images = {
     "Shot glass":    "./Images/icons/shot_icon.png",
@@ -2458,6 +2525,11 @@ const images = {
     "Red cup":              "./Images/icons/red_cup_icon.png",
     "Gin bottle":          "./Images/icons/gin_bottle_icon.png",
     "Rum bottle":  "./Images/icons/rum_bottle_icon.png",
+    "Holy wine": "./Images/icons/holy_wine_icon.png",
+    "Altar wine":   "./Images/icons/altar_wine_icon.png",
+    "Bloody mary": "./Images/icons/bloody_mary_icon.png",
+    "Mohito":    "./Images/icons/mohito_icon.png",
+    "Flaming shot":  "./Images/icons/flaming_shot_icon.png",
 };
 
 
@@ -3132,3 +3204,659 @@ function rollAll() {
 document.querySelector(".slots").addEventListener('click', (e) => {
     document.querySelector(".slots").style.display = "none";
 })
+
+
+function countNewlinesBeforeSubstring(inputString, searchString) {
+    // Find the index of the first occurrence of the search string
+    const index = inputString.indexOf(searchString);
+
+    // If the substring doesn't appear, return null
+    if (index === -1) return null;
+    
+    if (index == 0) return 0;
+
+    // Extract the part of the string before the found substring
+    const partBeforeSubstring = inputString.slice(0, index);
+
+    // Count the number of newline characters in the extracted part
+    const newlineCount = (partBeforeSubstring.match(/\n/g) || []).length;
+
+    // Return the count of newlines
+    return newlineCount;
+}
+function addNAfterKNewlines(text, k, N) {
+    // Split the text into lines
+    const lines = text.split('\n');
+
+    // If k is out of bounds, return the original text
+    if (k < 0 || k >= lines.length) {
+        console.error("Invalid value of k: out of bounds.", lines);
+        return text;
+    }
+
+    // Parse the number at the kth line and add 1
+    const num = parseInt(lines[k], 10);
+
+    // Check if the line contains a valid number
+    if (isNaN(num)) {
+        console.error(`The line at position ${k} is not a valid number.`);
+        return text;
+    }
+
+    // Update the number in the kth line
+    lines[k] = (Math.max(0, num + N)).toString();
+    
+
+    // Join the lines back into a single string
+    return lines.join('\n');
+}   
+function getDareMult(text, k) {
+    // Split the text into lines
+    
+    const lines = text.split('\n');
+
+    // If k is out of bounds, return the original text
+    if (k < 0 || k >= lines.length) {
+        console.error("Invalid value of k: out of bounds.", lines);
+        return null;
+    }
+
+    // Parse the number at the kth line and add 1
+    const num = parseInt(lines[k], 10);
+
+    // Check if the line contains a valid number
+    if (isNaN(num)) {
+        console.error(`The line at position ${k} is not a valid number.`);
+        return null;
+    }
+
+    return num;
+}   
+function ChangeDareCount(CurrentDare, N) {
+    
+        switch(current_wheel) {
+            case "no pain":
+                fLoadPain();
+                
+                if(CurrentDare.includes("ENVIRONMENT :")){
+                    index = countNewlinesBeforeSubstring(textArea2Obj["pain"], CurrentDare.replaceAll("ENVIRONMENT : ", ""));
+                        if(index != null){
+                            plusText2.value = addNAfterKNewlines(plusText2.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText2.value, index)}`;
+                            fSoftCommit("pain");
+                            if(N == 1){
+                                addTempEnv(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempEnv(CurrentDare)
+                            }
+                        }
+                }
+                else if(CurrentDare.includes("WHEEL CHANGE :")){
+                    index = countNewlinesBeforeSubstring(textArea3Obj["pain"], CurrentDare.replaceAll("WHEEL CHANGE : ", ""));
+                        if(index != null){
+                            plusText3.value = addNAfterKNewlines(plusText3.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText3.value, index)}`;
+                            fSoftCommit("pain");
+                            if(N == 1){
+                                addTempWheelch(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempWheelch(CurrentDare)
+                            }
+                        }
+                }
+                else{
+                    index = countNewlinesBeforeSubstring(textArea1Obj["pain"], CurrentDare);
+                        if(index != null){
+                            plusText1.value = addNAfterKNewlines(plusText1.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText1.value, index)}`;
+                            fSoftCommit("pain");
+                            if(N == 1){
+                                addTempDare(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempDare(CurrentDare)
+                            }
+                            
+                        }
+                }
+                break;
+            case "no enemies":
+                fLoadEnemies();
+                
+                if(CurrentDare.includes("ENVIRONMENT :")){
+                    index = countNewlinesBeforeSubstring(textArea2Obj["enemies"], CurrentDare.replaceAll("ENVIRONMENT : ", ""));
+                        if(index != null){
+                            plusText2.value = addNAfterKNewlines(plusText2.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText2.value, index)}`;
+                            fSoftCommit("enemies");
+                            if(N == 1){
+                                addTempEnv(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempEnv(CurrentDare)
+                            }
+                        }
+                }
+                else if(CurrentDare.includes("WHEEL CHANGE :")){
+                    index = countNewlinesBeforeSubstring(textArea3Obj["enemies"], CurrentDare.replaceAll("WHEEL CHANGE : ", ""));
+                        if(index != null){
+                            plusText3.value = addNAfterKNewlines(plusText3.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText3.value, index)}`;
+                            fSoftCommit("enemies");
+                            if(N == 1){
+                                addTempWheelch(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempWheelch(CurrentDare)
+                            }
+                        }
+                }
+                else{
+                    index = countNewlinesBeforeSubstring(textArea1Obj["enemies"], CurrentDare);
+                        if(index != null){
+                            plusText1.value = addNAfterKNewlines(plusText1.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText1.value, index)}`;
+                            fSoftCommit("enemies");
+                            if(N == 1){
+                                addTempDare(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempDare(CurrentDare)
+                            }
+                            
+                        }
+                }
+                break;
+            case "memes":
+                fLoadMemes();
+                
+                if(CurrentDare.includes("ENVIRONMENT :")){
+                    index = countNewlinesBeforeSubstring(textArea2Obj["memes"], CurrentDare.replaceAll("ENVIRONMENT : ", ""));
+                        if(index != null){
+                            plusText2.value = addNAfterKNewlines(plusText2.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText2.value, index)}`;
+                            fSoftCommit("memes");
+                            if(N == 1){
+                                addTempEnv(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempEnv(CurrentDare)
+                            }
+                        }
+                }
+                else if(CurrentDare.includes("WHEEL CHANGE :")){
+                    index = countNewlinesBeforeSubstring(textArea3Obj["memes"], CurrentDare.replaceAll("WHEEL CHANGE : ", ""));
+                        if(index != null){
+                            plusText3.value = addNAfterKNewlines(plusText3.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText3.value, index)}`;
+                            fSoftCommit("memes");
+                            if(N == 1){
+                                addTempWheelch(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempWheelch(CurrentDare)
+                            }
+                        }
+                }
+                else{
+                    index = countNewlinesBeforeSubstring(textArea1Obj["memes"], CurrentDare);
+                        if(index != null){
+                            plusText1.value = addNAfterKNewlines(plusText1.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText1.value, index)}`;
+                            fSoftCommit("memes");
+                            if(N == 1){
+                                addTempDare(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempDare(CurrentDare)
+                            }
+                            
+                        }
+                }
+                break;
+            case "vergipsycho":
+                fLoadVergi();
+                
+                if(CurrentDare.includes("ENVIRONMENT :")){
+                    index = countNewlinesBeforeSubstring(textArea2Obj["vergi"], CurrentDare.replaceAll("ENVIRONMENT : ", ""));
+                        if(index != null){
+                            plusText2.value = addNAfterKNewlines(plusText2.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText2.value, index)}`;
+                            fSoftCommit("vergi");
+                            if(N == 1){
+                                addTempEnv(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempEnv(CurrentDare)
+                            }
+                        }
+                }
+                else if(CurrentDare.includes("WHEEL CHANGE :")){
+                    index = countNewlinesBeforeSubstring(textArea3Obj["vergi"], CurrentDare.replaceAll("WHEEL CHANGE : ", ""));
+                        if(index != null){
+                            plusText3.value = addNAfterKNewlines(plusText3.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText3.value, index)}`;
+                            fSoftCommit("vergi");
+                            if(N == 1){
+                                addTempWheelch(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempWheelch(CurrentDare)
+                            }
+                        }
+                }
+                else{
+                    index = countNewlinesBeforeSubstring(textArea1Obj["vergi"], CurrentDare);
+                        if(index != null){
+                            plusText1.value = addNAfterKNewlines(plusText1.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText1.value, index)}`;
+                            fSoftCommit("vergi");
+                            if(N == 1){
+                                addTempDare(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempDare(CurrentDare)
+                            }
+                            
+                        }
+                }
+                break;
+            case "no sitting":
+                fLoadSitting();
+                
+                if(CurrentDare.includes("ENVIRONMENT :")){
+                    index = countNewlinesBeforeSubstring(textArea2Obj["sitting"], CurrentDare.replaceAll("ENVIRONMENT : ", ""));
+                        if(index != null){
+                            plusText2.value = addNAfterKNewlines(plusText2.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText2.value, index)}`;
+                            fSoftCommit("sitting");
+                            if(N == 1){
+                                addTempEnv(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempEnv(CurrentDare)
+                            }
+                        }
+                }
+                else if(CurrentDare.includes("WHEEL CHANGE :")){
+                    index = countNewlinesBeforeSubstring(textArea3Obj["sitting"], CurrentDare.replaceAll("WHEEL CHANGE : ", ""));
+                        if(index != null){
+                            plusText3.value = addNAfterKNewlines(plusText3.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText3.value, index)}`;
+                            fSoftCommit("sitting");
+                            if(N == 1){
+                                addTempWheelch(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempWheelch(CurrentDare)
+                            }
+                        }
+                }
+                else{
+                    index = countNewlinesBeforeSubstring(textArea1Obj["sitting"], CurrentDare);
+                        if(index != null){
+                            plusText1.value = addNAfterKNewlines(plusText1.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText1.value, index)}`;
+                            fSoftCommit("sitting");
+                            if(N == 1){
+                                addTempDare(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempDare(CurrentDare)
+                            }
+                            
+                        }
+                }
+                break;
+            case "default":
+                fLoadDefault();
+                
+                if(CurrentDare.includes("ENVIRONMENT :")){
+                    index = countNewlinesBeforeSubstring(textArea2Obj["default"], CurrentDare.replaceAll("ENVIRONMENT : ", ""));
+                        if(index != null){
+                            plusText2.value = addNAfterKNewlines(plusText2.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText2.value, index)}`;
+                            fSoftCommit("default");
+                            if(N == 1){
+                                addTempEnv(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempEnv(CurrentDare)
+                            }
+                        }
+                }
+                else if(CurrentDare.includes("WHEEL CHANGE :")){
+                    index = countNewlinesBeforeSubstring(textArea3Obj["default"], CurrentDare.replaceAll("WHEEL CHANGE : ", ""));
+                        if(index != null){
+                            plusText3.value = addNAfterKNewlines(plusText3.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText3.value, index)}`;
+                            fSoftCommit("default");
+                            if(N == 1){
+                                addTempWheelch(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempWheelch(CurrentDare)
+                            }
+                        }
+                }
+                else{
+                    index = countNewlinesBeforeSubstring(textArea1Obj["default"], CurrentDare);
+                        if(index != null){
+                            plusText1.value = addNAfterKNewlines(plusText1.value, index, N);
+                            document.getElementById("currentDareCount").innerText = `CURRENT COUNT ${getDareMult(plusText1.value, index)}`;
+                            fSoftCommit("default");
+                            if(N == 1){
+                                addTempDare(CurrentDare)
+                            }
+                            if(N == -1){
+                                removeTempDare(CurrentDare)
+                            }
+                            
+                        }
+                }
+                break;
+            default:
+                
+        }
+    }
+
+    function getAverageColorFromImageSrc(src, callback) {
+        const img = new Image();
+        img.crossOrigin = "Anonymous"; // Allow cross-origin images if needed
+        img.src = src;
+      
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+      
+          canvas.width = img.width;
+          canvas.height = img.height;
+      
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          const imageData = ctx.getImageData(0, 0, img.width, img.height).data;
+      
+          let r = 0, g = 0, b = 0, totalWeight = 0;
+      
+          // Loop through all pixels
+          for (let i = 0; i < imageData.length; i += 4) {
+            const pixelR = imageData[i];
+            const pixelG = imageData[i + 1];
+            const pixelB = imageData[i + 2];
+            const pixelA = imageData[i + 3]; // Alpha value (0-255)
+      
+            if (pixelA === 0) continue; // Skip transparent pixels
+      
+            // Calculate colorfulness: difference between max and min RGB values
+            const colorfulness = Math.max(pixelR, pixelG, pixelB) - Math.min(pixelR, pixelG, pixelB);
+      
+            // Weight based on colorfulness (normalized)
+            const weight = colorfulness / 255;
+      
+            // Accumulate weighted color values
+            r += pixelR * weight;
+            g += pixelG * weight;
+            b += pixelB * weight;
+      
+            totalWeight += weight;
+          }
+      
+          if (totalWeight === 0) {
+            callback("rgb(0, 0, 0)"); // Return black if no valid pixels
+            return;
+          }
+      
+          // Calculate the weighted average color
+          let avgR = Math.round(r / totalWeight);
+          let avgG = Math.round(g / totalWeight);
+          let avgB = Math.round(b / totalWeight);
+      
+          // Step 2: Post-process to boost colorfulness if too neutral
+          const colorfulness = Math.max(avgR, avgG, avgB) - Math.min(avgR, avgG, avgB);
+          if (colorfulness < 50) { // Threshold for low colorfulness
+            // Identify the dominant color channel
+            const maxChannel = Math.max(avgR, avgG, avgB);
+      
+            if (maxChannel === avgR) avgR = Math.min(avgR + 50, 255); // Boost red
+            if (maxChannel === avgG) avgG = Math.min(avgG + 50, 255); // Boost green
+            if (maxChannel === avgB) avgB = Math.min(avgB + 50, 255); // Boost blue
+      
+            // Increase saturation further by pushing other channels away
+            if (avgR >= avgG && avgR >= avgB) {
+              avgG = Math.max(avgG - 30, 0);
+              avgB = Math.max(avgB - 30, 0);
+            } else if (avgG >= avgR && avgG >= avgB) {
+              avgR = Math.max(avgR - 30, 0);
+              avgB = Math.max(avgB - 30, 0);
+            } else if (avgB >= avgR && avgB >= avgG) {
+              avgR = Math.max(avgR - 30, 0);
+              avgG = Math.max(avgG - 30, 0);
+            }
+          }
+      
+          // Final average color
+          const finalColor = `rgb(${avgR + 50}, ${avgG + 50}, ${avgB + 50})`;
+          callback(finalColor);
+        };
+      
+        img.onerror = () => {
+          console.error("Failed to load the image:", src);
+          callback(null);
+        };
+      }
+      
+
+function fSoftCommit(item){
+        //finish saving current editor 
+        if(currentEditor == ""){
+            
+        }
+        else{
+            textArea1Obj[currentEditor] = textArea1.value;
+            textArea2Obj[currentEditor] = textArea2.value;
+            textArea3Obj[currentEditor] = textArea3.value;
+    
+            plusText1Obj[currentEditor] = plusText1.value;
+            plusText2Obj[currentEditor] = plusText2.value;
+            plusText3Obj[currentEditor] = plusText3.value;
+        }
+        
+            textArea1.value = textArea1Obj[item];
+            textArea2.value = textArea2Obj[item];
+            textArea3.value = textArea3Obj[item];
+    
+            plusText1.value = plusText1Obj[item]; 
+            plusText2.value = plusText2Obj[item]; 
+            plusText3.value = plusText3Obj[item];
+    
+            saveTextArea(item);
+    
+    }
+
+    function addTempDare(added){
+        switch(current_wheel) {
+            case "no pain":
+                wheeldata_Pain_Free.dares.push(added);
+                change_wheel(wheeldata_Pain_Free);
+                break;
+            case "no enemies":
+                wheeldata_No_Enemies.dares.push(added);
+                change_wheel(wheeldata_No_Enemies);
+                break;
+            case "memes":
+                wheeldata_Memes.dares.push(added);
+                change_wheel(wheeldata_Memes);
+                break;
+            case "vergipsycho":
+                wheeldata_Vergi_psycho.dares.push(added);
+                change_wheel(wheeldata_Vergi_psycho);
+                break;
+            case "no sitting":
+                wheeldata_No_Sitting.dares.push(added);
+                change_wheel(wheeldata_No_Sitting);
+                break;
+            case "default":
+                wheeldata_Default.dares.push(added);
+                change_wheel(wheeldata_Default);
+                break;
+            default:
+                
+        }
+    }
+    function addTempEnv(added){
+        switch(current_wheel) {
+            case "no pain":
+                wheeldata_Pain_Free.environments.push(added);
+                change_wheel(wheeldata_Pain_Free);
+                break;
+            case "no enemies":
+                wheeldata_No_Enemies.environments.push(added);
+                change_wheel(wheeldata_No_Enemies);
+                break;
+            case "memes":
+                wheeldata_Memes.environments.push(added);
+                change_wheel(wheeldata_Memes);
+                break;
+            case "vergipsycho":
+                wheeldata_Vergi_psycho.environments.push(added);
+                change_wheel(wheeldata_Vergi_psycho);
+                break;
+            case "no sitting":
+                wheeldata_No_Sitting.environments.push(added);
+                change_wheel(wheeldata_No_Sitting);
+                break;
+            case "default":
+                wheeldata_Default.environments.push(added);
+                change_wheel(wheeldata_Default);
+                break;
+            default:
+                
+        }
+    }
+    function addTempWheelch(added){
+        switch(current_wheel) {
+            case "no pain":
+                wheeldata_Pain_Free.wheel_changes.push(added);
+                change_wheel(wheeldata_Pain_Free);
+                break;
+            case "no enemies":
+                wheeldata_No_Enemies.wheel_changes.push(added);
+                change_wheel(wheeldata_No_Enemies);
+                break;
+            case "memes":
+                wheeldata_Memes.wheel_changes.push(added);
+                change_wheel(wheeldata_Memes);
+                break;
+            case "vergipsycho":
+                wheeldata_Vergi_psycho.wheel_changes.push(added);
+                change_wheel(wheeldata_Vergi_psycho);
+                break;
+            case "no sitting":
+                wheeldata_No_Sitting.wheel_changes.push(added);
+                change_wheel(wheeldata_No_Sitting);
+                break;
+            case "default":
+                wheeldata_Default.wheel_changes.push(added);
+                change_wheel(wheeldata_Default);
+                break;
+            default:
+                
+        }
+    }
+    function removeFirstMatch(arr, str) {
+        // Find the index of the first occurrence of the string
+        const index = arr.indexOf(str);
+        
+        // If the string exists in the array, remove it
+        if (index !== -1) {
+          arr.splice(index, 1);
+        }
+      }
+    function removeTempDare(added){
+        switch(current_wheel) {
+            case "no pain":
+                removeFirstMatch(wheeldata_Pain_Free.dares, added);
+                change_wheel(wheeldata_Pain_Free);
+                break;
+            case "no enemies":
+                removeFirstMatch(wheeldata_No_Enemies.dares, added);
+                change_wheel(wheeldata_No_Enemies);
+                break;
+            case "memes":
+                removeFirstMatch(wheeldata_Memes.dares, added);
+                change_wheel(wheeldata_Memes);
+                break;
+            case "vergipsycho":
+                removeFirstMatch(wheeldata_Vergi_psycho.dares, added);
+                change_wheel(wheeldata_Vergi_psycho);
+                break;
+            case "no sitting":
+                removeFirstMatch(wheeldata_No_Sitting.dares, added);
+                change_wheel(wheeldata_No_Sitting);
+                break;
+            case "default":
+                removeFirstMatch(wheeldata_Default.dares, added);
+                change_wheel(wheeldata_Default);
+                break;
+            default:
+        }
+    }
+    function removeTempEnv(added){
+        switch(current_wheel) {
+            case "no pain":
+                removeFirstMatch(wheeldata_Pain_Free.environments, added);
+                change_wheel(wheeldata_Pain_Free);
+                break;
+            case "no enemies":
+                removeFirstMatch(wheeldata_No_Enemies.environments, added);
+                change_wheel(wheeldata_No_Enemies);
+                break;
+            case "memes":
+                removeFirstMatch(wheeldata_Memes.environments, added);
+                change_wheel(wheeldata_Memes);
+                break;
+            case "vergipsycho":
+                removeFirstMatch(wheeldata_Vergi_psycho.environments, added);
+                change_wheel(wheeldata_Vergi_psycho);
+                break;
+            case "no sitting":
+                removeFirstMatch(wheeldata_No_Sitting.environments, added);
+                change_wheel(wheeldata_No_Sitting);
+                break;
+            case "default":
+                removeFirstMatch(wheeldata_Default.environments, added);
+                change_wheel(wheeldata_Default);
+                break;
+            default:
+        }
+    }
+    function removeTempWheelch(added){
+        switch(current_wheel) {
+            case "no pain":
+                removeFirstMatch(wheeldata_Pain_Free.wheel_changes, added);
+                change_wheel(wheeldata_Pain_Free);
+                break;
+            case "no enemies":
+                removeFirstMatch(wheeldata_No_Enemies.wheel_changes, added);
+                change_wheel(wheeldata_No_Enemies);
+                break;
+            case "memes":
+                removeFirstMatch(wheeldata_Memes.wheel_changes, added);
+                change_wheel(wheeldata_Memes);
+                break;
+            case "vergipsycho":
+                removeFirstMatch(wheeldata_Vergi_psycho.wheel_changes, added);
+                change_wheel(wheeldata_Vergi_psycho);
+                break;
+            case "no sitting":
+                removeFirstMatch(wheeldata_No_Sitting.wheel_changes, added);
+                change_wheel(wheeldata_No_Sitting);
+                break;
+            case "default":
+                removeFirstMatch(wheeldata_Default.wheel_changes, added);
+                change_wheel(wheeldata_Default);
+                break;
+            default:
+        }
+    }

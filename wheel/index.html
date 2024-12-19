@@ -59,6 +59,10 @@
             <p>default error</p>
             </h2>
       </div>
+      <div class="popup-content popupAdd">
+        <button style="width: 15%;" id="currentDareCountMinus">COUNT -1</button><p style="width: 44%;" id="currentDareCount">CURRENT COUNT 000</p><button style="width: 15%;" id="currentDareCountPlus">COUNT +1</button>
+      </div>
+      
   </div>
   <div id="popupbackground"></div>
 
@@ -256,6 +260,7 @@
                         <div class="dropdown-item" data-value="Shot glass 2">Shot glass 2</div>
                         <div class="dropdown-item" data-value="Cactus glass">Cactus glass</div>
                         <div class="dropdown-item" data-value="Red cup">Red cup</div>
+                        <div class="dropdown-item" data-value="Flaming shot">Flaming shot</div>
 
                     </div>
                 </div>
@@ -268,6 +273,8 @@
                         <div class="dropdown-item" data-value="Coctail glass 2">Coctail glass 2</div>
                         <div class="dropdown-item" data-value="Copper mug">Copper mug</div>
                         <div class="dropdown-item" data-value="Whiskey ice">Whiskey ice</div>
+                        <div class="dropdown-item" data-value="Bloody mary">Bloody Mary</div>
+                        <div class="dropdown-item" data-value="Mohito">Mohito</div>
                     </div>
                 </div>
 
@@ -295,6 +302,8 @@
                         <div class="dropdown-item" data-value="White wine">White wine</div>
                         <div class="dropdown-item" data-value="Champagne">Champagne</div>
                         <div class="dropdown-item" data-value="Sake">Sake</div>
+                        <div class="dropdown-item" data-value="Holy wine">Holy wine</div>
+                        <div class="dropdown-item" data-value="Altar wine">Altar wine</div>
                         
                     </div>
                 </div>
@@ -340,8 +349,8 @@
             
         </div>
 
-          <img id="selectImg" src = "./Images\icons\shot_icon.png" width="80" height="104">
-
+          <img id="selectImg" src = "./Images\icons\shot_icon.png" width="80" height="104"><button style="position: absolute; top: 22%; right: 35%; background: none; box-shadow:none" onclick="getRandomShotImg()" id="shotRandom"><img src="./Images/icons/random_icon.png" width="30px"></button>
+         
         <button id="shotSubmitOne">
             <div> 
                 Create shot counter 
@@ -388,6 +397,11 @@
               <option value="./Images/icons/red_cup_icon.png">Red cup</option>
               <option value="./Images/icons/gin_bottle_icon.png">Gin bottle</option>
               <option value="./Images/icons/rum_bottle_icon.png">Rum bottle</option>
+              <option value="./Images/icons/holy_wine_icon.png">Holy wine</option>
+              <option value="./Images/icons/altar_wine_icon.png">Altar wine</option>
+              <option value="./Images/icons/bloody_mary_icon.png">Bloody mary</option>
+              <option value="./Images/icons/mohito_icon.png">Mohito</option>
+              <option value="./Images/icons/flaming_shot_icon.png">Flaming shot</option>
             </select>
           </form>
     </div>
@@ -689,11 +703,24 @@
           </label>
           <label for="powerDisButton">disable power-ups</label><br>
 
-          <label class="switch">
-            <input id="BoomSetting" type="checkbox" value="car" checked="true">
-            <span class="slider round"></span>
+          <br>
+          <hr class="rounded">
+          <br>
+          Round of shots Animation style:
+
+          <label class="containerRad">Default
+            <input type="radio" checked="checked" name="radio" id="radioDefault">
+            <span class="checkmark"></span>
           </label>
-          <label for="BoomSetting"><img src="./Images/icons/teo.jpg" height="50px" width="100px"></label><br>
+          <label class="containerRad"><img src="./Images/icons/teo.jpg" height="50px" width="100px">
+            <input type="radio" name="radio" id="radioBoom">
+            <span class="checkmark"></span>
+          </label>
+          <label class="containerRad">Slot-machine
+            <input type="radio" name="radio" id="radioSlots">
+            <span class="checkmark"></span>
+          </label>
+          
           <hr class="rounded">
           <br>
           <p>

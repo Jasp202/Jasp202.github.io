@@ -2530,6 +2530,7 @@ const images = {
     "Bloody mary": "./Images/icons/bloody_mary_icon.png",
     "Mohito":    "./Images/icons/mohito_icon.png",
     "Flaming shot":  "./Images/icons/flaming_shot_icon.png",
+    "Hand sanitizer": "./Images/icons/hand_sanitizer_icon.png",
 };
 
 

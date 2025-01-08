@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Disable with Local Storage</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: peachpuff;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        button {
+            border: none;
+            background: lightblue;
+            padding: 0;
+        }
+        button img {
+            width: 100px;
+            height: 100px;
+            filter: grayscale(100%);
+            border: 5px solid #eb0000;
+            border-radius: 5px;
+        }
+        button:disabled img {
+            filter: none;
+            border: 5px solid #29bb0f;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button onclick="markButton(this, 'button1')">
+            <img src="./Images/toothbrush_icon.png" alt="Button 1">
+        </button>
+        <button onclick="markButton(this, 'button2')">
+            <img src="./Images/treadmill_icon.png" alt="Button 2">
+        </button>
+        <button onclick="markButton(this, 'button3')">
+            <img src="./Images/toothbrush_icon.png" alt="Button 3">
+        </button>
+    </div>
+
+    <script>
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        function checkButtonState(buttonId, buttonElement) {
+            const storedData = localStorage.getItem(buttonId);
+            if (storedData === currentDate) {
+                buttonElement.disabled = true;
+            }
+        }
+
+        document.querySelectorAll('button').forEach((button, index) => {
+            checkButtonState(`button${index + 1}`, button);
+        });
+
+        function markButton(button, buttonId) {
+            button.disabled = true;
+            localStorage.setItem(buttonId, currentDate);
+        }
+    </script>
+</body>
+</html>

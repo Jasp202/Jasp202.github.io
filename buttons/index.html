@@ -34,6 +34,36 @@
             border: 5px solid #29bb0f;
             border-radius: 5px;
         }
+        
+        .explosion {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, #63d576, #057105, transparent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            display: none;
+        }
+
+      
+        @keyframes explode {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+      
+        .exploding {
+            display: block;
+            animation: explode 0.5s ease-out forwards;
+        }
+
     </style>
 </head>
 <body>
@@ -41,6 +71,7 @@
         <button onclick="markButton(this, 'button1')">
             <img src="./Images/toothbrush_icon.png" alt="Button 1">
         </button>
+        <div class="explosion"></div>
         <button onclick="markButton(this, 'button2')">
             <img src="./Images/treadmill_icon.png" alt="Button 2">
         </button>
@@ -63,10 +94,46 @@
             checkButtonState(`button${index + 1}`, button);
         });
 
+        const explosion = document.querySelector('.explosion');
         function markButton(button, buttonId) {
             button.disabled = true;
             localStorage.setItem(buttonId, currentDate);
+            
+            switch(buttonId){
+                case "button1":
+                    
+                    explosion.style.top = 'calc(50% - 120px)';
+                    explosion.style.left = '50%';
+                    explosion.classList.add('exploding');
+                    setTimeout(() => {
+                        explosion.classList.remove('exploding');
+                        
+                    }, 3000);
+                    break;
+                case "button2":
+                    
+                    explosion.style.top = 'calc(50%)';
+                    explosion.style.left = '50%';
+                    explosion.classList.add('exploding');
+                    setTimeout(() => {
+                        explosion.classList.remove('exploding');
+                        
+                    }, 3000);
+                    break;
+                case "button3":
+                    
+                    explosion.style.top = 'calc(50% + 130px)';
+                    explosion.style.left = '50%';
+                    explosion.classList.add('exploding');
+                    setTimeout(() => {
+                        explosion.classList.remove('exploding');
+                        
+                    }, 3000);
+                    break;
+                default:
+            }
         }
+
     </script>
 </body>
 </html>

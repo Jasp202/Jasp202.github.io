@@ -3189,7 +3189,7 @@ function rollAll() {
 			mySoundSpin.stop();
 		
 			// Win conditions
-			if (indexes[0] == indexes[1] || indexes[1] == indexes[2]) {
+			if (indexes[0] == indexes[1] && indexes[1] == indexes[2]) {
                 var mySound = new alarmSound("win", 1);
                 mySound.play();
 				const winCls = indexes[0] == indexes[2] ? "win2" : "win1";

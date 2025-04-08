@@ -1,0 +1,119 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: beige;
+  }
+  
+  .gradient-box {
+    font-family: 'Anton', sans-serif;
+    font-weight: 500;
+    position: relative;
+    background: 
+    linear-gradient(to right, #0d44577c 0%, #17799a00 10%, #17799a00 90%, #0d44577b 100%),
+    linear-gradient(to bottom, #0d4557 0%, #177a9a 15%,#177a9a 85%, #0d4557 100%);
+    height: 80vh;
+    width: 80vw;
+    color: white;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .corner {
+    position: absolute;
+    width: 20%; 
+    pointer-events: none;
+  }
+  
+  .top-left {
+    top: 0;
+    left: 0;
+    transform: rotate(180deg);
+  }
+  
+  .top-right {
+    top: 0;
+    right: 0;
+    transform: rotate(-90deg);
+  }
+  
+  .bottom-left {
+    bottom: 0;
+    left: 0;
+    transform: rotate(90deg);
+  }
+  
+  .bottom-right {
+    bottom: 0;
+    right: 0;
+    transform: rotate(0deg);
+  }
+  
+  .content {
+    padding: 8px;
+    z-index: 1; /* Makes sure content sits above corner images */
+    text-align: center;
+    border-style: solid;
+    border-width: 1px;
+    border-color: lightblue;
+    border-left: #ffffff00;
+    border-right: #ffffff00;
+  }
+  .content2 {
+    z-index: 1; /* Makes sure content sits above corner images */
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .split-text {
+    font-size: 10px;
+    font-weight: 100;
+    width: 95%;
+    margin: 0 auto;           /* centers the div horizontally */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1px 2px;
+    box-sizing: border-box;
+   
+  }
+  
+  .left-text {
+    text-align: left;
+  }
+  
+  .right-text {
+    text-align: right;
+  }
+  button{
+    width: 10px;
+    height: 10px;
+  }
+  .warning-text{
+    margin-top: 8%;
+    font-size: 10px;
+    font-weight: 100;
+    width: 95%;
+    text-align: center;
+  }
+ #countdown{
+    margin-top: -2%;
+    font-size: 12px;
+    font-weight: 100;
+    width: 95%;
+    text-align: center;
+  }
+#cancel{
+    position: absolute;
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px;
+    top: 0px;
+    right: 28px;
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeTracker</title>
+    <!---------------  CSS  --------------------->
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="./Images/timerIcon.png">
+    <!---------------  Font Aewsome  --------------------->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" 
+    integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+</head>
+
+<body>
+
+<div class="gradient-box" id="dailyQuestDiv">
+    <img src="./Images/corner.png" class="corner top-left" />
+    <img src="./Images/corner.png" class="corner top-right" />
+    <img src="./Images/corner.png" class="corner bottom-left" />
+    <img src="./Images/corner.png" class="corner bottom-right" />
+    <p id="cancel" onclick="hideDaily()">X</p>
+    
+    <!-- Your main content here -->
+    <div class="content">
+        <i class="fa-solid fa-circle-exclamation"></i> QUEST INFO
+    </div>
+    <div class="content2">
+        Daily Quest - Getting Ready to Become Powerful
+    </div>
+    <div class="content2" style="font-weight: 600; margin-bottom: 10px">
+        <span style="color: lightgreen;">GOALS</span>
+    </div>
+    <div class="split-text">
+        <div class="left-text"><span id="statusPushUps2">[Incomplete]</span> PUSH-UPS</div>
+        <div class="right-text"><span id="counterPushUps" onclick="incrementCounter(statusPushUps2, counterPushUps, statusPushUps, 'Push', 100)">[0/100]</span> <span id="statusPushUps">❌</span></div>
+    </div>
+    <div class="split-text">
+        <div class="left-text"><span id="statusSitUps2">[Incomplete]</span> SIT-UPS</div>
+        <div class="right-text"><span id="counterSitUps" onclick="incrementCounter(statusSitUps2, counterSitUps, statusSitUps, 'Sit', 100)">[0/100]</span> <span id="statusSitUps">❌</span></div>
+    </div>
+    <div class="split-text">
+        <div class="left-text"><span id="statusSquats2">[Incomplete]</span> SQUATS</div>
+        <div class="right-text"><span id="counterSquats" onclick="incrementCounter(statusSquats2, counterSquats, statusSquats, 'Squat', 100)">[0/100]</span> <span id="statusSquats">❌</span></div>
+    </div>
+    <div class="split-text">
+        <div class="left-text"><span id="statusBike2">[Incomplete]</span> BIKE</div>
+        <div class="right-text"><span id="counterBike" onclick="incrementCounter(statusBike2, counterBike, statusBike, 'Bike', 20)">[0/20KM]</span> <span id="statusBike">❌</span></div>
+    </div>
+    <div class="warning-text">
+        <span style="color: rgb(225, 14, 14); font-weight: 800">WARNING!</span> - If the daily quest is remains incomplete, penalties will be given accordingly.
+    </div>
+    <img src="./Images/timerIcon.png" style="height: 5%;">
+    <div id="countdown">Loading...</div>
+  </div>
+
+  <script src="script.js"></script> 
+</body>

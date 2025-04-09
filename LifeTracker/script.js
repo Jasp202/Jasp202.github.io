@@ -1,3 +1,15 @@
+// Set --vh to 1% of the actual viewport height
+function setVh() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }
+  
+  // Initial setup
+  setVh();
+  
+  // Update on resize or orientation change
+  window.addEventListener('resize', setVh);
+  
 //#region Daily Quest
 var currentSitUps = 0;
 var currentPushUps = 0;

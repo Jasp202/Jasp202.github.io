@@ -1,12 +1,13 @@
 body {
     margin: 0;
-    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
     background: beige;
+    overflow: hidden;
   }
   
   .gradient-box {
     position: fixed;
-    top: 70vw;
+    top: 35vh;
     left: 50vw;
     transform: translate(-50%, -50%);
     font-family: 'Anton', sans-serif;
@@ -121,7 +122,7 @@ body {
 
 .progress-box {
     position: fixed;
-    top: 70vw;
+    top: 35vh;
     left: 50vw;
     transform: translate(-50%, -50%);
     font-family: 'Anton', sans-serif;

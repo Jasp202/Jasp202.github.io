@@ -7,7 +7,7 @@ body {
   
   .gradient-box {
     position: fixed;
-    top: 20vh;
+    top: 30vh;
     left: 50vw;
     transform: translate(-50%, -50%);
     font-family: 'Anton', sans-serif;
@@ -27,6 +27,7 @@ body {
     gap: 15px; 
     justify-content: center;
     align-items: center;
+    border-radius: 1px;
   }
   
   .corner {

@@ -1,13 +1,14 @@
 body {
     margin: 0;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background: beige;
   }
   
   .gradient-box {
+    position: fixed;
+    top: 70vw;
+    left: 50vw;
+    transform: translate(-50%, -50%);
     font-family: 'Anton', sans-serif;
     font-weight: 500;
     position: relative;
@@ -20,7 +21,7 @@ body {
     padding: 20px;
     box-sizing: border-box;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 15px; 
     justify-content: center;
@@ -116,4 +117,83 @@ body {
     text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px;
     top: 0px;
     right: 28px;
+}
+
+.progress-box {
+    position: fixed;
+    top: 70vw;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    font-family: 'Anton', sans-serif;
+    font-weight: 500;
+    position: relative;
+    background: 
+    linear-gradient(to right, rgb(211, 105, 160) 0%, rgba(255, 218, 255, 0.281) 5%, rgba(255, 218, 255, 0.281) 95%, rgb(211, 105, 160) 100%),
+    linear-gradient(to bottom, rgb(211, 105, 160) 0%, white 3%,white 97%, rgb(211, 105, 160) 100%);
+    height: 80vh;
+    width: 80vw;
+    color: white;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    display: none;
+    flex-direction: column;
+    gap: 25px; 
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.cyan-bar{
+    --maincolor: #0ff;
+    --lightcolor: rgb(182, 255, 255);
+}
+.pink-bar{
+    --maincolor: #ec90ac;
+    --lightcolor: #f0e0e5;
+}
+.green-bar{
+    --maincolor: #7eea7c;
+    --lightcolor: #cdf0c9;
+}
+.progress-container {
+    text-align: left;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    
+  }
+  
+  .progress-text {
+    font-size: 1.2rem;
+    color: var(--maincolor);
+    text-shadow: 1px 1px 2px black;
+    
+  }
+  
+  .progress-bar {
+    width: 100%;
+    height: 10px;
+    border: 3px solid var(--maincolor);
+    background-color: #000;
+    position: relative;
+    box-shadow: 0 0 10px var(--maincolor);
+    padding: 1px;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    width: 0%; /* Set this to whatever percentage you want */
+    background-color: var(--lightcolor);
+    border-radius: 1px;
+  }
+
+#cancelProgress{
+    position: absolute;
+    color: white;
+    text-shadow: 0 0 2px #000000, 0 0 2px #000000, 0 0 3px;
+    top: 5px;
+    right: 20px;
+}
+#noGame{
+    width: 100%;
 }

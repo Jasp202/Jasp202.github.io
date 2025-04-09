@@ -93,7 +93,9 @@ function incrementCounter(status2, counter, status, key, max) {
 function hideDaily() {
     document.getElementById("dailyQuestDiv").style.display = "none";
 }
-
+function showDaily() {
+    document.getElementById("dailyQuestDiv").style.display = "flex";
+}
     
 if(localStorage.Sit){
     currentSitUps = localStorage.Sit -10;
@@ -135,3 +137,50 @@ checkDateOnFocus();
 window.addEventListener("focus", checkDateOnFocus);
 
 //#endregion
+
+var gymCounter = 0;
+var alcoholCounter = 0;
+var dietCounter = 0;
+
+function addProgress(key, counter, progress) {
+    let current;
+    switch(key){
+        case "gym":
+            gymCounter += 1;
+            localStorage.gymCounter = gymCounter;
+            current = gymCounter;
+            break;
+        case "alcohol":
+            alcoholCounter += 1;
+            localStorage.alcoholCounter = alcoholCounter;
+            current = alcoholCounter;
+            break;
+        case "diet":
+            dietCounter +=1;
+            localStorage.dietCounter = dietCounter;
+            current = dietCounter;
+            break;
+    }
+counter.textContent = ` ${current}/${Math.floor(current/10 + 1)*10} Days`;
+progress.style.width = `${current / Math.floor(current/10 + 1) * 10}%`
+}
+
+if(localStorage.gymCounter){
+    gymCounter = localStorage.gymCounter -1;
+    document.getElementById("gym").click();
+}
+if(localStorage.alcoholCounter){
+    alcoholCounter = localStorage.alcoholCounter -1;
+    document.getElementById("alcohol").click();
+}
+if(localStorage.dietCounter){
+    dietCounter = localStorage.dietCounter -1;
+    document.getElementById("diet").click();
+}
+
+function showProgress(){
+    document.getElementById("progressDiv").style.display = "flex";
+}
+function hideProgress(){
+    document.getElementById("progressDiv").style.display = "none";
+}

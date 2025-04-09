@@ -17,6 +17,8 @@
 </head>
 
 <body>
+    <button style="width: 100px; height: 100px" onclick="showDaily()">show daily</button>
+    <button style="width: 100px; height: 100px" onclick="showProgress()">show progress</button>
 
 <div class="gradient-box" id="dailyQuestDiv">
     <img src="./Images/corner.png" class="corner top-left" />
@@ -37,15 +39,15 @@
     </div>
     <div class="split-text">
         <div class="left-text"><span id="statusPushUps2">[Incomplete]</span> PUSH-UPS</div>
-        <div class="right-text"><span id="counterPushUps" onclick="incrementCounter(statusPushUps2, counterPushUps, statusPushUps, 'Push', 100)">[0/100]</span> <span id="statusPushUps">❌</span></div>
+        <div class="right-text"><span id="counterPushUps" onclick="incrementCounter(statusPushUps2, counterPushUps, statusPushUps, 'Push', 50)">[0/50]</span> <span id="statusPushUps">❌</span></div>
     </div>
     <div class="split-text">
         <div class="left-text"><span id="statusSitUps2">[Incomplete]</span> SIT-UPS</div>
-        <div class="right-text"><span id="counterSitUps" onclick="incrementCounter(statusSitUps2, counterSitUps, statusSitUps, 'Sit', 100)">[0/100]</span> <span id="statusSitUps">❌</span></div>
+        <div class="right-text"><span id="counterSitUps" onclick="incrementCounter(statusSitUps2, counterSitUps, statusSitUps, 'Sit', 50)">[0/50]</span> <span id="statusSitUps">❌</span></div>
     </div>
     <div class="split-text">
         <div class="left-text"><span id="statusSquats2">[Incomplete]</span> SQUATS</div>
-        <div class="right-text"><span id="counterSquats" onclick="incrementCounter(statusSquats2, counterSquats, statusSquats, 'Squat', 100)">[0/100]</span> <span id="statusSquats">❌</span></div>
+        <div class="right-text"><span id="counterSquats" onclick="incrementCounter(statusSquats2, counterSquats, statusSquats, 'Squat', 50)">[0/50]</span> <span id="statusSquats">❌</span></div>
     </div>
     <div class="split-text">
         <div class="left-text"><span id="statusBike2">[Incomplete]</span> BIKE</div>
@@ -58,5 +60,31 @@
     <div id="countdown">Loading...</div>
   </div>
 
+<div class="progress-box" id="progressDiv">
+    <img src="./Images/NoGameNoLyfe.png" id="noGame">
+    <p id="cancelProgress" onclick="hideProgress()">X</p>
+
+    <div id="gym" class="cyan-bar progress-container" onclick="addProgress('gym', document.getElementById('gymCounter'), document.getElementById('gymProgress'))">
+        <div class="progress-text"> <i class="fa-solid fa-dumbbell"></i><span id="gymCounter"> 0/10 Days</span></div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="gymProgress"></div>
+        </div>
+      </div>
+
+      <div id="alcohol" class="pink-bar progress-container" onclick="addProgress('alcohol', document.getElementById('alcoholCounter'), document.getElementById('alcoholProgress'))">
+        <div class="progress-text"><i class="fa-solid fa-wine-bottle"></i><span id="alcoholCounter"> 0/10 Days</span></div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="alcoholProgress"></div>
+        </div>
+      </div>
+
+      <div id="diet" class="green-bar progress-container" onclick="addProgress('diet', document.getElementById('dietCounter'), document.getElementById('dietProgress'))">
+        <div class="progress-text"><i class="fa-solid fa-cat"></i><span id="dietCounter"> 0/10 Days</span></div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="dietProgress"></div>
+        </div>
+      </div>
+      <img height="20px">
+</div>
   <script src="script.js"></script> 
 </body>

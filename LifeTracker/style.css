@@ -27,7 +27,7 @@ body {
     gap: 15px; 
     justify-content: center;
     align-items: center;
-    border-radius: 1px;
+    border-radius: 5px;
   }
   
   .corner {

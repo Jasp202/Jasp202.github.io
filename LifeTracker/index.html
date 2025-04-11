@@ -19,7 +19,13 @@
 <body>
     <button style="width: 100px; height: 100px" onclick="showDaily()">show daily</button>
     <button style="width: 100px; height: 100px" onclick="showProgress()">show progress</button>
-
+    <button style="width: 100px; height: 100px" onclick="showWeather()">show weather</button>
+    
+    <div class="weatherContainer" id="WeatherContainer" onclick="hideWeather()">
+        <table id="weatherTable"></table>
+        <img id="uvImage"src="https://cdn.fmi.fi/apps/global-ultraviolet-index/plot.php?location=helsinki&lang=fi&day=0">
+    </div>
+    
 <div class="gradient-box" id="dailyQuestDiv">
     <img src="./Images/corner.png" class="corner top-left" />
     <img src="./Images/corner.png" class="corner top-right" />

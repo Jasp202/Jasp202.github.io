@@ -199,3 +199,42 @@ body {
 #noGame{
     width: 100%;
 }
+
+#uvImage{
+    border: 5px solid #555;
+    padding: 5px;
+    background-color: white;
+    width: calc(100% - 20px);
+}
+th, td {
+    border: 2px solid transparent;
+    width: 50px;
+    
+  }
+  table{
+    border: 5px solid #555;
+    border-bottom: 0px;
+    font-size: 20px;
+    font-weight: bold;
+    background: 
+    linear-gradient(to bottom, lightblue 0%, lightblue 49%, white 50%, white 100%);
+    width: 100%;
+  }
+  .redWeather{
+    color: red;
+  }
+  .blueWeather{
+    color: darkblue;
+  }
+  .weatherContainer{
+    position: fixed;
+    top: 30vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    display: none;
+    width: 80vw;
+    flex-direction: column;
+    gap: 15px; 
+    justify-content: center;
+    align-items: center;
+  }

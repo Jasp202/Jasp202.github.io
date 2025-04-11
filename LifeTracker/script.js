@@ -150,6 +150,8 @@ window.addEventListener("focus", checkDateOnFocus);
 
 //#endregion
 
+//#region Progress bars
+
 var gymCounter = 0;
 var alcoholCounter = 0;
 var dietCounter = 0;
@@ -196,3 +198,78 @@ function showProgress(){
 function hideProgress(){
     document.getElementById("progressDiv").style.display = "none";
 }
+//#endregion
+
+//#region Weather
+document.addEventListener('DOMContentLoaded', () => {
+    const url = 'https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&place=helsinki&';
+  
+    fetch(url)
+      .then(res => res.text())
+      .then(xmlText => {
+        const temperatureData = [];
+  
+        // Loop through each <wfs:member> block
+        const memberRegex = /<wfs:member>([\s\S]*?)<\/wfs:member>/g;
+        let match;
+  
+        while ((match = memberRegex.exec(xmlText)) !== null) {
+          const member = match[1];
+  
+          if (member.includes('<BsWfs:ParameterName>Temperature</BsWfs:ParameterName>')) {
+            const timeMatch = /<BsWfs:Time>(.*?)<\/BsWfs:Time>/i.exec(member);
+            const valueMatch = /<BsWfs:ParameterValue>(.*?)<\/BsWfs:ParameterValue>/i.exec(member);
+  
+            if (timeMatch && valueMatch) {
+              const timeRaw = new Date(timeMatch[1]).toISOString().replace('T', ' ').split('.')[0];
+              const value = valueMatch[1];
+              const boolTime = checkTime(timeRaw);
+              const time = timeRaw.split(' ')[1].split(':')[0];
+              if(boolTime) temperatureData.push({ time, value, boolTime });
+            }
+          }
+        }
+          const table = document.getElementById("weatherTable");
+          const rowTime = table.insertRow(0);
+          const rowWeather = table.insertRow(1);
+          rowWeather.classList.add("redWeather");
+          rowTime.classList.add("blueWeather")
+          for(i = 0; i < temperatureData.length; i++){
+              var cellTime = rowTime.insertCell(i);
+              var cellWeather = rowWeather.insertCell(i);
+              cellTime.innerHTML = temperatureData[i].time;
+              cellWeather.innerHTML = Math.round(temperatureData[i].value) + "°";
+          }
+          
+      })
+      .catch(err => {
+        console.error('Error:', err.message);
+      });
+  });
+  
+  function checkTime(inputTimeStr) {
+      const now = new Date();
+      const input = new Date(inputTimeStr.replace(" ", "T")); // Local time
+
+      const sameDate =
+          input.getFullYear() === now.getFullYear() &&
+          input.getMonth() === now.getMonth() &&
+          input.getDate() === now.getDate();
+
+      const sameHour = input.getHours() === now.getHours();
+
+      if (sameDate && (input > now || sameHour)) {
+          return true;
+        } 
+      else {
+          return false;
+        }
+  }
+
+function hideWeather(){
+    document.getElementById("WeatherContainer").style.display = "none";
+}
+function showWeather(){
+    document.getElementById("WeatherContainer").style.display = "block";
+}
+//#endregion Weather

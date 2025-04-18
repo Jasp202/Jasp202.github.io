@@ -17,13 +17,40 @@
 </head>
 
 <body>
-    <button style="width: 100px; height: 100px" onclick="showDaily()">show daily</button>
-    <button style="width: 100px; height: 100px" onclick="showProgress()">show progress</button>
-    <button style="width: 100px; height: 100px" onclick="showWeather()">show weather</button>
+    <div id="topDiv">
+        <img src="./Images/xp.png" class="xpImage">
+        <div class="xpLevel" id="xpText">0</div>
+        <div id="xp" class="cyan-bar xp-container">
+            <div class="xp-bar">
+              <div class="xp-fill" id="xpProgress"></div>
+            </div>
+          </div>
+        <div class="xpNumber" id="xpNumber">0/200</div>
+        <div class="currency" id="orbsText">0
+            <img src="./Images/ManaOrbs.png" width="20px">
+        </div>
+        <div class="currency" id="diamondsText">0
+            <img src="./Images/Diamond.png" width="20px">
+        </div>
+    </div>
+
+    <button id="soloButton" onclick="showDaily()">
+        <img src="./Images/solo.png"width=100%>
+    </button>
+    <br>
+    <button id="gameButton" onclick="showProgress()">
+        <img src="./Images/Progress.png" width="100%">
+    </button>
+    <br>
+    <button  id ="weatherButton" onclick="showWeather()"><i class="fa-solid fa-temperature-three-quarters"></i></button>
     
     <div class="weatherContainer" id="WeatherContainer" onclick="hideWeather()">
         <table id="weatherTable"></table>
         <img id="uvImage"src="https://cdn.fmi.fi/apps/global-ultraviolet-index/plot.php?location=helsinki&lang=fi&day=0">
+    </div>
+    <div id="me">
+        <img src="./Images/me.png" height="100%">
+        <img src="./Images/trophy.png" height="10%" style="margin-top: 5%;">
     </div>
     
 <div class="gradient-box" id="dailyQuestDiv">

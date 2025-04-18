@@ -9,31 +9,149 @@ function setVh() {
   
   // Update on resize or orientation change
   window.addEventListener('resize', setVh);
-  
+
+
+//#region Currencies
+
+let level = 0;
+if(localStorage.level){
+    level = Number(localStorage.level);
+}
+console.log(level)
+let xp = 0;
+if(localStorage.xp){
+    xp = Number(localStorage.xp);
+}
+console.log(xp)
+let orbs = 0;
+if(localStorage.orbs){
+    orbs = Number(localStorage.orbs);
+}
+console.log(orbs)
+let diamonds = 0;
+if(localStorage.diamonds){
+    diamonds = Number(localStorage.diamonds);
+}
+console.log(diamonds);
+document.getElementById("xpProgress").style.width = xp / (2 + level*2);
+document.getElementById("xpNumber").innerHTML = `${xp}/${200 + level*200}`;
+document.getElementById("xpProgress").style.width = Math.round(xp / (2 + level*2)) +"%";
+document.getElementById("xpNumber").innerHTML = `${xp}/${200 + level*200}`;
+document.getElementById("xpText").innerHTML = level;
+document.getElementById("orbsText").innerHTML = orbs + '<img src="./Images/ManaOrbs.png" width="20px">';
+document.getElementById("diamondsText").innerHTML = diamonds +'<img src="./Images/Diamond.png" width="20px">';
+
+function changeCurrencies(xpDelta, orbsDelta, diamondsDelta) {
+    if(xpDelta != 0 && xp + xpDelta < 200 + level*200){
+        xp = xp + xpDelta;
+        localStorage.xp = xp;
+        document.getElementById("xpProgress").style.width = Math.round(xp / (2 + level*2)) +"%";
+        document.getElementById("xpNumber").innerHTML = `${xp}/${200 + level*200}`;
+    }
+    else if(xpDelta + xp >= 200 + level*200){
+        xp = xp + xpDelta - (200 + level*200);
+        level = level + 1;
+        localStorage.level = level;
+        localStorage.xp = xp;
+        document.getElementById("xpProgress").style.width = Math.round(xp / (2 + level*2)) +"%";
+        console.log( Math.round(xp / (2 + level*2)) +"%")
+        document.getElementById("xpNumber").innerHTML = `${xp}/${200 + level*200}`;
+        document.getElementById("xpText").innerHTML = level;
+    }
+    if(orbsDelta != 0){
+        orbs = orbs + orbsDelta;
+        localStorage.orbs = orbs;
+        document.getElementById("orbsText").innerHTML = orbs + '<img src="./Images/ManaOrbs.png" width="20px">';
+    }
+    if(diamondsDelta != 0){
+        diamonds = diamonds + diamondsDelta;
+        localStorage.diamonds = diamonds;
+        document.getElementById("diamondsText").innerHTML = diamonds +'<img src="./Images/Diamond.png" width="20px">';
+    }
+}
+
+//#endregion
+
 //#region Daily Quest
 var currentSitUps = 0;
 var currentPushUps = 0;
 var currentSquats = 0;
 var currentBike = 0;
 
+var sitReward = 0;
+var pushReward = 0;
+var squatReward = 0;
+var bikeReward = 0;
+var claimedReward = 0;
+
+function dailyReward() {
+    console.log(claimedReward)
+    
+    if(claimedReward == 2){
+        console.log(claimedReward)
+        return;
+    }
+    else if(claimedReward == 0 && bikeReward >= 1 && pushReward >= 1 && sitReward >= 1 && squatReward >= 1){
+        changeCurrencies(100, 0, 0);
+        claimedReward = 1;
+        localStorage.claimedReward = 1;
+        console.log("def",claimedReward)
+        return;
+    }
+    else if(claimedReward == 1 && bikeReward == 2 && pushReward == 2 && sitReward == 2 && squatReward == 2){
+        changeCurrencies(100,50,1);
+        claimedReward = 2;
+        localStorage.claimedReward = 2;
+        console.log("crown",claimedReward)
+        return;
+    }
+    else{
+        return;
+    }
+}
+
+function isToday(){
+const today = new Date().toLocaleDateString("en-CA");
+    const saved = localStorage.getItem("lastVisitDate");
+  
+    if (today === saved) {
+      return true
+    } else {
+        return false
+}}
+
 function incrementCounter(status2, counter, status, key, max) {
     let current;
+    var currentReward = {
+    };
     switch (key) {
         case "Sit":
           currentSitUps += 10;
           current = currentSitUps;
+          currentReward = currentReward = {
+            set: (val) => sitReward = val,
+        };
           break;
         case "Push":
           currentPushUps += 10;
           current = currentPushUps;
+          currentReward = currentReward = {
+            set: (val) => pushReward = val,
+        };
           break;
         case "Squat":
           currentSquats += 10;
           current = currentSquats;
+          currentReward = currentReward = {
+            set: (val) => squatReward = val,
+        };
           break;
         case "Bike":
           currentBike += 10;
           current = currentBike;
+          currentReward = currentReward = {
+            set: (val) => bikeReward = val,
+        };
           break;
       }
       
@@ -46,15 +164,19 @@ function incrementCounter(status2, counter, status, key, max) {
       if (current >= max) {
         status.textContent = "✔️";
         status2.textContent = "[Complete]";
+        currentReward.set(1);
       }
       if (current >= 2*max) {
         status.textContent = "👑";
         status2.textContent = "[Complete]";
+        currentReward.set(2);
       }
       if (current == 0) {
         status.textContent = "❌";
         status2.textContent = "[Incomplete]";
       }
+      dailyReward();
+
   }
 
   function updateTimer() {
@@ -109,6 +231,8 @@ function showDaily() {
     document.getElementById("dailyQuestDiv").style.display = "flex";
 }
     
+
+checkDateOnFocus();
 if(localStorage.Sit){
     currentSitUps = localStorage.Sit -10;
     document.getElementById("counterSitUps").click();
@@ -131,7 +255,14 @@ function checkDateOnFocus() {
   
     if (today === saved) {
       //same day no changes
+      console.log("todia")
+      if(localStorage.claimedReward){
+        claimedReward = Number(localStorage.claimedReward);
+        console.log("claimed",claimedReward)
+      }
     } else {
+    claimedReward = 0;
+    localStorage.claimedReward = 0;
     currentSitUps = -10;
     document.getElementById("counterSitUps").click();
     currentPushUps = -10;
@@ -144,7 +275,7 @@ function checkDateOnFocus() {
     localStorage.setItem("lastVisitDate", today);
     }
 }
-checkDateOnFocus();
+
 // Run again every time the tab gains focus
 window.addEventListener("focus", checkDateOnFocus);
 
@@ -178,6 +309,25 @@ function addProgress(key, counter, progress) {
 counter.textContent = ` ${current}/${Math.floor(current/10 + 1)*10} Days`;
 progress.style.width = `${current / Math.floor(current/10 + 1) * 10}%`
 }
+function resetProgress(key, counter, progress){
+    console.log("reset!")
+    switch(key){
+        case "gym":
+            gymCounter = 0;
+            localStorage.gymCounter = gymCounter;
+            break;
+        case "alcohol":
+            alcoholCounter = 0;
+            localStorage.alcoholCounter = alcoholCounter;
+            break;
+        case "diet":
+            dietCounter = 0;
+            localStorage.dietCounter = dietCounter;
+            break;
+    }
+counter.textContent = ` 0/10 Days`;
+progress.style.width = `0%`
+}
 
 if(localStorage.gymCounter){
     gymCounter = localStorage.gymCounter -1;
@@ -198,16 +348,53 @@ function showProgress(){
 function hideProgress(){
     document.getElementById("progressDiv").style.display = "none";
 }
+
+//haldes adding hold event listeners
+function AddHoldEvent(element, callback, duration = 750) {
+    let pressTimer;
+
+    const start = () => {
+        console.log("started")
+      pressTimer = setTimeout(() => {
+        console.log("called")
+        callback();
+      }, duration);
+    };
+
+    const cancel = () => {
+        console.log("ended")
+      clearTimeout(pressTimer);
+    };
+
+    // Touch events
+    element.addEventListener("touchstart", start);
+    element.addEventListener("touchend", cancel);
+
+    // Mouse events
+    element.addEventListener("mousedown", start);
+    element.addEventListener("mouseup", cancel);
+    element.addEventListener("mouseleave", cancel);
+}
+
+AddHoldEvent(document.getElementById("gym"), () =>resetProgress('gym', document.getElementById('gymCounter'), document.getElementById('gymProgress')))
+AddHoldEvent(document.getElementById("alcohol"), () =>resetProgress('alcohol', document.getElementById('alcoholCounter'), document.getElementById('alcoholProgress')))
+AddHoldEvent(document.getElementById("diet"), () =>resetProgress('diet', document.getElementById('dietCounter'), document.getElementById('dietProgress')))
 //#endregion
 
 //#region Weather
-document.addEventListener('DOMContentLoaded', () => {
-    const url = 'https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&place=helsinki&';
-  
+loadWeatherData();
+window.addEventListener('focus', loadWeatherData());
+function loadWeatherData(){
+    $("#weatherTable tr").remove(); 
+    const url = 'https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&place=helsinki&' + new Date().getTime();
+    document.getElementById("uvImage").src = "https://cdn.fmi.fi/apps/global-ultraviolet-index/plot.php?location=helsinki&lang=fi&day=0"+ new Date().getTime()
     fetch(url)
       .then(res => res.text())
       .then(xmlText => {
         const temperatureData = [];
+        const precipitationAmount = [];
+        const cloudCover = [];
+        const windSpeed = [];
   
         // Loop through each <wfs:member> block
         const memberRegex = /<wfs:member>([\s\S]*?)<\/wfs:member>/g;
@@ -228,24 +415,109 @@ document.addEventListener('DOMContentLoaded', () => {
               if(boolTime) temperatureData.push({ time, value, boolTime });
             }
           }
+          if (member.includes('<BsWfs:ParameterName>PrecipitationAmount</BsWfs:ParameterName>')) {
+            const valueMatch = /<BsWfs:ParameterValue>(.*?)<\/BsWfs:ParameterValue>/i.exec(member);
+            if (valueMatch) {
+              const value = valueMatch[1];
+              precipitationAmount.push(value);
+            }
+          }
+          if (member.includes('<BsWfs:ParameterName>TotalCloudCover</BsWfs:ParameterName>')) {
+            const valueMatch = /<BsWfs:ParameterValue>(.*?)<\/BsWfs:ParameterValue>/i.exec(member);
+            if (valueMatch) {
+              const value = valueMatch[1];
+              cloudCover.push(value);
+            }
+          }
+          if (member.includes('<BsWfs:ParameterName>WindSpeedMS</BsWfs:ParameterName>')) {
+            const valueMatch = /<BsWfs:ParameterValue>(.*?)<\/BsWfs:ParameterValue>/i.exec(member);
+            if (valueMatch) {
+              const value = valueMatch[1];
+              windSpeed.push(value);
+            }
+          }
+
         }
           const table = document.getElementById("weatherTable");
-          const rowTime = table.insertRow(0);
-          const rowWeather = table.insertRow(1);
-          rowWeather.classList.add("redWeather");
-          rowTime.classList.add("blueWeather")
           for(i = 0; i < temperatureData.length; i++){
-              var cellTime = rowTime.insertCell(i);
-              var cellWeather = rowWeather.insertCell(i);
-              cellTime.innerHTML = temperatureData[i].time;
+                var rowI = table.insertRow(-1);
+                
+              var cellTime = rowI.insertCell(0);
+              var cellWeather = rowI.insertCell(1);
+              var cellCloud = rowI.insertCell(2);
+              var cellWind = rowI.insertCell(3);
+              var cellwater = rowI.insertCell(4);
+              cellwater.innerHTML = (precipitationAmount[i+1]-precipitationAmount[i]).toFixed(1);
+              cellWind.innerHTML = Math.round(windSpeed[i]);
+              cellTime.innerHTML = temperatureData[i].time + ":00";
               cellWeather.innerHTML = Math.round(temperatureData[i].value) + "°";
+              var img = document.createElement("img");
+              img.style.width = "20px"
+              img.style.position = "absolute";
+              img.style.transform = "translate(-50%, -50%)";
+              
+
+                if(precipitationAmount[i+1]-precipitationAmount[i] < 0.1){
+                if(cloudCover[i] < 1/8*100){
+                    img.src = "./Images/0.svg";
+                }
+                else if(cloudCover[i] < 3/8*100){
+                    img.src = "./Images/1.svg";
+                }
+                else if(cloudCover[i] < 5/8*100){
+                    img.src = "./Images/2.svg";
+                }
+                else if(cloudCover[i] < 7/8*100){
+                    img.src = "./Images/3.svg";
+                }
+                else{
+                    img.src = "./Images/4.svg";
+                }
+                }
+                else if(precipitationAmount[i+1]-precipitationAmount[i] < 0.25){
+                    if(cloudCover[i] < 5/8*100){
+                        img.src = "./Images/20.svg";
+                    }
+                    else if(cloudCover[i] < 7/8*100){
+                        img.src = "./Images/21.svg";
+                    }
+                    else{
+                        img.src = "./Images/22.svg";
+                    }
+                }
+                else if(precipitationAmount[i+1]-precipitationAmount[i] < 1){
+                    if(cloudCover[i] < 5/8*100){
+                        img.src = "./Images/30.svg";
+                    }
+                    else if(cloudCover[i] < 7/8*100){
+                        img.src = "./Images/31.svg";
+                    }
+                    else{
+                        img.src = "./Images/32.svg";
+                    }
+                }
+                else{
+                    if(cloudCover[i] < 5/8){
+                        img.src = "./Images/40.svg";
+                    }
+                    else if(cloudCover[i] < 7/8){
+                        img.src = "./Images/41.svg";
+                    }
+                    else{
+                        img.src = "./Images/42.svg";
+                    }
+                }
+
+                cellCloud.appendChild(img)
+              cellWeather.classList.add("redWeather");
+                cellTime.classList.add("blueWeather")
           }
-          
+          document.getElementById("weatherButton").innerHTML = document.getElementById("weatherTable").rows[0].cells[1].textContent + '<i class="fa-solid fa-temperature-three-quarters"></i>'
       })
       .catch(err => {
         console.error('Error:', err.message);
       });
-  });
+  };
   
   function checkTime(inputTimeStr) {
       const now = new Date();
@@ -270,6 +542,7 @@ function hideWeather(){
     document.getElementById("WeatherContainer").style.display = "none";
 }
 function showWeather(){
+    loadWeatherData();
     document.getElementById("WeatherContainer").style.display = "block";
 }
 //#endregion Weather

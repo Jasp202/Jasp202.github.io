@@ -447,8 +447,8 @@ function loadWeatherData(){
               var cellCloud = rowI.insertCell(2);
               var cellWind = rowI.insertCell(3);
               var cellwater = rowI.insertCell(4);
-              cellwater.innerHTML = (precipitationAmount[i+1]-precipitationAmount[i]).toFixed(1);
-              cellWind.innerHTML = Math.round(windSpeed[i]);
+              cellwater.innerHTML = Math.max(0, precipitationAmount[i+1]-precipitationAmount[i]).toFixed(1) + " mm";
+              cellWind.innerHTML = Math.round(windSpeed[i]) + ' m/s';
               cellTime.innerHTML = temperatureData[i].time + ":00";
               cellWeather.innerHTML = Math.round(temperatureData[i].value) + "°";
               var img = document.createElement("img");
@@ -456,52 +456,52 @@ function loadWeatherData(){
               img.style.position = "absolute";
               img.style.transform = "translate(-50%, -50%)";
               
-
+                console.log(precipitationAmount[i+1]-precipitationAmount[i])
                 if(precipitationAmount[i+1]-precipitationAmount[i] < 0.1){
-                if(cloudCover[i] < 1/8*100){
-                    img.src = "./Images/0.svg";
-                }
-                else if(cloudCover[i] < 3/8*100){
-                    img.src = "./Images/1.svg";
-                }
-                else if(cloudCover[i] < 5/8*100){
-                    img.src = "./Images/2.svg";
-                }
-                else if(cloudCover[i] < 7/8*100){
-                    img.src = "./Images/3.svg";
-                }
-                else{
-                    img.src = "./Images/4.svg";
-                }
+                    if(cloudCover[i] < 1/8*100){
+                        img.src = "./Images/0.svg";
+                    }
+                    else if(cloudCover[i] < 3/8*100){
+                        img.src = "./Images/1.svg";
+                    }
+                    else if(cloudCover[i] < 5/8*100){
+                        img.src = "./Images/2.svg";
+                    }
+                    else if(cloudCover[i] < 7/8*100){
+                        img.src = "./Images/3.svg";
+                    }
+                    else{
+                        img.src = "./Images/4.svg";
+                    }
                 }
                 else if(precipitationAmount[i+1]-precipitationAmount[i] < 0.25){
                     if(cloudCover[i] < 5/8*100){
                         img.src = "./Images/20.svg";
                     }
                     else if(cloudCover[i] < 7/8*100){
-                        img.src = "./Images/21.svg";
+                        img.src = "./Images/30.svg";
                     }
                     else{
-                        img.src = "./Images/22.svg";
+                        img.src = "./Images/40.svg";
                     }
                 }
                 else if(precipitationAmount[i+1]-precipitationAmount[i] < 1){
                     if(cloudCover[i] < 5/8*100){
-                        img.src = "./Images/30.svg";
+                        img.src = "./Images/21.svg";
                     }
                     else if(cloudCover[i] < 7/8*100){
                         img.src = "./Images/31.svg";
                     }
                     else{
-                        img.src = "./Images/32.svg";
+                        img.src = "./Images/41.svg";
                     }
                 }
                 else{
                     if(cloudCover[i] < 5/8){
-                        img.src = "./Images/40.svg";
+                        img.src = "./Images/22.svg";
                     }
                     else if(cloudCover[i] < 7/8){
-                        img.src = "./Images/41.svg";
+                        img.src = "./Images/32.svg";
                     }
                     else{
                         img.src = "./Images/42.svg";

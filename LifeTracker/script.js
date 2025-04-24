@@ -282,6 +282,11 @@ window.addEventListener("focus", checkDateOnFocus);
 //#endregion
 
 //#region Progress bars
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var rewardCheckPoints = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+var gottenGym = 0;
+var gottenAlcohol = 0;
+var gottenDiet = 0;
 
 var gymCounter = 0;
 var alcoholCounter = 0;
@@ -289,25 +294,44 @@ var dietCounter = 0;
 
 function addProgress(key, counter, progress) {
     let current;
+    let gottenCount;
     switch(key){
         case "gym":
             gymCounter += 1;
             localStorage.gymCounter = gymCounter;
             current = gymCounter;
+            gottenCount = gottenGym;
             break;
         case "alcohol":
             alcoholCounter += 1;
             localStorage.alcoholCounter = alcoholCounter;
             current = alcoholCounter;
+            gottenCount = gottenAlcohol;
             break;
         case "diet":
             dietCounter +=1;
             localStorage.dietCounter = dietCounter;
             current = dietCounter;
+            gottenCount = gottenDiet;
             break;
     }
 counter.textContent = ` ${current}/${Math.floor(current/10 + 1)*10} Days`;
 progress.style.width = `${current / Math.floor(current/10 + 1) * 10}%`
+
+if(rewardCheckPoints.includes(current) &&  current > gottenCount){
+    changeCurrencies(0, 100, 1);
+    switch(key){
+        case "gym":
+            localStorage.gottenGym = current;
+            break;
+        case "alcohol":
+            localStorage.gottenAlcohol = current;
+            break;
+        case "diet":
+            localStorage.gottenDiet = current;
+            break;
+    }
+}
 }
 function resetProgress(key, counter, progress){
     console.log("reset!")
@@ -327,6 +351,16 @@ function resetProgress(key, counter, progress){
     }
 counter.textContent = ` 0/10 Days`;
 progress.style.width = `0%`
+}
+
+if(localStorage.gottenGym){
+    gottenGym = localStorage.gottenGym;
+}
+if(localStorage.gottenAlcohol){
+    gottenAlcohol = localStorage.gottenAlcohol;
+}
+if(localStorage.gottenDiet){
+    gottenDiet = localStorage.gottenDiet;
 }
 
 if(localStorage.gymCounter){

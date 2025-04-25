@@ -43,7 +43,10 @@
     </button>
     <br>
     <button  id ="weatherButton" onclick="showWeather()"><i class="fa-solid fa-temperature-three-quarters"></i></button>
-    
+    <br>
+    <button id="soloButton" onclick="showButtons()">
+        <img src="./Images/lunch_icon.png"width=100%>
+    </button>
     <div class="weatherContainer" id="WeatherContainer" onclick="hideWeather()">
         <table id="weatherTable"></table>
         <img id="uvImage"src="https://cdn.fmi.fi/apps/global-ultraviolet-index/plot.php?location=helsinki&lang=fi&day=0">
@@ -119,5 +122,33 @@
       </div>
       <img height="20px">
 </div>
+
+<div class="button-container" id="buttonContainer">
+
+    <p id="cancelButtons" onclick="disableButtons()">X</p>
+    <button class="dailyButton" onclick="markButton(this, 'button1')">
+        <img src="./Images/toothbrush_icon.png" alt="Button 1">
+    </button>
+    <div class="explosion"></div>
+    <button class="dailyButton" onclick="markButton(this, 'button2')">
+        <img src="./Images/banana_icon.png" alt="Button 2">
+    </button>
+    <button class="dailyButton" onclick="markButton(this, 'button3')">
+        <img src="./Images/gym_icon.png" alt="Button 3">
+    </button>
+    <button class="dailyButton" onclick="markButton(this, 'button4')">
+        <img src="./Images/treadmill_icon.png" alt="Button 4">
+    </button>
+    <button class="dailyButton" onclick="markButton(this, 'button5')">
+        <img src="./Images/lunch_icon.png" alt="Button 5">
+    </button>
+    <button class="dailyButton" onclick="markButton(this, 'button6')">
+        <img src="./Images/toast_icon.png" alt="Button 6">
+    </button>
+    <button class="dailyButton" onclick="markButton(this, 'button7')">
+        <img src="./Images/toothbrush_icon.png" alt="Button 7">
+    </button>
+</div>
+
   <script src="script.js"></script> 
 </body>

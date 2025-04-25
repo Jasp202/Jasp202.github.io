@@ -580,3 +580,70 @@ function showWeather(){
     document.getElementById("WeatherContainer").style.display = "block";
 }
 //#endregion Weather
+
+
+//#region Buttons
+
+
+const currentDate = new Date().toISOString().split('T')[0];
+
+function checkButtonState(buttonId, buttonElement) {
+    const storedData = localStorage.getItem(buttonId);
+    if (storedData === currentDate) {
+        buttonElement.disabled = true;
+    }
+}
+
+document.querySelectorAll('.dailyButton').forEach((button, index) => {
+    checkButtonState(`button${index + 1}`, button);
+});
+
+const explosion = document.querySelector('.explosion');
+function markButton(button, buttonId) {
+    button.disabled = true;
+    localStorage.setItem(buttonId, currentDate);
+    
+    switch(buttonId){
+        case "button1":
+            
+            explosion.style.top = '0px';
+            
+            explosion.classList.add('exploding');
+            setTimeout(() => {
+                explosion.classList.remove('exploding');
+                
+            }, 3000);
+            break;
+        case "button2":
+            
+            explosion.style.top = '75px';
+            
+            explosion.classList.add('exploding');
+            setTimeout(() => {
+                explosion.classList.remove('exploding');
+                
+            }, 3000);
+            break;
+        case "button3":
+            
+            explosion.style.top = '140px';
+            
+            explosion.classList.add('exploding');
+            setTimeout(() => {
+                explosion.classList.remove('exploding');
+                
+            }, 3000);
+            break;
+        case "button7":
+            changeCurrencies(0,10,0);
+            break;
+        default:
+    }
+}
+
+function disableButtons(){
+    document.getElementById("buttonContainer").style.display = "none";
+}
+function showButtons(){
+    document.getElementById("buttonContainer").style.display = "flex";
+}

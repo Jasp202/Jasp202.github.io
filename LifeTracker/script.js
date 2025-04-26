@@ -489,32 +489,64 @@ function loadWeatherData(){
               img.style.width = "20px"
               img.style.position = "absolute";
               img.style.transform = "translate(-50%, -50%)";
-              
+              var sunset = isSunUp(getSunriseSunsetForToday(), Number(temperatureData[i].time)); 
                 console.log(precipitationAmount[i+1]-precipitationAmount[i])
                 if(precipitationAmount[i+1]-precipitationAmount[i] < 0.1){
                     if(cloudCover[i] < 1/8*100){
+                        if(sunset) {
                         img.src = "./Images/0.svg";
+                        }
+                        else{
+                            img.src = "./Images/0d.svg";
+                        }
                     }
                     else if(cloudCover[i] < 3/8*100){
+                        if(sunset) {
                         img.src = "./Images/1.svg";
+                        }
+                        else{
+                            img.src = "./Images/1d.svg";
+                        }
                     }
                     else if(cloudCover[i] < 5/8*100){
+                        if(sunset) {
                         img.src = "./Images/2.svg";
+                        }
+                        else{
+                            img.src = "./Images/2d.svg";
+                        }
                     }
                     else if(cloudCover[i] < 7/8*100){
+                        if(sunset) {
                         img.src = "./Images/3.svg";
+                        }
+                        else{
+                            img.src = "./Images/3d.svg";
+                        }
                     }
                     else{
+                        
                         img.src = "./Images/4.svg";
+                        
                     }
                 }
                 else if(precipitationAmount[i+1]-precipitationAmount[i] < 0.25){
                     img.style.background = "#E5EDFF";
                     if(cloudCover[i] < 5/8*100){
+                        if(sunrise){
                         img.src = "./Images/20.svg";
+                        }
+                        else{
+                            img.src = "./Images/20d.svg";
+                        }
                     }
                     else if(cloudCover[i] < 7/8*100){
+                        if(sunrise){
                         img.src = "./Images/30.svg";
+                        }
+                        else{
+                            img.src = "./Images/30d.svg";
+                        }
                     }
                     else{
                         img.src = "./Images/40.svg";
@@ -523,10 +555,21 @@ function loadWeatherData(){
                 else if(precipitationAmount[i+1]-precipitationAmount[i] < 1){
                     img.style.background = "#CCDBFF";
                     if(cloudCover[i] < 5/8*100){
+                        if(sunrise){
                         img.src = "./Images/21.svg";
+                        }
+                        else{
+                            img.src = "./Images/21d.svg";
+                        }
                     }
+                    
                     else if(cloudCover[i] < 7/8*100){
+                        if(sunrise){
                         img.src = "./Images/31.svg";
+                        }
+                        else{
+                            img.src = "./Images/31d.svg";
+                        }
                     }
                     else{
                         img.src = "./Images/41.svg";
@@ -535,10 +578,20 @@ function loadWeatherData(){
                 else{
                     img.style.background = "#99B8FF";
                     if(cloudCover[i] < 5/8){
+                        if(sunrise){
                         img.src = "./Images/22.svg";
+                        }
+                        else{
+                            img.src = "./Images/22d.svg";
+                        }
                     }
                     else if(cloudCover[i] < 7/8){
+                        if(sunrise){
                         img.src = "./Images/32.svg";
+                        }
+                        else{
+                            img.src = "./Images/32d.svg";
+                        }
                     }
                     else{
                         img.src = "./Images/42.svg";
@@ -586,6 +639,58 @@ function showWeather(){
     loadWeatherData();
     document.getElementById("WeatherContainer").style.display = "block";
 }
+
+/**returns an array [sunrise, sunset] or null*/
+function getSunriseSunsetForToday() {
+    try {
+        // Get current date (day of the year)
+        const currentDate = new Date();
+        const month = currentDate.getMonth();  // Month is 0-based (January is 0)
+        const day = currentDate.getDate();  // Day of the month
+
+        // Get the current month name
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        const currentMonth = monthNames[month];
+
+        // Find the corresponding date in the sunrises data
+        const currentDayData = sunrises[currentMonth]?.find(entry => entry.day === day);
+
+        if (currentDayData) {
+            // Return an array with [sunrise, sunset] times
+            return [currentDayData.sunrise, currentDayData.sunset];
+        } else {
+            // Return null if no data is found for today
+            return null;
+        }
+    } catch (error) {
+        console.error('Error accessing the sunrises data:', error);
+        return null; // Return null if there's an error
+    }
+}
+/**get and array of two times and check if we are between those 2 */
+function isSunUp([sunrise, sunset], timeHour = null) {
+    if (!sunrise || !sunset) return false;
+
+    const now = new Date();
+    const checkTime = new Date(now);
+
+    // Use provided hour if available
+    if (typeof timeHour === 'number') {
+        checkTime.setHours(timeHour, 0, 0, 0);
+    }
+
+    const [srHours, srMinutes] = sunrise.split(':').map(Number);
+    const [ssHours, ssMinutes] = sunset.split(':').map(Number);
+
+    const sunriseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), srHours, srMinutes);
+    const sunsetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), ssHours, ssMinutes);
+
+    return checkTime >= sunriseTime && checkTime <= sunsetTime;
+}
+console.log(getSunriseSunsetForToday(), isSunUp(getSunriseSunsetForToday()))
 //#endregion Weather
 
 

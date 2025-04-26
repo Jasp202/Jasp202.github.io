@@ -509,6 +509,7 @@ function loadWeatherData(){
                     }
                 }
                 else if(precipitationAmount[i+1]-precipitationAmount[i] < 0.25){
+                    img.style.background = "#E5EDFF";
                     if(cloudCover[i] < 5/8*100){
                         img.src = "./Images/20.svg";
                     }
@@ -520,6 +521,7 @@ function loadWeatherData(){
                     }
                 }
                 else if(precipitationAmount[i+1]-precipitationAmount[i] < 1){
+                    img.style.background = "#CCDBFF";
                     if(cloudCover[i] < 5/8*100){
                         img.src = "./Images/21.svg";
                     }
@@ -531,6 +533,7 @@ function loadWeatherData(){
                     }
                 }
                 else{
+                    img.style.background = "#99B8FF";
                     if(cloudCover[i] < 5/8){
                         img.src = "./Images/22.svg";
                     }
@@ -541,8 +544,12 @@ function loadWeatherData(){
                         img.src = "./Images/42.svg";
                     }
                 }
-
-                cellCloud.appendChild(img)
+                
+                
+                
+                img.style.paddingLeft = "10px";
+                img.style.paddingRight = "10px";
+                cellCloud.appendChild(img);
               cellWeather.classList.add("redWeather");
                 cellTime.classList.add("blueWeather")
           }
@@ -591,6 +598,9 @@ function checkButtonState(buttonId, buttonElement) {
     const storedData = localStorage.getItem(buttonId);
     if (storedData === currentDate) {
         buttonElement.disabled = true;
+    }
+    else{
+        buttonElement.disabled = false;
     }
 }
 
@@ -646,4 +656,11 @@ function disableButtons(){
 }
 function showButtons(){
     document.getElementById("buttonContainer").style.display = "flex";
+}
+
+window.addEventListener("focus", checkDateOnFocusButtons);
+function checkDateOnFocusButtons(){
+    document.querySelectorAll('.dailyButton').forEach((button, index) => {
+        checkButtonState(`button${index + 1}`, button);
+    });    
 }

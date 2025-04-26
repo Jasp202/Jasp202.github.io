@@ -325,7 +325,7 @@ th, td {
 #soloButton{
     background: none;
     border: none;
-    width: 55px;
+    width: 65px;
     position: relative;
     top: 20px;
     left: 4px
@@ -333,10 +333,20 @@ th, td {
 #gameButton{
     background: none;
     border: none;
-    width: 55px;
+    width: 65px;
     position: relative;
     top: 20px;
     left: 4px
+}
+#lunchButton{
+    background: none;
+    border: none;
+    width: 70px;
+    position: relative;
+    top: 20px;
+    left: 4px;
+    filter: drop-shadow(0 0 1px black);
+    
 }
 .currency{
     position: relative;

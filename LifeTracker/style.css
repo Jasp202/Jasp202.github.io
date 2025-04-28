@@ -8,7 +8,7 @@ body {
   
   .gradient-box {
     position: fixed;
-    top: 20vh;
+    top: 10vh;
     left: 50vw;
     transform: translate(-50%, -50%);
     font-family: 'Anton', sans-serif;
@@ -124,7 +124,7 @@ body {
 
 .progress-box {
     position: fixed;
-    top: 20vh;
+    top: 10vh;
     left: 50vw;
     transform: translate(-50%, -50%);
     font-family: 'Anton', sans-serif;
@@ -221,6 +221,8 @@ th, td {
     background: 
     linear-gradient(to right, lightblue 0%, lightblue 18%, white 18%, white 100%);
     width: 100%;
+    border-top: solid gray 3px;
+    border-bottom: solid gray 3px;
     
   }
   .redWeather{
@@ -230,7 +232,7 @@ th, td {
     color: darkblue;
   }
   .weatherContainer{
-    margin-top: 5vh;
+    margin-top: 1vh;
     position: fixed;
     border: 5px solid #555;
     border-radius: 10px;
@@ -244,6 +246,7 @@ th, td {
     z-index: 10;
     justify-content: center;
     align-items: center;
+    background-color: white;
   }
 
 #topDiv{
@@ -379,8 +382,8 @@ th, td {
     display: none;
     flex-direction: column;
     gap: 20px;
-    position: fixed;
-    top: 20vh;
+    position: relative;
+    top: 10vh;
     left: 50vw;
     transform: translate(-50%, -50%);
     font-family: 'Anton', sans-serif;
@@ -431,6 +434,7 @@ th, td {
     opacity: 0;
     display: none;
     z-index: 100;
+    transform: translate(-50%,-50%);
 }
 
 
@@ -440,7 +444,7 @@ th, td {
         opacity: 1;
     }
     100% {
-        transform: scale(2);
+        transform: scale(5);
         opacity: 0;
     }
 }
@@ -457,4 +461,38 @@ th, td {
     text-shadow: 0 0 2px #ffffff, 0 0 2px #ffffff, 0 0 3px;
     top: 5px;
     right: 20px;
+}
+#weatherUpperInfo{
+    display: flex;
+    flex-direction: row;
+    font-size: 15px;
+    align-items: center;
+    
+    padding: 0px;
+    
+    
+    
+    margin-top: -9px;
+    margin-bottom: -20px;
+    
+}
+#weatherLowerInfo{
+    display: flex;
+    flex-direction: row;
+    font-size: 15px;
+    align-items: center;
+    
+    padding: 0px;
+    
+
+    margin-top: -9px;
+    margin-bottom: -9px;
+    
+}
+.weatherClock{
+    font-weight: bold;
+}
+#UvNumber{
+    color: magenta;
+    -webkit-text-stroke: 0.1px black;
 }

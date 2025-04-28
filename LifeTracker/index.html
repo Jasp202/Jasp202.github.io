@@ -48,6 +48,8 @@
         <img src="./Images/lunch_icon.png"width=100%>
     </button>
     <div class="weatherContainer" id="WeatherContainer" onclick="hideWeather()">
+        <div id="weatherUpperInfo"><img src="./Images/sunrise.svg" width="30px">Sunrise:&nbsp<p class="weatherClock" id="timeRise">19:00</p>,&nbspsunset:&nbsp<p class="weatherClock" id="timeSet"> 20:00</p></div>
+        <div id="weatherLowerInfo"><img src="./Images/UV.svg" width="20px" style="padding-left: 5px;padding-right: 5px;"> Max UV&nbsp<p class="weatherClock" id="UvNumber">9</p>:&nbsp<p class="weatherClock" id="timeUv">19:00</p></div>
         <table id="weatherTable"></table>
         <img id="uvImage"src="https://cdn.fmi.fi/apps/global-ultraviolet-index/plot.php?location=helsinki&lang=fi&day=0">
     </div>

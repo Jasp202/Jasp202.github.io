@@ -57,6 +57,7 @@ function changeCurrencies(xpDelta, orbsDelta, diamondsDelta) {
         console.log( Math.round(xp / (2 + level*2)) +"%")
         document.getElementById("xpNumber").innerHTML = `${xp}/${200 + level*200}`;
         document.getElementById("xpText").innerHTML = level;
+        changeCurrencies(0,500,0);
     }
     if(orbsDelta != 0){
         orbs = orbs + orbsDelta;
@@ -419,6 +420,9 @@ AddHoldEvent(document.getElementById("diet"), () =>resetProgress('diet', documen
 loadWeatherData();
 window.addEventListener('focus', loadWeatherData());
 function loadWeatherData(){
+    findPeakUV("https://cdn.fmi.fi/apps/global-ultraviolet-index/plot.php?location=helsinki&lang=fi&day=0&" + new Date().getTime());
+    document.getElementById("timeRise").innerText = getSunriseSunsetForToday()[0];
+    document.getElementById("timeSet").innerText = getSunriseSunsetForToday()[1];
     $("#weatherTable tr").remove(); 
     const url = 'https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::forecast::harmonie::surface::point::simple&place=helsinki&' + new Date().getTime();
     document.getElementById("uvImage").src = "https://cdn.fmi.fi/apps/global-ultraviolet-index/plot.php?location=helsinki&lang=fi&day=0"+ new Date().getTime()
@@ -693,6 +697,131 @@ function isSunUp([sunrise, sunset], timeHour = null) {
 console.log(getSunriseSunsetForToday(), isSunUp(getSunriseSunsetForToday()))
 //#endregion Weather
 
+// Mapping of colors for UV 1 to UV 17 (your preset colors)
+const colorToUV = {
+    "rgb(78,180,0)": 1,
+    "rgb(160,206,0)": 2,
+    "rgb(247,228,0)": 3,
+    "rgb(248,182,0)": 4,
+    "rgb(248,135,0)": 5,
+    "rgb(248,89,0)": 6,
+    "rgb(232,44,14)": 7,
+    "rgb(216,0,29)": 8,
+    "rgb(255,0,153)": 9,
+    "rgb(181,76,255)": 10,
+    "rgb(153,140,255)": 11,
+    "rgb(133,120,235)": 12,
+    "rgb(113,100,215)": 13,
+    "rgb(93,80,195)": 14,
+    "rgb(73,60,175)": 15,
+    "rgb(53,40,155)": 16,
+    "rgb(33,20,135)": 17
+  };
+const uvToColor = {
+    0: "rgb(93, 93, 93)",
+    1: "rgb(78,180,0)",
+    2: "rgb(160,206,0)",
+    3: "rgb(247,228,0)",
+    4: "rgb(248,182,0)",
+    5: "rgb(248,135,0)",
+    6: "rgb(248,89,0)",
+    7: "rgb(232,44,14)",
+    8: "rgb(216,0,29)",
+    9: "rgb(255,0,153)",
+    10: "rgb(181,76,255)",
+    11: "rgb(153,140,255)",
+    12: "rgb(133,120,235)",
+    13: "rgb(113,100,215)",
+    14: "rgb(93,80,195)",
+    15: "rgb(73,60,175)",
+    16: "rgb(53,40,155)",
+    17: "rgb(33,20,135)"
+  };
+
+function findPeakUV(imagePath) {
+  const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+   
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';        // allow CORS
+    img.src = imagePath;                 // same origin now
+    img.onload = () => {
+      // draw onto canvas, then getImageData…
+    };
+
+    img.onload = function() {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      const width = canvas.width;
+      const height = canvas.height;
+
+      let peakUV = 0;  // Default UV 0 if no peak found
+      let peakY = height;  // Start with the lowest possible Y-coordinate (no peak yet)
+      let peakX = width;
+
+      // Start scanning the image for UV 1-17 (ignore UV 0)
+      
+      for (let y = 0; y < height; y++) {
+          
+        for (let x = 0; x < width; x++) {
+          const pixel = ctx.getImageData(x, y, 1, 1).data;
+          const r = pixel[0];
+          const g = pixel[1];
+          const b = pixel[2];
+          const color = `rgb(${r},${g},${b})`;
+
+          // Skip black or white pixels
+          if (color === "rgb(255,255,255)" || color === "rgb(0,0,0)") {
+            continue;
+          }
+
+          // Check if the color matches a UV 1-17 color
+          if (colorToUV[color]) {
+            // If we find a valid UV color and it's at a higher position, update the peak
+            if (y <= peakY && peakUV != colorToUV[color]) {
+              peakY = y;
+              peakX = x;
+              peakUV = colorToUV[color];
+            }
+          }
+        }
+      }
+      console.log(peakUV, mapPeakXToTime(peakX))
+      document.getElementById("UvNumber").innerText = peakUV;
+      document.getElementById("UvNumber").style.color = uvToColor[peakUV];
+      document.getElementById("timeUv").innerText = mapPeakXToTime(peakX);
+      canvas.width = 0;
+      canvas.height = 0;
+      canvas.remove(); 
+      
+    };
+
+  }
+function mapPeakXToTime(peakX) {
+      // your linear map from px → hours
+      const m = 4/63;
+      const b = 1.73;
+      const t = m * peakX + b;      // e.g. 9.95
+    
+      // split into whole hours and fractional part
+      let hours   = Math.floor(t);                    
+      let minutes = Math.round((t - hours) * 60);     
+    
+      // handle rounding up to the next hour
+      if (minutes === 60) {
+        minutes = 0;
+        hours += 1;
+      }
+    
+      // pad both to two digits
+      const hh = String(hours).padStart(2, "0");
+      const mm = String(minutes).padStart(2, "0");
+    
+      return `${hh}:${mm}`;
+    }
 
 //#region Buttons
 
@@ -717,43 +846,29 @@ const explosion = document.querySelector('.explosion');
 function markButton(button, buttonId) {
     button.disabled = true;
     localStorage.setItem(buttonId, currentDate);
+    console.log(button.getBoundingClientRect())
     
-    switch(buttonId){
-        case "button1":
-            
-            explosion.style.top = '0px';
-            
-            explosion.classList.add('exploding');
+
+  // Get the position and size of the main div relative to its parent container
+  const mainDivRect = button.getBoundingClientRect();
+  const containerRect = button.parentElement.getBoundingClientRect(); // Container position
+
+  // Calculate the relative position of the main div within the container
+  const offsetTop = mainDivRect.top - containerRect.top;
+  const offsetLeft = mainDivRect.left - containerRect.left;
+
+  // Set the overlay div on top of the main div
+  explosion.style.top = `${offsetTop}px`;
+  explosion.style.left = `${offsetLeft}px`;
+  explosion.style.width = `${mainDivRect.width}px`;
+  explosion.style.height = `${mainDivRect.height}px`;
+
+    explosion.classList.add('exploding');
             setTimeout(() => {
                 explosion.classList.remove('exploding');
                 
             }, 3000);
-            break;
-        case "button2":
-            
-            explosion.style.top = '75px';
-            
-            explosion.classList.add('exploding');
-            setTimeout(() => {
-                explosion.classList.remove('exploding');
-                
-            }, 3000);
-            break;
-        case "button3":
-            
-            explosion.style.top = '140px';
-            
-            explosion.classList.add('exploding');
-            setTimeout(() => {
-                explosion.classList.remove('exploding');
-                
-            }, 3000);
-            break;
-        case "button7":
-            changeCurrencies(0,10,0);
-            break;
-        default:
-    }
+
 }
 
 function disableButtons(){

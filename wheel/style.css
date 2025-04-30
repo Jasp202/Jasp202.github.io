@@ -2123,6 +2123,9 @@ section {
     z-index: -10;
     cursor: pointer;
 }
+#lever:hover{
+    filter: drop-shadow(0 0 4px rgb(255, 217, 0))drop-shadow(0 0 4px rgb(255, 217, 0))drop-shadow(0 0 4px rgb(255, 217, 0));
+}
 
 .bottom {
     background: #551c37;

@@ -3184,9 +3184,12 @@ function rollAll() {
 		
 		// When all reels done animating (all promises solve)
 		.then((deltas) => {
+            mySoundSpin.stop();
+            mySoundSpin.stop();
+            topLever.classList.remove("pull");
 			// add up indexes
 			deltas.forEach((delta, i) => indexes[i] = (indexes[i] + delta)%num_icons);
-			mySoundSpin.stop();
+			
 		
 			// Win conditions
 			if (indexes[0] == indexes[1] && indexes[1] == indexes[2]) {
@@ -3203,9 +3206,21 @@ function rollAll() {
 		});
 };
 document.querySelector(".slots").addEventListener('click', (e) => {
-    document.querySelector(".slots").style.display = "none";
+    
+    if(e.target.matches("div.slots") || e.target.matches("div.reel")){
+        document.querySelector(".slots").style.display = "none";
+    }
 })
+let lever = document.querySelector("#lever");
+let topLever = document.querySelector(".top");
+function pull(e) {
+    if(!topLever.classList.contains("pull")){
+        rollAll();
+    }
+    topLever.classList.add("pull");
+}
 
+lever.addEventListener("click", pull);
 
 function countNewlinesBeforeSubstring(inputString, searchString) {
     // Find the index of the first occurrence of the search string

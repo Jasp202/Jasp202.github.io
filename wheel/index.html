@@ -1625,9 +1625,29 @@ slider.oninput = function() {
 	<div class="reel"></div>
 	<div class="reel"></div>
 
+    <div>
+        <div id="lever">
+            <div class="top">
+                <div class="ball"></div>
+            </div>
+            <div class="bottom">
+                <div class="screw"></div>
+            </div>
+        </div>
+    </div>
+
 </div>
+<button id="slotsButton">
+    <img src="./Images/icons/slot_machine_icon.png" width="60">
 
+  </button>
+  <script>
+    
+    slotsButton.addEventListener("click", function () {
+        document.querySelector(".slots").style.display="flex";
+    });
 
+</script>
  
 
   <!---------------  PRELOADING IMAGES  --------------------->

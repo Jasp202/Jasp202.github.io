@@ -2100,3 +2100,100 @@ section {
       border-radius: 50%;
       background: white;
   }
+
+  #slotsButton{
+    position: absolute;
+    top: 10px;
+    right: 280px;
+    background: none;
+    border: none;
+    padding: 0;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+#slotsButton:hover{
+    opacity: 1.0;
+}
+
+#lever {
+    position: relative;
+    top: 45%;
+    left: 5px;
+    z-index: -10;
+    cursor: pointer;
+}
+
+.bottom {
+    background: #551c37;
+    width: 40px;
+    height: 70px;
+    position: absolute;
+    right: -30px;
+    border-radius: 10px;
+}
+
+
+.screw {
+    background: #333;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    top: 20px;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.screw::before {
+    content: "";
+    background: #111;
+    width: 10px;
+    height: 10px;
+    display: block;
+    border-radius: 50%;
+} 
+
+.top {
+    background: #333;
+    width: 70px;
+    height: 15px;
+    position: absolute;
+    right: -88px;
+    top: 27px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-origin: left top;
+   transform: rotate(-50deg);
+}
+
+.pull {
+    animation: rotate50 1s  forwards;
+}
+
+.ball {
+    content: "";
+    display: block;
+    background: #ca1717;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    right: -40px;
+    top: -20px;
+    border-radius: 50%;
+}
+
+
+@keyframes rotate50 {
+  from {
+    transform: rotate(-50deg);
+  }
+  to {
+    transform: rotate(50deg);
+  }
+}

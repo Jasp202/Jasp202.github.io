@@ -1800,6 +1800,9 @@ spinBtn.addEventListener("click", () => {
             else if (wheelChangeString.includes("memes")){
                 memesButton.click();
             }
+            else if(wheelChangeString.includes("default")){
+                defaultButton.click();
+            }
 
             myPopup.classList.remove("show");
             document.getElementById("popupbackground").style.display = "none";

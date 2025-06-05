@@ -32,6 +32,10 @@ let diamonds = 0;
 if(localStorage.diamonds){
     diamonds = Number(localStorage.diamonds);
 }
+let gems = 0;
+if(localStorage.gems){
+    gems = Number(localStorage.gems);
+}
 console.log(diamonds);
 document.getElementById("xpProgress").style.width = xp / (2 + level*2);
 document.getElementById("xpNumber").innerHTML = `${xp}/${200 + level*200}`;
@@ -40,6 +44,14 @@ document.getElementById("xpNumber").innerHTML = `${xp}/${200 + level*200}`;
 document.getElementById("xpText").innerHTML = level;
 document.getElementById("orbsText").innerHTML = orbs + '<img src="./Images/ManaOrbs.png" width="20px">';
 document.getElementById("diamondsText").innerHTML = diamonds +'<img src="./Images/Diamond.png" width="20px">';
+document.getElementById("gemsText").innerHTML = gems +'<img src="./Images/gem.png" width="20px">';
+
+
+function giveGem(gemsDelta){
+    gems = gems + gemsDelta;
+        localStorage.gems = gems;
+        document.getElementById("gemsText").innerHTML = gems +'<img src="./Images/gem.png" width="20px">';
+}
 
 function changeCurrencies(xpDelta, orbsDelta, diamondsDelta) {
     if(xpDelta != 0 && xp + xpDelta < 200 + level*200){
@@ -57,7 +69,8 @@ function changeCurrencies(xpDelta, orbsDelta, diamondsDelta) {
         console.log( Math.round(xp / (2 + level*2)) +"%")
         document.getElementById("xpNumber").innerHTML = `${xp}/${200 + level*200}`;
         document.getElementById("xpText").innerHTML = level;
-        changeCurrencies(0,500,0);
+        giveGem(1);
+        
     }
     if(orbsDelta != 0){
         orbs = orbs + orbsDelta;
@@ -70,6 +83,49 @@ function changeCurrencies(xpDelta, orbsDelta, diamondsDelta) {
         document.getElementById("diamondsText").innerHTML = diamonds +'<img src="./Images/Diamond.png" width="20px">';
     }
 }
+
+//#endregion
+
+
+//#region Chest Drop
+
+function DropChestWith(diamondsChest, orbsChest, xpChest, gemsChest) {
+    document.getElementById("rewardDiv").style.display = "block";
+    let dropText = "";
+    if(xpChest != 0){
+        dropText += `+${xpChest}<img src="./Images/xp.png" width="20px">&nbsp`;
+    }
+    if(orbsChest != 0){
+        dropText += `+${orbsChest}<img src="./Images/ManaOrbs.png" width="20px">&nbsp`;
+    }
+    if(diamondsChest != 0){
+        dropText += `+${diamondsChest}<img src="./Images/Diamond.png" width="20px">&nbsp`;
+    }
+    if(gemsChest != 0){
+        dropText += `+${gemsChest}<img src="./Images/gem.png" width="20px">&nbsp`;
+    }
+    let chest = document.getElementById("chestDiv");
+    chest.classList.add("chestAnimate");
+
+    chest.addEventListener('animationend', () => {
+        
+        chest.innerHTML = `<img src="./Images/goldChestOpen.png" width="100px"></img>`;
+        document.getElementById("chestRewardText").innerHTML = dropText;
+        (document.getElementById("chestRewardButton")).onclick = function() {
+            
+            chest.classList.remove("chestAnimate");
+            chest.innerHTML = `<img src="./Images/goldChest.png" width="100px"></img>`;
+            document.getElementById("chestRewardText").innerHTML = "";
+            document.getElementById("rewardDiv").style.display = "none";
+
+            changeCurrencies(xpChest, orbsChest, diamondsChest);
+            giveGem(gemsChest);
+        }
+    });
+    
+}
+
+
 
 //#endregion
 
@@ -93,14 +149,14 @@ function dailyReward() {
         return;
     }
     else if(claimedReward == 0 && bikeReward >= 1 && pushReward >= 1 && sitReward >= 1 && squatReward >= 1){
-        changeCurrencies(100, 0, 0);
+        DropChestWith(0,100,100,0);
         claimedReward = 1;
         localStorage.claimedReward = 1;
         console.log("def",claimedReward)
         return;
     }
     else if(claimedReward == 1 && bikeReward == 2 && pushReward == 2 && sitReward == 2 && squatReward == 2){
-        changeCurrencies(100,50,1);
+        DropChestWith(1,100,100,0)
         claimedReward = 2;
         localStorage.claimedReward = 2;
         console.log("crown",claimedReward)
@@ -320,7 +376,7 @@ counter.textContent = ` ${current}/${Math.floor(current/10 + 1)*10} Days`;
 progress.style.width = `${current / Math.floor(current/10 + 1) * 10}%`
 
 if(rewardCheckPoints.includes(current) &&  current > gottenCount){
-    changeCurrencies(0, 100, 1);
+    DropChestWith(1,0,0,0);
     switch(key){
         case "gym":
             localStorage.gottenGym = current;
@@ -847,7 +903,9 @@ function markButton(button, buttonId) {
     button.disabled = true;
     localStorage.setItem(buttonId, currentDate);
     console.log(button.getBoundingClientRect())
-    
+    if(buttonId == "button7"){
+        DropChestWith(0,50,0,0);
+    }
 
   // Get the position and size of the main div relative to its parent container
   const mainDivRect = button.getBoundingClientRect();

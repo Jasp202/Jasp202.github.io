@@ -344,10 +344,12 @@ var rewardCheckPoints = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 var gottenGym = 0;
 var gottenAlcohol = 0;
 var gottenDiet = 0;
+var gottenPiano = 0;
 
 var gymCounter = 0;
 var alcoholCounter = 0;
 var dietCounter = 0;
+var pianoCounter = 0;
 
 function addProgress(key, counter, progress) {
     let current;
@@ -371,6 +373,12 @@ function addProgress(key, counter, progress) {
             current = dietCounter;
             gottenCount = gottenDiet;
             break;
+        case "piano":
+            pianoCounter +=1;
+            localStorage.pianoCounter = pianoCounter;
+            current = pianoCounter;
+            gottenCount = gottenPiano;
+            break;
     }
 counter.textContent = ` ${current}/${Math.floor(current/10 + 1)*10} Days`;
 progress.style.width = `${current / Math.floor(current/10 + 1) * 10}%`
@@ -386,6 +394,9 @@ if(rewardCheckPoints.includes(current) &&  current > gottenCount){
             break;
         case "diet":
             localStorage.gottenDiet = current;
+            break;
+        case "piano":
+            localStorage.gottenPiano = current;
             break;
     }
 }
@@ -405,6 +416,10 @@ function resetProgress(key, counter, progress){
             dietCounter = 0;
             localStorage.dietCounter = dietCounter;
             break;
+        case "piano":
+            pianoCounter = 0;
+            localStorage.pianoCounter = pianoCounter;
+            break;
     }
 counter.textContent = ` 0/10 Days`;
 progress.style.width = `0%`
@@ -419,6 +434,9 @@ if(localStorage.gottenAlcohol){
 if(localStorage.gottenDiet){
     gottenDiet = localStorage.gottenDiet;
 }
+if(localStorage.gottenPiano){
+    gottenPiano = localStorage.gottenPiano;
+}
 
 if(localStorage.gymCounter){
     gymCounter = localStorage.gymCounter -1;
@@ -431,6 +449,10 @@ if(localStorage.alcoholCounter){
 if(localStorage.dietCounter){
     dietCounter = localStorage.dietCounter -1;
     document.getElementById("diet").click();
+}
+if(localStorage.pianoCounter){
+    pianoCounter = localStorage.pianoCounter -1;
+    document.getElementById("piano").click();
 }
 
 function showProgress(){
@@ -470,6 +492,7 @@ function AddHoldEvent(element, callback, duration = 750) {
 AddHoldEvent(document.getElementById("gym"), () =>resetProgress('gym', document.getElementById('gymCounter'), document.getElementById('gymProgress')))
 AddHoldEvent(document.getElementById("alcohol"), () =>resetProgress('alcohol', document.getElementById('alcoholCounter'), document.getElementById('alcoholProgress')))
 AddHoldEvent(document.getElementById("diet"), () =>resetProgress('diet', document.getElementById('dietCounter'), document.getElementById('dietProgress')))
+AddHoldEvent(document.getElementById("piano"), () =>resetProgress('piano', document.getElementById('pianoCounter'), document.getElementById('pianoProgress')))
 //#endregion
 
 //#region Weather
@@ -942,3 +965,49 @@ function checkDateOnFocusButtons(){
         checkButtonState(`button${index + 1}`, button);
     });    
 }
+
+
+//#endregion
+
+
+//#region Items
+
+class MainItem {
+    constructor(name, icon, src, price, unlocked, lowers){
+        this.name = name; 
+        this.icon = icon;
+        this.price = price;
+        this.unlocked = unlocked;
+        this.lowers = lowers;
+        this.src = src;
+    }
+}
+class ItemItself{
+    constructor(name, icon, src, price, unlocked, lowers){
+        this.name = name; 
+        this.icon = icon;
+        this.price = price;
+        this.unlocked = unlocked;
+        this.lowers = lowers;
+        this.src = src;
+    }
+}
+class ItemVersion{
+    constructor(name, icon, src, price, unlocked){
+        this.name = name; 
+        this.icon = icon;
+        this.price = price;
+        this.unlocked = unlocked;
+        this.src = src;
+    }
+}
+
+const shirts = new MainItem("shirts", "./Images/me_images/Tshirt_red.png","./Images/me_images/Tshirt_red.png", [0,0,5], false, [
+    new ItemItself("Thirt", "./Images/me_images/Tshirt_red.png","./Images/me_images/Tshirt_red.png", [0,0,0], true, [
+        new ItemVersion("redTshirt", "red","./Images/me_images/Tshirt_red.png", [0,0,0], true),
+        new ItemVersion("grayTshirt", "gray", "./Images/me_images/Tshirt_gray.png", [500,0,0], false)
+    ]
+    )
+]
+);
+console.log(shirts)

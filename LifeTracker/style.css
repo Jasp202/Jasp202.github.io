@@ -159,6 +159,10 @@ body {
     --maincolor: #7eea7c;
     --lightcolor: #cdf0c9;
 }
+.white-bar{
+    --maincolor: #e4a033;
+    --lightcolor: rgb(245, 249, 227);
+}
 .progress-container {
     text-align: left;
     width: 100%;
@@ -232,6 +236,7 @@ th, td {
     color: darkblue;
   }
   .weatherContainer{
+    height: 100vh;
     margin-top: 1vh;
     position: fixed;
     border: 5px solid #555;
@@ -247,7 +252,12 @@ th, td {
     justify-content: center;
     align-items: center;
     background-color: white;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
   }
+  .weatherContainer::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
 
 #topDiv{
     margin-top: 9vw;
@@ -566,4 +576,34 @@ th, td {
     background: none; 
     border: none;
     z-index: 20;
+}
+
+.skinContainer{
+    position: relative;
+    height: 110vh;
+    width: 0px;
+    
+     filter: 
+    drop-shadow(  3px  0px 0 black)
+     drop-shadow(  -3px  0px 0 black)
+     drop-shadow(  0px  3px 0 black)
+    drop-shadow(  0px  -3px 0 black)
+
+}
+.skinImg{
+    height: 100%;
+   position: absolute;
+   top: 0px;
+   left: 0px;
+   transform: translate(-50%);
+}
+.outline{
+    
+     filter: 
+    drop-shadow(  3px  0px 0 red)
+     drop-shadow(  -3px  0px 0 red)
+     drop-shadow(  0px  3px 0 red)
+    drop-shadow(  0px  -3px 0 red);
+    
+    z-index: 1000;
 }

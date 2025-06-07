@@ -66,7 +66,16 @@
         <img id="uvImage"src="https://cdn.fmi.fi/apps/global-ultraviolet-index/plot.php?location=helsinki&lang=fi&day=0">
     </div>
     <div id="me">
-        <img src="./Images/me.png" height="100%">
+        <div class="skinContainer">
+            <img src="./Images/me_images/base.png" class="skinImg" id="skin">
+            <img src="./Images/me_images/pants_shorts.png" class="skinImg" id="pants">
+            <img src="./Images/me_images/toes.png" class="skinImg" id="shoes">
+            <img src="" class="skinImg" id="shirt">
+            <img src="" class="skinImg" id="jacket">
+            <img src="" class="skinImg" id="hair">
+            <img src="" class="skinImg" id="cap">
+            
+        </div>
         <img src="./Images/trophy.png" height="10%" style="margin-top: 5%;">
     </div>
     
@@ -132,6 +141,13 @@
         <div class="progress-text"><i class="fa-solid fa-cat"></i><span id="dietCounter"> 0/10 Days</span></div>
         <div class="progress-bar">
           <div class="progress-fill" id="dietProgress"></div>
+        </div>
+      </div>
+
+      <div id="piano" class="white-bar progress-container" onclick="addProgress('piano', document.getElementById('pianoCounter'), document.getElementById('pianoProgress'))">
+        <div class="progress-text"><i class="fa-solid fa-music"></i><span id="pianoCounter"> 0/10 Days</span></div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="pianoProgress"></div>
         </div>
       </div>
       <img height="20px">

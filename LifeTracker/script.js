@@ -973,23 +973,23 @@ function checkDateOnFocusButtons(){
 //#region Items
 
 class MainItem {
-    constructor(name, icon, src, price, unlocked, lowers){
+    constructor(name, icon,  price, unlocked, lowers){
         this.name = name; 
         this.icon = icon;
         this.price = price;
         this.unlocked = unlocked;
         this.lowers = lowers;
-        this.src = src;
+        
     }
 }
 class ItemItself{
-    constructor(name, icon, src, price, unlocked, lowers){
+    constructor(name, icon,  price, unlocked, lowers){
         this.name = name; 
         this.icon = icon;
         this.price = price;
         this.unlocked = unlocked;
         this.lowers = lowers;
-        this.src = src;
+        
     }
 }
 class ItemVersion{
@@ -1002,12 +1002,338 @@ class ItemVersion{
     }
 }
 
-const shirts = new MainItem("shirts", "./Images/me_images/Tshirt_red.png","./Images/me_images/Tshirt_red.png", [0,0,5], false, [
-    new ItemItself("Thirt", "./Images/me_images/Tshirt_red.png","./Images/me_images/Tshirt_red.png", [0,0,0], true, [
-        new ItemVersion("redTshirt", "red","./Images/me_images/Tshirt_red.png", [0,0,0], true),
-        new ItemVersion("grayTshirt", "gray", "./Images/me_images/Tshirt_gray.png", [500,0,0], false)
+class Person{
+    constructor(){
+        this.pants = "./Images/me_images/pants/shorts/gray_shorts.png";
+        this.feet = "./Images/me_images/feet/toes/toes.png";
+        this.shirts = "";
+        this.jackets = "";
+        this.hair = "";
+        this.hats = "";
+    }
+    applyToShop(){
+        document.getElementById("pantsShop").src = this.pants;
+         document.getElementById("feetShop").src = this.feet;
+          document.getElementById("shirtsShop").src = this.shirts;
+           document.getElementById("jacketsShop").src = this.jackets;
+            document.getElementById("hairShop").src = this.hair;
+             document.getElementById("hatsShop").src = this.hats;
+    }
+    applyToMe(){
+        (document.getElementById("pants")).src = this.pants;
+        (document.getElementById("feet")).src = this.feet;
+        (document.getElementById("shirts")).src = this.shirts;
+        (document.getElementById("jackets")).src = this.jackets;
+        (document.getElementById("hair")).src = this.hair;
+        (document.getElementById("hats")).src = this.hats;
+    }
+    savePerson(){
+        localStorage.personpants = this.pants;
+        localStorage.personfeet = this.feet;
+        localStorage.personshirts = this.shirts;
+        localStorage.personjackets = this.jackets;
+        localStorage.personhair = this.hair;
+        localStorage.personhats = this.hats;
+    }
+    loadPerson(){
+        if(localStorage.personpants){this.pants = localStorage.personpants}else{this.pants = "./Images/me_images/pants/shorts/gray_shorts.png"};
+        if(localStorage.personfeet ){this.feet= localStorage.personfeet}else{this.feet = "./Images/me_images/feet/toes/toes.png"};
+        if(localStorage.personshirts ){ this.shirts= localStorage.personshirts}else{this.shirts = ""};
+        if(localStorage.personjackets ){this.jackets= localStorage.personjackets}else{this.jackets = ""};
+        if(localStorage.personhair ){ this.hair= localStorage.personhair}else{this.hair = ""};
+        if(localStorage.personhats ){ this.hats= localStorage.personhats}else{this.hats = ""};
+    }
+    changeItem(ItemName, newSrc){
+        switch(ItemName){
+            case "pants": this.pants = newSrc;break;
+            case "feet": this.feet = newSrc;break;
+            case "shirts": this.shirts = newSrc;break;
+            case "jackets": this.jackets = newSrc;break;
+            case "hair": this.hair = newSrc;break;
+            case "hats": this.hats = newSrc;break;
+        }
+    }
+}
+const shopPerson = new Person();
+shopPerson.loadPerson();
+shopPerson.applyToShop();
+shopPerson.applyToMe();
+
+const shirts = new MainItem("shirts", "./Images/me_images/shirts_icon.png",  [0,0,5], false, [
+    new ItemItself("NoShirt", "./Images/me_images/0_icon.png", [0,0,0], true, [
+        new ItemVersion("noShirtVersion", "./Images/me_images/0_icon.png","", [0,0,0], true)
+    ]),
+    new ItemItself("T-shirts", "./Images/me_images/shirts/Tshirts_icon.png", [0,0,0], true, [
+        new ItemVersion("red color", "./Images/me_images/shirts/Tshirts/Tshirt_red_icon.png","./Images/me_images/shirts/Tshirts/Tshirt_red.png", [0,0,0], true),
+        new ItemVersion("gray color", "./Images/me_images/shirts/Tshirts/Tshirt_gray_icon.png", "./Images/me_images/shirts/Tshirts/Tshirt_gray.png", [500,0,0], false),
+        new ItemVersion("green color", "./Images/me_images/shirts/Tshirts/Tshirt_green_icon.png", "./Images/me_images/shirts/Tshirts/Tshirt_green.png", [500,0,0], false),
+        new ItemVersion("blue color", "./Images/me_images/shirts/Tshirts/Tshirt_blue_icon.png", "./Images/me_images/shirts/Tshirts/Tshirt_blue.png", [500,0,0], false),
+        new ItemVersion("black color", "./Images/me_images/shirts/Tshirts/Tshirt_black_icon.png", "./Images/me_images/shirts/Tshirts/Tshirt_black.png", [500,0,0], false),
+        new ItemVersion("pink color", "./Images/me_images/shirts/Tshirts/Tshirt_pink_icon.png", "./Images/me_images/shirts/Tshirts/Tshirt_pink.png", [500,0,0], false),
+        new ItemVersion("white color", "./Images/me_images/shirts/Tshirts/Tshirt_white_icon.png", "./Images/me_images/shirts/Tshirts/Tshirt_white.png", [500,0,0], false),
+        new ItemVersion("sakura style", "./Images/me_images/shirts/Tshirts/Tshirt_sakura_icon.png", "./Images/me_images/shirts/Tshirts/Tshirt_sakura.png", [1000,5,0], false),
+        new ItemVersion("anime style", "./Images/me_images/shirts/Tshirts/Tshirt_anime_icon.png", "./Images/me_images/shirts/Tshirts/Tshirt_anime.png", [1000,5,0], false),
+
     ]
     )
 ]
 );
-console.log(shirts)
+const pants = new MainItem("pants", "./Images/me_images/pants_icon.png", [0,0,5], true, [
+    new ItemItself("shorts", "./Images/me_images/pants/shorts_icon.png", [0,0,5], true, [
+        new ItemVersion("gray color", "./Images/me_images/pants/shorts/gray_shorts_icon.png", "./Images/me_images/pants/shorts/gray_shorts.png", [0,0,0], true)
+    ])
+])
+const jackets = new MainItem("jackets", "./Images/me_images/jackets_icon.png", [0,0,5], false, [
+    new ItemItself("noJacket", "./Images/me_images/0_icon.png", [0,0,0], true, [
+        new ItemVersion("noJacketLow", "./Images/me_images/0_icon.png", "",[0,0,0], true)
+    ]),
+    new ItemItself("flanels", "./Images/me_images/jackets/flanel_icon.png", [0,0,0], true, [
+        new ItemVersion("Buffalo check", "./Images/me_images/jackets/flanel/jacket_flanel_icon.png", "./Images/me_images/jackets/flanel/jacket_flanel.png", [0,0,0], true)
+    ])
+])
+const feet = new MainItem("feet", "./Images/me_images/feet_icon.png", [0,0,5], false, [
+    new ItemItself("toes", "./Images/me_images/0_icon.png", [0,0,0], true, [
+        new ItemVersion("toesLow", "./Images/me_images/0_icon.png", "./Images/me_images/feet/toes/toes.png",[0,0,0],true)
+    ]),
+    new ItemItself("shoes", "./Images/me_images/feet_icon.png", [0,0,0], true, [
+        new ItemVersion("brown shoes", "./Images/me_images/feet_icon.png","./Images/me_images/feet/shoes_standard/shoes_brown.png",[0,0,0],true)
+    ])
+])
+const hair = new MainItem("hair", "./images/me_images/hair_icon.png", [0,0,5],false, [
+    new ItemItself("noHair", "./Images/me_images/0_icon.png", [0,0,0], true, [
+        new ItemVersion("noHairLow", "./Images/me_images/0_icon.png", "",[0,0,0], true)
+    ]),
+    new ItemItself("long hair", "./images/me_images/hair_icon.png", [0,0,0], true, [
+        new ItemVersion("brown color", "./images/me_images/hairs/hair_long/hair_long_brown_icon.png", "./images/me_images/hairs/hair_long/hair_long_brown.png", [500,0,0], true),
+        new ItemVersion("black color", "./images/me_images/hairs/hair_long/hair_long_black_icon.png", "./images/me_images/hairs/hair_long/hair_long_black.png", [500,0,0], false),
+        new ItemVersion("blue color", "./images/me_images/hairs/hair_long/hair_long_blue_icon.png", "./images/me_images/hairs/hair_long/hair_long_blue.png", [500,0,0], false),
+        new ItemVersion("gray color", "./images/me_images/hairs/hair_long/hair_long_gray_icon.png", "./images/me_images/hairs/hair_long/hair_long_gray.png", [500,0,0], false),
+        new ItemVersion("pink color", "./images/me_images/hairs/hair_long/hair_long_pink_icon.png", "./images/me_images/hairs/hair_long/hair_long_pink.png", [500,0,0], false),
+        new ItemVersion("purple color", "./images/me_images/hairs/hair_long/hair_long_purple_icon.png", "./images/me_images/hairs/hair_long/hair_long_purple.png", [500,0,0], false),
+        new ItemVersion("white color", "./images/me_images/hairs/hair_long/hair_long_white_icon.png", "./images/me_images/hairs/hair_long/hair_long_white.png", [500,0,0], false),
+        new ItemVersion("yellow color", "./images/me_images/hairs/hair_long/hair_long_yellow_icon.png", "./images/me_images/hairs/hair_long/hair_long_yellow.png", [500,0,0], false),
+        new ItemVersion("rainbow style", "./images/me_images/hairs/hair_long/hair_long_rainbow_icon.png", "./images/me_images/hairs/hair_long/hair_long_rainbow.png", [500,5,0], false),
+        new ItemVersion("star style", "./images/me_images/hairs/hair_long/hair_long_star_icon.png", "./images/me_images/hairs/hair_long/hair_long_star.png", [500,5,0], false),
+    ])
+])
+const hats = new MainItem("hats", "./Images/me_images/hats_icon.png", [0,0,5], false, [
+    new ItemItself("nohat", "./Images/me_images/0_icon.png", [0,0,0], true, [
+        new ItemVersion("nohatLow", "./Images/me_images/0_icon.png", "",[0,0,0], true)
+    ]),
+    new ItemItself("caps", "./Images/me_images/hats/caps_icon.png", [0,0,0], true, [
+        new ItemVersion("gray cap", "./Images/me_images/shirts/Tshirts/Tshirt_gray_icon.png","./Images/me_images/hats/caps/cap_gray.png",[0,0,0],true)
+    ])
+])
+
+
+const mainItems = [shirts, pants, jackets, feet, hair, hats];
+
+
+function openSubShop(subShopdiv, buttonClicked) {
+
+    if(buttonClicked.classList.contains("selected")){
+        buttonClicked.classList.remove("selected")
+    }
+
+    if(subShopdiv.style.display === "block"){
+        subShopdiv.classList.remove("open")
+        subShopdiv.classList.add("close")
+        setTimeout(() => {
+            subShopdiv.style.display = "none";
+        }, 100); // 100 milliseconds = 0.1 seconds
+        return;
+    }
+    subShopdiv.classList.remove("close")
+    subShopdiv.classList.add("open")
+
+    Array.from(document.getElementsByClassName("subShop")).forEach((i) => i.style.display = "none")
+    subShopdiv.style.display = "block"
+
+    Array.from(document.getElementsByClassName("mainItemButton")).forEach((i) => i.classList.remove("selected"))
+    buttonClicked.classList.add("selected")
+}
+
+function openItemShop(itemShopdiv, buttonClicked){
+    if(buttonClicked.classList.contains("selected2")){
+        buttonClicked.classList.remove("selected2")
+    }
+    if(itemShopdiv.style.display === "block"){
+        itemShopdiv.classList.remove("open")
+        itemShopdiv.classList.add("close")
+        setTimeout(() => {
+            itemShopdiv.style.display = "none";
+        }, 100); // 100 milliseconds = 0.1 seconds
+
+        return;
+    }
+
+    itemShopdiv.classList.remove("close")
+    itemShopdiv.classList.add("open")
+
+
+    Array.from(itemShopdiv.parentElement.getElementsByTagName("button")).forEach(i => i.classList.remove("selected2"))
+    buttonClicked.classList.add("selected2")
+    
+
+    Array.from(document.getElementsByClassName("itemShop")).forEach((i) => i.style.display = "none")
+    itemShopdiv.style.display = "block"
+
+
+}
+
+function openVersionShop(clothingItem, itemMainName, itemButtonArray, theButton){
+    itemButtonArray.forEach((i) => i.classList.remove("selected3"));
+    theButton.classList.add("selected3")
+
+    let clothImg;
+    switch(itemMainName){
+        case "shirts": clothImg = document.getElementById("shirtsShop");break;
+        case "pants": clothImg = document.getElementById("pantsShop");break;
+        case "jackets": clothImg = document.getElementById("jacketsShop");break;
+        case "feet": clothImg = document.getElementById("feetShop");break;
+        case "hair": clothImg = document.getElementById("hairShop");break;
+        case "hats": clothImg = document.getElementById("hatsShop");break;
+    }
+    shopPerson.changeItem(itemMainName, clothingItem.src);
+    clothImg.src = clothingItem.src;
+    document.getElementById("skinContainerShopID").style.filter = "drop-shadow(  3px  0px 0 black)drop-shadow(  -3px  0px 0 black)drop-shadow(  0px  3px 0 black)drop-shadow(  0px  -3px 0 black)";
+}
+function openBuyShopWithItem(theItem, localName, theItemButton){
+    document.getElementById("shopUnlock").style.display = "flex";
+    document.getElementById("buyName").innerText = theItem.name;
+    document.getElementById("buyPrice").innerHTML = "";
+    document.getElementById("buyPrice").innerHTML = priceToStringFromArray(theItem.price);
+    document.getElementById("buyImg").src = theItem.icon;
+
+    let buyButton = document.getElementById("buyButton");
+    if(canAfford(theItem.price)){
+        buyButton.disabled = false;
+        buyButton.innerHTML ="BUY"
+
+        buyButton.onclick = () => {
+            theItemButton.style.background = "url('"+ theItem.icon + "') no-repeat center / cover, #f0f9f6";
+            theItem.unlocked = true;
+            buyButton.innerHTML = "BOUGHT"
+            localStorage.setItem(localName, "1");
+            changeCurrencies(0,-theItem.price[0], -theItem.price[1]);
+            giveGem(-theItem.price[2]);
+            
+        }
+    }
+    else{
+        buyButton.onclick = () => {};
+        buyButton.disabled = true;
+        buyButton.innerHTML = '<img src="./Images/lock_icon.png"></img>'
+    }
+    
+}
+document.getElementById("buyCancel").onclick = () => {
+    document.getElementById("shopUnlock").style.display = "none";
+}
+
+function buyMainItem(mainItem){
+
+}
+
+function priceToStringFromArray(array){
+    let priceText = "for: ";
+    if(array[0] != 0){priceText += (array[0] +' <img src="./Images/ManaOrbs.png"> ')};
+    if(array[1] != 0){priceText += (array[1] +' <img src="./Images/Diamond.png"> ')};
+    if(array[2] != 0){priceText += (array[2] +' <img src="./Images/gem.png""> ')};
+    return priceText;
+}
+function canAfford(price){
+    if((orbs >= price[0]) && (diamonds >= price[1]) && (gems >= price[2])){
+        return true;
+    }else{
+        return false;
+    }
+}
+//document.getElementById("button111").addEventListener('click', () => {
+//    openSubShop(document.getElementById("subShop1"))
+//})
+//document.getElementById("button222").addEventListener('click', () => {
+//    openSubShop(document.getElementById("itemShop1"))
+//})
+const shop = document.getElementById("shopDiv");
+mainItems.forEach((item) =>{
+    if(localStorage.getItem(item.name) == "1"){
+                item.unlocked = true;
+            }
+    //create the button and its subshop
+    let newSubShop = document.createElement('div');
+    newSubShop.className = "subShop";
+
+    let newButton = document.createElement('button');
+    newButton.onclick = () => {
+        if(item.unlocked){    
+            openSubShop(newSubShop, newButton)
+        } else{
+            openBuyShopWithItem(item, item.name, newButton);
+        }
+    };
+    newButton.style.background = (item.unlocked ? "" : "url('./Images/lock_icon.png') no-repeat center / cover,") + "url('"+ item.icon + "') no-repeat center / cover, #f0f9f6";
+    newButton.classList.add("mainItemButton")
+    
+
+    shop.appendChild(newButton);
+    shop.appendChild(newSubShop);
+
+    //fill the subshop
+    item.lowers.forEach((item2) => {
+        if(localStorage.getItem(item.name + item2.name) == "1"){
+                item2.unlocked = true;
+            }
+        let newItemShop = document.createElement('div');
+        newItemShop.className = "itemShop";
+
+        let newSubButton = document.createElement('button');
+        newSubButton.onclick = () => {
+            if(item2.unlocked){  
+                openItemShop(newItemShop ,newSubButton);
+            }else{
+                openBuyShopWithItem(item2, item.name + item2.name, newSubButton);
+            }
+
+        };
+        newSubButton.style.background = (item2.unlocked ? "" : "url('./Images/lock_icon.png') no-repeat center / cover,") +"url('"+ item2.icon + "') no-repeat center / cover, #f0f9f6";
+
+        newSubShop.appendChild(newSubButton);
+        newSubShop.appendChild(newItemShop);
+
+        item2.lowers.forEach((item3) => {
+            if(localStorage.getItem(item.name + item2.name + item3.name) == "1"){
+                item3.unlocked = true;
+            }
+
+            let newItemButton = document.createElement('button');
+            newItemButton.style.background = (item3.unlocked ? "" : "url('./Images/lock_icon.png') no-repeat center / cover,") +"url('"+ item3.icon + "') no-repeat center / cover, #f0f9f6";
+            newItemButton.onclick = () => {
+                if(item3.unlocked){
+                    openVersionShop(item3, item.name, Array.from(newSubShop.getElementsByTagName("button")), newItemButton);
+                }else{
+                    openBuyShopWithItem(item3, item.name + item2.name + item3.name, newItemButton);
+                }};
+
+            newItemShop.appendChild(newItemButton);
+        })
+    })
+
+})
+
+//buttons back done
+document.getElementById("backButton").addEventListener("click", () => {
+    document.getElementById("shopID").style.display = "none";
+    shopPerson.loadPerson();
+    shopPerson.applyToShop();
+});
+
+document.getElementById("shopOpenButton").addEventListener("click", () => {
+    document.getElementById("shopID").style.display = "block";
+});
+
+document.getElementById("doneButton").addEventListener("click", () => {
+    shopPerson.applyToMe();
+    shopPerson.savePerson();
+    document.getElementById("shopID").style.display = "none";
+});

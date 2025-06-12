@@ -1099,21 +1099,21 @@ const feet = new MainItem("feet", "./Images/me_images/feet_icon.png", [0,0,5], f
         new ItemVersion("brown shoes", "./Images/me_images/feet_icon.png","./Images/me_images/feet/shoes_standard/shoes_brown.png",[0,0,0],true)
     ])
 ])
-const hair = new MainItem("hair", "./images/me_images/hair_icon.png", [0,0,5],false, [
+const hair = new MainItem("hair", "./Images/me_images/hair_icon.png", [0,0,5],false, [
     new ItemItself("noHair", "./Images/me_images/0_icon.png", [0,0,0], true, [
         new ItemVersion("noHairLow", "./Images/me_images/0_icon.png", "",[0,0,0], true)
     ]),
-    new ItemItself("long hair", "./images/me_images/hair_icon.png", [0,0,0], true, [
-        new ItemVersion("brown color", "./images/me_images/hairs/hair_long/hair_long_brown_icon.png", "./images/me_images/hairs/hair_long/hair_long_brown.png", [500,0,0], true),
-        new ItemVersion("black color", "./images/me_images/hairs/hair_long/hair_long_black_icon.png", "./images/me_images/hairs/hair_long/hair_long_black.png", [500,0,0], false),
-        new ItemVersion("blue color", "./images/me_images/hairs/hair_long/hair_long_blue_icon.png", "./images/me_images/hairs/hair_long/hair_long_blue.png", [500,0,0], false),
-        new ItemVersion("gray color", "./images/me_images/hairs/hair_long/hair_long_gray_icon.png", "./images/me_images/hairs/hair_long/hair_long_gray.png", [500,0,0], false),
-        new ItemVersion("pink color", "./images/me_images/hairs/hair_long/hair_long_pink_icon.png", "./images/me_images/hairs/hair_long/hair_long_pink.png", [500,0,0], false),
-        new ItemVersion("purple color", "./images/me_images/hairs/hair_long/hair_long_purple_icon.png", "./images/me_images/hairs/hair_long/hair_long_purple.png", [500,0,0], false),
-        new ItemVersion("white color", "./images/me_images/hairs/hair_long/hair_long_white_icon.png", "./images/me_images/hairs/hair_long/hair_long_white.png", [500,0,0], false),
-        new ItemVersion("yellow color", "./images/me_images/hairs/hair_long/hair_long_yellow_icon.png", "./images/me_images/hairs/hair_long/hair_long_yellow.png", [500,0,0], false),
-        new ItemVersion("rainbow style", "./images/me_images/hairs/hair_long/hair_long_rainbow_icon.png", "./images/me_images/hairs/hair_long/hair_long_rainbow.png", [500,5,0], false),
-        new ItemVersion("star style", "./images/me_images/hairs/hair_long/hair_long_star_icon.png", "./images/me_images/hairs/hair_long/hair_long_star.png", [500,5,0], false),
+    new ItemItself("long hair", "./Images/me_images/hair_icon.png", [0,0,0], true, [
+        new ItemVersion("brown color", "./Images/me_images/hairs/hair_long/hair_long_brown_icon.png", "./Images/me_images/hairs/hair_long/hair_long_brown.png", [500,0,0], true),
+        new ItemVersion("black color", "./Images/me_images/hairs/hair_long/hair_long_black_icon.png", "./Images/me_images/hairs/hair_long/hair_long_black.png", [500,0,0], false),
+        new ItemVersion("blue color", "./Images/me_images/hairs/hair_long/hair_long_blue_icon.png", "./Images/me_images/hairs/hair_long/hair_long_blue.png", [500,0,0], false),
+        new ItemVersion("gray color", "./Images/me_images/hairs/hair_long/hair_long_gray_icon.png", "./Images/me_images/hairs/hair_long/hair_long_gray.png", [500,0,0], false),
+        new ItemVersion("pink color", "./Images/me_images/hairs/hair_long/hair_long_pink_icon.png", "./Images/me_images/hairs/hair_long/hair_long_pink.png", [500,0,0], false),
+        new ItemVersion("purple color", "./Images/me_images/hairs/hair_long/hair_long_purple_icon.png", "./Images/me_images/hairs/hair_long/hair_long_purple.png", [500,0,0], false),
+        new ItemVersion("white color", "./Images/me_images/hairs/hair_long/hair_long_white_icon.png", "./Images/me_images/hairs/hair_long/hair_long_white.png", [500,0,0], false),
+        new ItemVersion("yellow color", "./Images/me_images/hairs/hair_long/hair_long_yellow_icon.png", "./Images/me_images/hairs/hair_long/hair_long_yellow.png", [500,0,0], false),
+        new ItemVersion("rainbow style", "./Images/me_images/hairs/hair_long/hair_long_rainbow_icon.png", "./Images/me_images/hairs/hair_long/hair_long_rainbow.png", [500,5,0], false),
+        new ItemVersion("star style", "./Images/me_images/hairs/hair_long/hair_long_star_icon.png", "./Images/me_images/hairs/hair_long/hair_long_star.png", [500,5,0], false),
     ])
 ])
 const hats = new MainItem("hats", "./Images/me_images/hats_icon.png", [0,0,5], false, [

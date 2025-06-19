@@ -1145,47 +1145,7 @@ let BaseRotationDataLabels = Array.from({ length: dares_count }, (value, index) 
 /* --------------- Guide : https://chartjs-plugin-datalabels.netlify.app/guide/getting-started.html --------------------- */
 document.getElementById("containerTest").style.maxWidth = "1000px"
 
-let spinChart = new Chart(spinWheel, {
-  plugins: [ChartDataLabels],
-  type: "pie",
-  rotation: 0,
-  data: {
-    labels: dares_sliced,
-    datasets: [
-      {
-        backgroundColor: spinColors,
-        data: size,
-      },
-    ],
-  },
-  options: {
-    elements: {
-        arc: {
-            borderWidth: 0
-        }
-    },
-    rotation: 0,
-    responsive: true,
-    animation: { duration: 0 },
-    plugins: {
-      tooltip: false,
-      legend: {
-        display: false,
-      },
-      datalabels: {
-        rotation: BaseRotationDataLabels,
-        anchor: 'end',
-        align: 'start',
-        clamp: false,
-        display: true,
-        color: "#ffffff",
-        formatter: (_, context) => context.chart.data.labels[context.dataIndex],
-        font: { size: 15, weight: 'bold'},
-      },
-    },
-  },
-});
-spinChart.destroy()
+
 
 document.getElementById("containerTest").style.maxWidth = "24.37rem";
 /* --------------- Chart To Image --------------------- */
@@ -3938,34 +3898,8 @@ var totalValue = 1;
 var dataDaresPie;
 
 window.onload = () => {
-
-    
-  if(localStorage.defaultJSON){
-    pie_Default = JSON.parse(localStorage.defaultJSON).dares;
-    pie_Default_colors = json_default.colors;
-  }
-  if(localStorage.plusdefaultDare){
-        dareNums = localStorage.plusdefaultDare.split("\n");
-        console.log(dareNums.map((i) => parseOrDefault(i)))
-
-    };
-    let datadares = []
-    
-    for(i in pie_Default){
-        let slicecolors = sliceColor(pie_Default_colors, pie_Default[i], i)
-        datadares.push({label: pie_Default[i], value: parseOrDefault(dareNums[i]), color: slicecolors})
-    }
-    pie_Default_wheel = JSON.parse(localStorage.defaultJSON).wheel_changes;
-        wheelNums = localStorage.plusdefaultWheel.split("\n")
-
-    for(i in pie_Default_wheel){
-        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
-    }
-    console.log(datadares)
-    dataDaresPie = datadares;
-    spinValuesPie = CalculateSpinValues(datadares);
-    totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
-    drawPie(datadares);
+    getDataDareDefault();
+    drawPie(dataDaresPie);
 }
 
 function findAngleByString(name){
@@ -4071,10 +4005,9 @@ sliderS.oninput = function() {
 
 
 function getDataDareDefault() {
-  
+  pie_Default_colors = json_default.colors;
   if(localStorage.defaultJSON){
     pie_Default = JSON.parse(localStorage.defaultJSON).dares;
-    pie_Default_colors = json_default.colors;
   }
   else{
     pie_Default = json_default.dares;
@@ -4109,10 +4042,9 @@ function getDataDareDefault() {
     totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
 }
 function getDataDareEnemies() {
-  
+  pie_Default_colors = json_no_enemies.colors;
   if(localStorage.enemiesJSON){
     pie_Default = JSON.parse(localStorage.enemiesJSON).dares;
-    pie_Default_colors = json_no_enemies.colors;
   }
   else{
     pie_Default = json_no_enemies.dares;
@@ -4147,10 +4079,9 @@ function getDataDareEnemies() {
     totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
 }
 function getDataDareVergi() {
-  
+  pie_Default_colors = json_vergi_psycho.colors;
   if(localStorage.vergiJSON){
     pie_Default = JSON.parse(localStorage.vergiJSON).dares;
-    pie_Default_colors = json_vergi_psycho.colors;
   }
   else{
     pie_Default = json_vergi_psycho.dares;
@@ -4185,10 +4116,9 @@ function getDataDareVergi() {
     totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
 }
 function getDataDareMeme() {
-  
+  pie_Default_colors = json_memes.colors;
   if(localStorage.memesJSON){
     pie_Default = JSON.parse(localStorage.memesJSON).dares;
-    pie_Default_colors = json_memes.colors;
   }
   else{
     pie_Default = json_memes.dares;
@@ -4223,10 +4153,10 @@ function getDataDareMeme() {
     totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
 }
 function getDataDareSitting() {
-  
+  pie_Default_colors = json_no_sitting.colors;
   if(localStorage.sittingJSON){
     pie_Default = JSON.parse(localStorage.sittingJSON).dares;
-    pie_Default_colors = json_no_sitting.colors;
+    
   }
   else{
     pie_Default = json_no_sitting.dares;

@@ -44,6 +44,7 @@ function CreateNewDom() {
     clone.style.padding = "0";
     clone.style.display = "table-cell"
     clone.style.verticalAlign = "top";
+    clone.style.marginBottom = "5px"
     clone.getElementsByTagName('div')[0].innerHTML = counterTextInput.value;
     clone.getElementsByTagName('div')[0].style.width = "100px";
     clone.getElementsByTagName('img')[0].src = document.getElementById("mySelect").value;
@@ -56,12 +57,14 @@ function CreateNewDom() {
         } else {
             shadowColor = "rgb(255, 217, 0)";
         }
+        clone.getElementsByTagName('img')[0].style.filter = `drop-shadow(  1px  0px 0px black)drop-shadow(  -1px  0px 0px black)drop-shadow(  0px  1px 0px black)drop-shadow(  0px  -1px 0px black)drop-shadow(  3px  0px 0px ${shadowColor})drop-shadow(  -3px  0px 0 ${shadowColor})drop-shadow(  0px  3px 0 ${shadowColor})drop-shadow(  0px  -3px 0 ${shadowColor})`
       });
 
+      
     
     clone.addEventListener('mouseover', function () {
         this.style.filter = `drop-shadow(0 0 1rem ${shadowColor})drop-shadow(0 0 1rem ${shadowColor})`
-        this.style.transition = "all 0.1s ease";
+        this.style.transition = "all 0.3s ease";
         
       });
       clone.addEventListener('mouseout', function () {
@@ -118,6 +121,7 @@ function CreateNewDom() {
     img.src ="./Images/icons/power_icon_7.png";
     img.style.height = "120px";
     img.style.width = "40px";
+    img.style.filter = `drop-shadow(  0.3px  0px 0px black)drop-shadow(  -0.3px  0px 0px black)drop-shadow(  0px  0.3px 0px black)drop-shadow(  0px  -0.3px 0px black)`
     img.id = `mapImage${functionName}`
     img.dataset.custom = "7";
     img.classList.add("powerImage");
@@ -272,88 +276,57 @@ function alarmSound(src, vol) {
 }
 
 
-function change_wheel(wheeldata) {
-    wheel_array = wheeldata.dares.concat(wheeldata.environments, wheeldata.wheel_changes);
-    wheel_array = shuffle(wheel_array);
-    dares_count = wheel_array.length;
-    dares_sliced = wheel_array.map(x => x.slice(0,10) + '...');
-    spinValues = wheel_array.map( (x, index) => Array( index / dares_count * 360,  (index + 1) / dares_count * 360, x, x.slice("")[0]));
-    size = Array(dares_count).fill(10);
+function change_wheel() {
+    gotoriginal = false;
     switch(current_wheel) {
         case "no pain":
             document.getElementById("triangleCSS").style.borderTop = "55px solid " + "#2E86C1";
             spinColors = json_pain_free.colors;
+            
             break;
         case "no enemies":
             document.getElementById("triangleCSS").style.borderTop = "55px solid " + '#B8C795';
             spinColors = json_no_enemies.colors;
+            document.getElementById("headerText").className = "vinlandFont";
+            document.getElementById("headerText").innerHTML = " I HAVE NO ENEMIES";
+            textWheelIcon.innerHTML = "no enemies";
             break;
         case "memes":
             document.getElementById("triangleCSS").style.borderTop = "55px solid " + '#2bdc4c';
             spinColors = json_memes.colors;
+            document.getElementById("headerText").className = "";
+            document.getElementById("headerText").innerHTML = 
+            `<div class="containerh1Text">
+            <div class="neon"> Iivo Wonkyn</div>
+            <div class="flux">Dare Factory</div>
+            </div>`;
+            textWheelIcon.innerHTML = "IWDF";
             break;
         case "vergipsycho":
             document.getElementById("triangleCSS").style.borderTop = "55px solid " + '#00ff9f';
             spinColors = json_vergi_psycho.colors;
+            document.getElementById("headerText").className = "cyberFont";
+            document.getElementById("headerText").innerHTML = "vergiPsycho";
+            textWheelIcon.innerHTML = "vergiPsycho";
             break;
         case "no sitting":
             document.getElementById("triangleCSS").style.borderTop = "55px solid " + "#447654";
             spinColors = json_no_sitting.colors;
+            document.getElementById("headerText").className = "armyFont";
+            document.getElementById("headerText").innerHTML = "NO SITTING";
+            textWheelIcon.innerHTML = "no sitting";
             break;
         case "default":
             document.getElementById("triangleCSS").style.borderTop = "55px solid " + "#E74C3C";
             spinColors = json_default.colors;
+            document.getElementById("headerText").className = "defaulHeader";
+            document.getElementById("headerText").innerHTML = "DEFAULT WHEEL";
+            textWheelIcon.innerHTML = "default";
             break;
         default:
             
     }
-
-    BaseRotationDataLabels = Array.from({ length: dares_count }, (value, index) => 90 + index * 360 / dares_count );
-
-    spinChart.destroy();
-    document.getElementById("containerTest").style.maxWidth = "1000px"
-    spinChart = new Chart(spinWheel, {
-        plugins: [ChartDataLabels],
-        type: "pie",
-        rotation: 0,
-        data: {
-          labels: dares_sliced,
-          datasets: [
-            {
-              backgroundColor: spinColors,
-              data: size,
-            },
-          ],
-        },
-        options: {
-            elements: {
-                arc: {
-                    borderWidth: 0
-                }
-            },
-          rotation: 0,
-          responsive: true,
-          animation: { duration: 0 },
-          plugins: {
-            tooltip: false,
-            legend: {
-              display: false,
-            },
-            datalabels: {
-              rotation: BaseRotationDataLabels,
-              anchor: 'end',
-              align: 'start',
-              clamp: true,
-              color: "#ffffff",
-              formatter: (_, context) => context.chart.data.labels[context.dataIndex],
-              font: { size: 15, weight: 'bold'},
-            },
-          },
-        },
-      });
-      document.getElementById("containerTest").style.maxWidth = (current_wheel == "default") ? "24.37rem" : "34.37rem";
-      spinImage.src = spinChart.toBase64Image();
-      textWheelIcon.innerHTML = current_wheel;
+    
 }
 
 function formatTime(time) {
@@ -391,6 +364,7 @@ if(localStorage.defaultJSON){
 
     if(localStorage.plusdefaultDare){
         dareNums = localStorage.plusdefaultDare.split("\n");
+        console.log(dareNums)
         dareNames = wheeldata_Default.dares;
         arrr = [];
         for(i=0; i < dareNames.length; i++){
@@ -711,6 +685,7 @@ const text2 = document.getElementById("text2");
 const textE = document.getElementById("textE");
 const textWheelIcon = document.getElementById("wheelNameIcon");
 const triangleCSS = document.getElementById("triangleCSS");
+const pieHolder = document.getElementById("pieHolder")
 
 const wheelPara1 = document.getElementById("wheelPara1");
 const wheelPara2 = document.getElementById("wheelPara2");
@@ -1000,7 +975,7 @@ const wheelPopup = document.getElementById("wheelPopup");
 const painButton = document.getElementById("wheelChoosePain");
 painButton.addEventListener("click", function () {
     current_wheel = "no pain"
-    change_wheel(wheeldata_Pain_Free)
+    change_wheel()
     wheelPopup.classList.remove("show");
     document.body.style.background = "url('./Images/backgrounds/no_pain_bg.png')center/cover no-repeat";
 
@@ -1024,7 +999,10 @@ painButton.addEventListener("click", function () {
 const enemiesButton = document.getElementById("wheelChooseEnemies");
 enemiesButton.addEventListener("click", function () {
     current_wheel = "no enemies"
-    change_wheel(wheeldata_No_Enemies)
+    change_wheel()
+    getDataDareEnemies();
+    updateValueOfShots(dataDaresPie);
+    drawPie(dataDaresPie);
     wheelPopup.classList.remove("show");
     document.body.style.background = "url('./Images/backgrounds/no_enemies_bg.png')center/cover no-repeat";
 
@@ -1048,7 +1026,10 @@ enemiesButton.addEventListener("click", function () {
 const memesButton = document.getElementById("wheelChooseMemes");
 memesButton.addEventListener("click", function () {
     current_wheel = "memes"
-    change_wheel(wheeldata_Memes)
+    change_wheel()
+    getDataDareMeme();
+    updateValueOfShots(dataDaresPie);
+    drawPie(dataDaresPie);
     wheelPopup.classList.remove("show");
     document.body.style.background = "url('./Images/backgrounds/memes_bg.png')center/cover no-repeat";
 
@@ -1072,7 +1053,10 @@ memesButton.addEventListener("click", function () {
 const vergiButton = document.getElementById("wheelChooseVergi");
 vergiButton.addEventListener("click", function () {
     current_wheel = "vergipsycho"
-    change_wheel(wheeldata_Vergi_psycho)
+    change_wheel()
+    getDataDareVergi();
+    updateValueOfShots(dataDaresPie);
+    drawPie(dataDaresPie);
     wheelPopup.classList.remove("show");
     document.body.style.background = "url('./Images/backgrounds/cyberpunk_bg.png')center/cover no-repeat";
 
@@ -1096,7 +1080,10 @@ vergiButton.addEventListener("click", function () {
 const sittingButton = document.getElementById("wheelChooseSitting");
 sittingButton.addEventListener("click", function () {
     current_wheel = "no sitting"
-    change_wheel(wheeldata_No_Sitting)
+    change_wheel()
+    getDataDareSitting();
+    updateValueOfShots(dataDaresPie);
+    drawPie(dataDaresPie);
     wheelPopup.classList.remove("show");
     document.body.style.background = "url('./Images/backgrounds/no_sitting_bg.png')center/cover no-repeat";
 
@@ -1120,7 +1107,10 @@ sittingButton.addEventListener("click", function () {
 const defaultButton = document.getElementById("wheelChooseDefault");
 defaultButton.addEventListener("click", function () {
     current_wheel = "default"
-    change_wheel(wheeldata_Default)
+    change_wheel()
+    getDataDareDefault();
+    updateValueOfShots(dataDaresPie);
+    drawPie(dataDaresPie);
     wheelPopup.classList.remove("show");
     document.body.style.background = "url('./Images/backgrounds/default_bg.png')center/cover no-repeat";
 
@@ -1154,6 +1144,7 @@ let BaseRotationDataLabels = Array.from({ length: dares_count }, (value, index) 
 /* --------------- Chart --------------------- */
 /* --------------- Guide : https://chartjs-plugin-datalabels.netlify.app/guide/getting-started.html --------------------- */
 document.getElementById("containerTest").style.maxWidth = "1000px"
+
 let spinChart = new Chart(spinWheel, {
   plugins: [ChartDataLabels],
   type: "pie",
@@ -1194,10 +1185,12 @@ let spinChart = new Chart(spinWheel, {
     },
   },
 });
+spinChart.destroy()
+
 document.getElementById("containerTest").style.maxWidth = "24.37rem";
 /* --------------- Chart To Image --------------------- */
 
-spinImage.src = spinChart.toBase64Image();
+spinImage.src = "";
 
 /* --------------- Display Value Based On The Angle --------------------- */
 let current_type = "1"; // gets number, E or W
@@ -1355,6 +1348,7 @@ const COLOR_CODES = {
 
 let remainingPathColor = COLOR_CODES.info.color;
 
+
 document.getElementById("app").innerHTML = `
 <div class="base-timer">
   <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1442,7 +1436,7 @@ function secretShotPercent(x){
 function inverseSecretShotPercent(x){ // polynomial ivese made with machine learning fitting ofr range 0.1, 0.5
     return -0.050716-0.207709*x+9.451340*x*x-26.148516*x*x*x+32.922510*x*x*x*x
 }
-let shotMultiplier = 0.0;
+let shotMultiplier = 0.1;
 const extraShots = document.getElementById('extraShots');
 
 extraShots.addEventListener('change', (event) => {
@@ -1451,11 +1445,13 @@ if (event.currentTarget.checked) {
     document.getElementById("sliderContainer").classList.remove("disabled");
     document.getElementById("sliderMul").style.cursor = "pointer"
     document.getElementById("sliderMul").disabled = false;
+    updateValueOfShots(dataDaresPie)
 } else {
     secret = false;
     document.getElementById("sliderContainer").classList.add("disabled");
     document.getElementById("sliderMul").style.cursor = "not-allowed"
     document.getElementById("sliderMul").disabled = true;
+    returnValueOfShots(dataDaresPie)
 }
 });
 
@@ -1574,9 +1570,32 @@ let previous_environment = "";
 let shotsMultiplied = 0;
 
 /* --------------- Spinning Code --------------------- */
-
+const confessionWheel = shuffle([
+'Who is your idol',
+'Name a person you DESPISE and why',
+'Pick your death row meal',
+'Last lie you told (preferably to one of the boys) / TEOLLE JOURNAL PAGE (FUCK YOU)',
+'Reveal one thing on your bucket list',
+'Fictional character (Movie/TV/Game/Anime) youd bang',
+'Favourite or least favourite cliche in fiction',
+'Dodgy thing youve done alone',
+'Reveal your kink',
+'Most perverted thing youve done',
+'Biggest pet peeve about one of the boys',
+'Most embarassing bathroom story',
+'Tell us a morally bad thing youve done',
+'Reveal your first or most recent celebrity crush',
+'What is your dream blunt rotation 2-4 people (living or dead, fictional or real)',
+'Whats the pettiest thing youve done',
+'Tell us the dumbest thing you ever believed 100%',
+'Whats your GUILTY pleasure that you shouldnt admit',
+'Cringiest thing youve done to impress someone',
+]);
+var currentConfessionCount = 0;
+var confessionWheelLength = confessionWheel.length;
+//#region spinning
 spinBtn.addEventListener("click", () => {
-    generateValue(spinChart.options.rotation)
+    
     let count = 100;
     spinBtn.disabled = true;
     let test_dare = "";
@@ -1590,14 +1609,15 @@ spinBtn.addEventListener("click", () => {
 
         do {
         rolledDare = 360 * Math.random();
-        for (let i = 0; i < dares_count; i++) {
-            angleValue =  mod(90 - rolledDare, 360);
-            if (angleValue >= spinValues[i][0] && angleValue <= spinValues[i][1]) {
-                current_type = `${spinValues[i][3]}`;
-                test_dare = `${spinValues[i][2]}`;
+    
+            current_type = pullPieType(rolledDare, totalValue);
+            test_dare = pullPieDare(rolledDare, totalValue);
+            console.log(test_dare, "test")
+            if(test_dare.toLowerCase().includes(". round of shots")){
                 break;
-        }
-        }
+            }    
+        
+        
         }while(test_dare == previous_dare || test_dare == previous_environment || (teamJengaIsDisabled && test_dare.includes("Team Jenga")) || disabledWheels.includes(test_dare));
 
       if ( (e_disabled == true) && (w_disabled == true) && (current_type == "E" || current_type == "W") ){
@@ -1605,14 +1625,12 @@ spinBtn.addEventListener("click", () => {
         do {
             rolledDare = 360 * Math.random();
             
-            for (let i = 0; i < dares_count; i++) {
-                angleValue =  mod(90 - rolledDare, 360);
-                if (angleValue >= spinValues[i][0] && angleValue <= spinValues[i][1]) {
-                    current_type = `${spinValues[i][3]}`;
-                    test_dare = `${spinValues[i][2]}`;
-                    break;
-            }
-          }
+            current_type = pullPieType(rolledDare, totalValue);
+            test_dare = pullPieDare(rolledDare, totalValue);
+            if(test_dare.toLowerCase().includes(". round of shots")){
+                break;
+            }  
+
         }while(current_type == "E" || current_type == "W" || test_dare == previous_dare || test_dare == previous_environment)
       }
       
@@ -1620,14 +1638,11 @@ spinBtn.addEventListener("click", () => {
         do {
             rolledDare = 360 * Math.random();
             
-            for (let i = 0; i < dares_count; i++) {
-                angleValue =  mod(90 - rolledDare, 360);
-                if (angleValue >= spinValues[i][0] && angleValue <= spinValues[i][1]) {
-                    current_type = `${spinValues[i][3]}`;
-                    test_dare = `${spinValues[i][2]}`;
-                    break;
-            }
-          }
+            current_type = pullPieType(rolledDare, totalValue);
+            test_dare = pullPieDare(rolledDare, totalValue);
+            if(test_dare.toLowerCase().includes(". round of shots")){
+                break;
+            }  
         }while(current_type == "E" || test_dare == previous_dare || test_dare == previous_environment || disabledWheels.includes(test_dare))
       }
 
@@ -1635,14 +1650,11 @@ spinBtn.addEventListener("click", () => {
         do {
             rolledDare = 360 * Math.random();
             
-            for (let i = 0; i < dares_count; i++) {
-                angleValue =  mod(90 - rolledDare, 360);
-                if (angleValue >= spinValues[i][0] && angleValue <= spinValues[i][1]) {
-                    current_type = `${spinValues[i][3]}`;
-                    test_dare = `${spinValues[i][2]}`;
-                    break;
-            }
-          }
+            current_type = pullPieType(rolledDare, totalValue);
+            test_dare = pullPieDare(rolledDare, totalValue);
+            if(test_dare.toLowerCase().includes(". round of shots")){
+                break;
+            }  
         }while(current_type == "W" || test_dare == previous_dare || test_dare == previous_environment || (teamJengaIsDisabled && test_dare.includes("Team Jenga")))
       }
 
@@ -1651,31 +1663,21 @@ spinBtn.addEventListener("click", () => {
         do {
             rolledDare = 360 * Math.random();
             
-            for (let i = 0; i < dares_count; i++) {
-                angleValue =  mod(90 - rolledDare, 360);
-                if (angleValue >= spinValues[i][0] && angleValue <= spinValues[i][1]) {
-                    current_type = `${spinValues[i][3]}`;
-                    test_dare = `${spinValues[i][2]}`;
-                    break;
-            }
-          }
+            current_type = pullPieType(rolledDare, totalValue);
+            test_dare = pullPieDare(rolledDare, totalValue);
+            if(test_dare.toLowerCase().includes(". round of shots")){
+                break;
+            }  
         }while(current_type == "E" || current_type == "W" || test_dare == previous_dare)
     }
+    
     // if secret is activated then this replaces rolled dare
-    if (secret == true && Math.random() > (1.0-shotMultiplier) && !(previous_dare.includes(". Round of shots")) && current_wheel != "no pain"){
-        let numbersA = Array.from({length: dares_count}, (_, i) => i);
-        numbersA = shuffle(numbersA);
-        for (let i = 0; i < dares_count; i++) {
-            let b = numbersA[i];
-            test_dare = `${spinValues[b][2]}`;
-            if (test_dare.includes(". Round of shots")){
-
-                current_type = 11;
-                rolledDare = 90 - (spinValues[b][0] + spinValues[b][1])/2;
-                break;
-            }
-      }
-    } 
+    //if (secret == true && Math.random() > 1.0-inverseSecretShotPercent(shotMultiplier) && !(previous_dare.toLowerCase().includes(". round of shots")) && current_wheel != "no pain"){
+    //    rolledDare = inverseDareToAngle(findAngleByString(". round of shots"));
+    //        
+    //    current_type = pullPieType(rolledDare, totalValue);
+    //    test_dare = pullPieDare(rolledDare, totalValue);
+    //} 
     // if hidden dare is next
     if (hiddenPrimed){
         test_dare =  "1" + String(Math.floor(Math.random() * 24) + 1).padStart(2, '0') + ". " + hiddenDare;
@@ -1690,15 +1692,15 @@ spinBtn.addEventListener("click", () => {
     let rotationInterval = window.setInterval(() => {
 
     if (count < 200) {
-        spinImage.style.transform = "rotate(" + 360 * Math.random() + "deg)" + "scale(1.10)";
+        pieHolder.style.transform = "rotate(" + 360 * Math.random() + "deg)" ;
         if(count % 2 == 0){
-            generateValue(180 * Math.random());
+            generateValuePie(180 * Math.random(), totalValue);
         };
     }
     else {
-        spinImage.style.transform = "rotate("  +  (-100000/Math.pow(count-199, 1.5) + 12.4533 - 36000 / (1 + 10 *count)  + rolledDare + 6 - 90) + "deg)" + "scale(1.10)";
+        pieHolder.style.transform = "rotate("  +  (-100000/Math.pow(count-199, 1.5) + 12.4533 - 36000 / (1 + 10 *count)  + rolledDare + 6 - 90) + "deg)";
         if(count % 2 == 0){
-            generateValue((-100000/Math.pow(count-199, 1.5) + 12.4533 -36000 / (1 + 10*count)  + rolledDare + 6 ));
+            generateValuePie((-100000/Math.pow(count-199, 1.5) + 12.4533 -36000 / (1 + 10*count)  + rolledDare + 6 ), totalValue);
         };
     }
 
@@ -1707,7 +1709,7 @@ spinBtn.addEventListener("click", () => {
     if (count >= 600) {
 
         clearInterval(rotationInterval);
-        generateValue(rolledDare);
+        generateValuePie(rolledDare, totalValue);
         if(hiddenPrimed){
             hiddenPrimed = false;
             text.innerHTML = test_dare;
@@ -1731,7 +1733,7 @@ spinBtn.addEventListener("click", () => {
         spinBtn.disabled = false;
         myPopup.classList.add("show");
 
-        if(test_dare.includes(". Round of shots")){
+        if(test_dare.toLowerCase().includes(". round of shots")){
             if(previous_environment.includes("Round of Shots multiplies")){
                 inputField.value = "Round of shots";
                 addDareAll.click();
@@ -1780,7 +1782,11 @@ spinBtn.addEventListener("click", () => {
             text2.style.color = "green";
             document.getElementById("popupbackground").style.display = "block";
         }
-
+        if(test_dare.toLowerCase().includes("confession wheel")){
+            confessionRoll();
+            
+        }
+        console.log(current_type)
         if ((current_type == "W") && (auto_change == true)){
             let wheelChangeString = test_dare;
             wheelChangeString = wheelChangeString.toLowerCase();
@@ -3696,28 +3702,22 @@ function fSoftCommit(item){
     function addTempDare(added){
         switch(current_wheel) {
             case "no pain":
-                wheeldata_Pain_Free.dares.push(added);
-                change_wheel(wheeldata_Pain_Free);
+                
                 break;
             case "no enemies":
-                wheeldata_No_Enemies.dares.push(added);
-                change_wheel(wheeldata_No_Enemies);
+                enemiesButton.click();
                 break;
             case "memes":
-                wheeldata_Memes.dares.push(added);
-                change_wheel(wheeldata_Memes);
+                memesButton.click();
                 break;
             case "vergipsycho":
-                wheeldata_Vergi_psycho.dares.push(added);
-                change_wheel(wheeldata_Vergi_psycho);
+                vergiButton.click();
                 break;
             case "no sitting":
-                wheeldata_No_Sitting.dares.push(added);
-                change_wheel(wheeldata_No_Sitting);
+                sittingButton.click();
                 break;
             case "default":
-                wheeldata_Default.dares.push(added);
-                change_wheel(wheeldata_Default);
+                defaultButton.click();
                 break;
             default:
                 
@@ -3756,28 +3756,22 @@ function fSoftCommit(item){
     function addTempWheelch(added){
         switch(current_wheel) {
             case "no pain":
-                wheeldata_Pain_Free.wheel_changes.push(added);
-                change_wheel(wheeldata_Pain_Free);
+                
                 break;
             case "no enemies":
-                wheeldata_No_Enemies.wheel_changes.push(added);
-                change_wheel(wheeldata_No_Enemies);
+                enemiesButton.click();
                 break;
             case "memes":
-                wheeldata_Memes.wheel_changes.push(added);
-                change_wheel(wheeldata_Memes);
+                memesButton.click();
                 break;
             case "vergipsycho":
-                wheeldata_Vergi_psycho.wheel_changes.push(added);
-                change_wheel(wheeldata_Vergi_psycho);
+                vergiButton.click();
                 break;
             case "no sitting":
-                wheeldata_No_Sitting.wheel_changes.push(added);
-                change_wheel(wheeldata_No_Sitting);
+                sittingButton.click();
                 break;
             case "default":
-                wheeldata_Default.wheel_changes.push(added);
-                change_wheel(wheeldata_Default);
+                defaultButton.click();
                 break;
             default:
                 
@@ -3795,30 +3789,25 @@ function fSoftCommit(item){
     function removeTempDare(added){
         switch(current_wheel) {
             case "no pain":
-                removeFirstMatch(wheeldata_Pain_Free.dares, added);
-                change_wheel(wheeldata_Pain_Free);
+                
                 break;
             case "no enemies":
-                removeFirstMatch(wheeldata_No_Enemies.dares, added);
-                change_wheel(wheeldata_No_Enemies);
+                enemiesButton.click();
                 break;
             case "memes":
-                removeFirstMatch(wheeldata_Memes.dares, added);
-                change_wheel(wheeldata_Memes);
+                memesButton.click();
                 break;
             case "vergipsycho":
-                removeFirstMatch(wheeldata_Vergi_psycho.dares, added);
-                change_wheel(wheeldata_Vergi_psycho);
+                vergiButton.click();
                 break;
             case "no sitting":
-                removeFirstMatch(wheeldata_No_Sitting.dares, added);
-                change_wheel(wheeldata_No_Sitting);
+                sittingButton.click();
                 break;
             case "default":
-                removeFirstMatch(wheeldata_Default.dares, added);
-                change_wheel(wheeldata_Default);
+                defaultButton.click();
                 break;
             default:
+                
         }
     }
     function removeTempEnv(added){
@@ -3853,29 +3842,457 @@ function fSoftCommit(item){
     function removeTempWheelch(added){
         switch(current_wheel) {
             case "no pain":
-                removeFirstMatch(wheeldata_Pain_Free.wheel_changes, added);
-                change_wheel(wheeldata_Pain_Free);
+                
                 break;
             case "no enemies":
-                removeFirstMatch(wheeldata_No_Enemies.wheel_changes, added);
-                change_wheel(wheeldata_No_Enemies);
+                enemiesButton.click();
                 break;
             case "memes":
-                removeFirstMatch(wheeldata_Memes.wheel_changes, added);
-                change_wheel(wheeldata_Memes);
+                memesButton.click();
                 break;
             case "vergipsycho":
-                removeFirstMatch(wheeldata_Vergi_psycho.wheel_changes, added);
-                change_wheel(wheeldata_Vergi_psycho);
+                vergiButton.click();
                 break;
             case "no sitting":
-                removeFirstMatch(wheeldata_No_Sitting.wheel_changes, added);
-                change_wheel(wheeldata_No_Sitting);
+                sittingButton.click();
                 break;
             case "default":
-                removeFirstMatch(wheeldata_Default.wheel_changes, added);
-                change_wheel(wheeldata_Default);
+                defaultButton.click();
                 break;
             default:
+                
         }
     }
+
+
+//#region spinwheel 
+
+
+
+
+// 🔁 Draw once
+function drawPie(data) {
+    const canvas = document.getElementById("pieCanvas");
+const ctx = canvas.getContext("2d");
+const centerX = 250, centerY = 250, radius = 248;
+    let total = data.reduce((sum, s) => sum + s.value, 0);
+
+  let startAngle = -Math.PI / 2;
+  data.forEach(slice => {
+    if(slice.value == 0){
+    }else{
+    const angle = (slice.value / total) * 2 * Math.PI;
+    const endAngle = startAngle + angle;
+
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = slice.color;
+    ctx.fill();
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    const midAngle = (startAngle + endAngle) / 2;
+    const textEndX = centerX + Math.cos(midAngle) * 80;
+    const textEndY = centerY + Math.sin(midAngle) * 80;
+    const textX = centerX + Math.cos(midAngle) * (radius - 10);
+    const textY = centerY + Math.sin(midAngle) * (radius - 10);
+    const dx = textEndX - textX, dy = textEndY - textY;
+    const angleText = Math.atan2(dy, dx);
+    const maxLength = Math.hypot(dx, dy);
+
+    ctx.save();
+    ctx.translate(textX, textY);
+    ctx.rotate(angleText);
+    ctx.font = "12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+
+    let text = slice.label;
+    while (ctx.measureText(text + "…").width > maxLength && text.length > 0) {
+      text = text.slice(0, -1);
+    }
+    if (text !== slice.label) text += "…";
+    ctx.fillStyle = "black";
+    ctx.fillText(text, 0, 0);
+    ctx.restore();
+
+    startAngle = endAngle;
+    }
+  });
+}
+
+function sliceColor(colors, darename, seed){
+    if(darename.includes("Round of Shots")){
+        return "white"
+    }
+    else{
+        return colors[seed % colors.length]
+    }
+}
+var spinValuesPie;
+var totalValue = 1;
+var dataDaresPie;
+
+window.onload = () => {
+
+    
+  if(localStorage.defaultJSON){
+    pie_Default = JSON.parse(localStorage.defaultJSON).dares;
+    pie_Default_colors = json_default.colors;
+  }
+  if(localStorage.plusdefaultDare){
+        dareNums = localStorage.plusdefaultDare.split("\n");
+        console.log(dareNums.map((i) => parseOrDefault(i)))
+
+    };
+    let datadares = []
+    
+    for(i in pie_Default){
+        let slicecolors = sliceColor(pie_Default_colors, pie_Default[i], i)
+        datadares.push({label: pie_Default[i], value: parseOrDefault(dareNums[i]), color: slicecolors})
+    }
+    pie_Default_wheel = JSON.parse(localStorage.defaultJSON).wheel_changes;
+        wheelNums = localStorage.plusdefaultWheel.split("\n")
+
+    for(i in pie_Default_wheel){
+        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    }
+    console.log(datadares)
+    dataDaresPie = datadares;
+    spinValuesPie = CalculateSpinValues(datadares);
+    totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
+    drawPie(datadares);
+}
+
+function findAngleByString(name){
+    let angle = 0;
+    for(i in spinValuesPie){
+        if(spinValuesPie[i][2].toLowerCase().includes(name)){
+            angle = (spinValuesPie[i][0] + spinValuesPie[i][1]) / 2;
+            console.log("dare ",spinValuesPie[i][2] )
+            break;
+        }
+    }
+    
+    return angle;
+}
+
+function inverseDareToAngle(dare) {
+    let angleValue = (dare + 0.5) / totalValue * 360; // center of bucket
+    return Math.floor((90 - angleValue + 360) % 360);
+}
+
+function CalculateSpinValues(dataDares) {
+    
+    let totalValue = dataDares.reduce((sum, s) => sum + s.value, 0);
+    console.log(totalValue)
+    let startAngle = -90;
+    let newSpinvalues = [];
+    const angle = (1 / totalValue) * 360;
+    for(i in dataDares){
+        for(j in [...Array(dataDares[i].value).keys()]){
+        let endAngle = startAngle + angle;
+        newSpinvalues.push([mod(startAngle, 360), mod(endAngle, 360), dataDares[i].label, (dataDares[i].label).slice("")[0] ])
+        startAngle = endAngle;
+        }
+    }
+    console.log(newSpinvalues)
+    return newSpinvalues;
+}
+
+function generateValuePie(OriginalangleValue, total){
+        let angleValue = Math.floor(mod(90 - OriginalangleValue, 360))
+        let dare = Math.floor(angleValue / 360 * spinValuesPie.length)
+        
+
+        text.innerHTML = `${spinValuesPie[dare][2]}`;
+        text2.innerHTML = `${spinValuesPie[dare][2]}`;      
+};
+
+function pullPieDare(OriginalangleValue, total){
+    let angleValue = Math.floor(mod(90 - OriginalangleValue, 360))
+        let dare = Math.floor(angleValue / 360 * total)
+        console.log(dare)
+    return `${spinValuesPie[dare][2]}`
+}
+function pullPieType(OriginalangleValue, total){
+    let angleValue = Math.floor(mod(90 - OriginalangleValue, 360))
+        let dare = Math.floor(angleValue / 360 * total)
+
+    return `${spinValuesPie[dare][3]}`
+}
+
+var originalShotsValue = 1;
+var gotoriginal = false; 
+function updateValueOfShots(array){
+    if(!secret){
+        return;
+    }
+    
+    array.forEach(obj => {
+        if((obj.label).toLowerCase().includes(". round of shots")){
+            if(!gotoriginal){
+                originalShotsValue = obj.value;
+                gotoriginal = true;
+            }
+            obj.value = Math.ceil(shotMultiplier / (1-shotMultiplier) * (totalValue - obj.value))
+        }
+    })
+    totalValue = dataDaresPie.reduce((sum, s) => sum + s.value, 0);
+    spinValuesPie = CalculateSpinValues(dataDaresPie);
+    drawPie(dataDaresPie);
+    return;
+}
+function returnValueOfShots(array){
+    array.forEach(obj => {
+        if((obj.label).toLowerCase().includes(". round of shots")){
+            obj.value = originalShotsValue;
+        }
+    })
+    totalValue = dataDaresPie.reduce((sum, s) => sum + s.value, 0);
+    spinValuesPie = CalculateSpinValues(dataDaresPie);
+    drawPie(dataDaresPie);
+}
+
+var sliderS = document.getElementById("sliderMul");
+var outputS = document.getElementById("labelSliderMul");
+outputS.innerHTML = "Amount of rolls that are rounds of shots: 10%"; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+sliderS.oninput = function() {
+  outputS.innerHTML = "Amount of rolls that are rounds of shots: " + (this.value) + "%";
+  shotMultiplier = (this.value / 100.0);
+  updateValueOfShots(dataDaresPie);
+}
+
+
+function getDataDareDefault() {
+  
+  if(localStorage.defaultJSON){
+    pie_Default = JSON.parse(localStorage.defaultJSON).dares;
+    pie_Default_colors = json_default.colors;
+  }
+  else{
+    pie_Default = json_default.dares;
+  }
+  if(localStorage.plusdefaultDare){
+        dareNums = localStorage.plusdefaultDare.split("\n");
+    }else{
+        dareNums = []
+    }
+    let datadares = []
+    
+    for(i in pie_Default){
+        let slicecolors = sliceColor(pie_Default_colors, pie_Default[i], i)
+        datadares.push({label: pie_Default[i], value: parseOrDefault(dareNums[i]), color: slicecolors})
+    }
+    if(localStorage.defaultJSON){
+        pie_Default_wheel = JSON.parse(localStorage.defaultJSON).wheel_changes;
+    }else{
+        pie_Default_wheel = json_default.wheel_changes;
+    }
+    if(localStorage.plusdefaultWheel){
+        wheelNums = localStorage.plusdefaultWheel.split("\n")
+    }else{
+        wheelNums = [];
+    }
+    
+    for(i in pie_Default_wheel){
+        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    }
+    dataDaresPie = datadares;
+    spinValuesPie = CalculateSpinValues(datadares);
+    totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
+}
+function getDataDareEnemies() {
+  
+  if(localStorage.enemiesJSON){
+    pie_Default = JSON.parse(localStorage.enemiesJSON).dares;
+    pie_Default_colors = json_no_enemies.colors;
+  }
+  else{
+    pie_Default = json_no_enemies.dares;
+  }
+  if(localStorage.plusenemiesDare){
+        dareNums = localStorage.plusenemiesDare.split("\n");
+    }else{
+        dareNums = []
+    }
+    let datadares = []
+    
+    for(i in pie_Default){
+        let slicecolors = sliceColor(pie_Default_colors, pie_Default[i], i)
+        datadares.push({label: pie_Default[i], value: parseOrDefault(dareNums[i]), color: slicecolors})
+    }
+    if(localStorage.enemiesJSON){
+        pie_Default_wheel = JSON.parse(localStorage.enemiesJSON).wheel_changes;
+    }else{
+        pie_Default_wheel = json_no_enemies.wheel_changes;
+    }
+    if(localStorage.plusenemiesWheel){
+        wheelNums = localStorage.plusenemiesWheel.split("\n")
+    }else{
+        wheelNums = [];
+    }
+    
+    for(i in pie_Default_wheel){
+        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    }
+    dataDaresPie = datadares;
+    spinValuesPie = CalculateSpinValues(datadares);
+    totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
+}
+function getDataDareVergi() {
+  
+  if(localStorage.vergiJSON){
+    pie_Default = JSON.parse(localStorage.vergiJSON).dares;
+    pie_Default_colors = json_vergi_psycho.colors;
+  }
+  else{
+    pie_Default = json_vergi_psycho.dares;
+  }
+  if(localStorage.plusvergiDare){
+        dareNums = localStorage.plusvergiDare.split("\n");
+    }else{
+        dareNums = []
+    }
+    let datadares = []
+    
+    for(i in pie_Default){
+        let slicecolors = sliceColor(pie_Default_colors, pie_Default[i], i)
+        datadares.push({label: pie_Default[i], value: parseOrDefault(dareNums[i]), color: slicecolors})
+    }
+    if(localStorage.vergiJSON){
+        pie_Default_wheel = JSON.parse(localStorage.vergiJSON).wheel_changes;
+    }else{
+        pie_Default_wheel = json_vergi_psycho.wheel_changes;
+    }
+    if(localStorage.plusvergiWheel){
+        wheelNums = localStorage.plusvergiWheel.split("\n")
+    }else{
+        wheelNums = [];
+    }
+    
+    for(i in pie_Default_wheel){
+        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    }
+    dataDaresPie = datadares;
+    spinValuesPie = CalculateSpinValues(datadares);
+    totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
+}
+function getDataDareMeme() {
+  
+  if(localStorage.memesJSON){
+    pie_Default = JSON.parse(localStorage.memesJSON).dares;
+    pie_Default_colors = json_memes.colors;
+  }
+  else{
+    pie_Default = json_memes.dares;
+  }
+  if(localStorage.plusmemesDare){
+        dareNums = localStorage.plusmemesDare.split("\n");
+    }else{
+        dareNums = []
+    }
+    let datadares = []
+    
+    for(i in pie_Default){
+        let slicecolors = sliceColor(pie_Default_colors, pie_Default[i], i)
+        datadares.push({label: pie_Default[i], value: parseOrDefault(dareNums[i]), color: slicecolors})
+    }
+    if(localStorage.memesJSON){
+        pie_Default_wheel = JSON.parse(localStorage.memesJSON).wheel_changes;
+    }else{
+        pie_Default_wheel = json_memes.wheel_changes;
+    }
+    if(localStorage.plusmemesWheel){
+        wheelNums = localStorage.plusmemesWheel.split("\n")
+    }else{
+        wheelNums = [];
+    }
+    
+    for(i in pie_Default_wheel){
+        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    }
+    dataDaresPie = datadares;
+    spinValuesPie = CalculateSpinValues(datadares);
+    totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
+}
+function getDataDareSitting() {
+  
+  if(localStorage.sittingJSON){
+    pie_Default = JSON.parse(localStorage.sittingJSON).dares;
+    pie_Default_colors = json_no_sitting.colors;
+  }
+  else{
+    pie_Default = json_no_sitting.dares;
+  }
+  if(localStorage.plussittingDare){
+        dareNums = localStorage.plussittingDare.split("\n");
+    }else{
+        dareNums = []
+    }
+    let datadares = []
+    
+    for(i in pie_Default){
+        let slicecolors = sliceColor(pie_Default_colors, pie_Default[i], i)
+        datadares.push({label: pie_Default[i], value: parseOrDefault(dareNums[i]), color: slicecolors})
+    }
+    if(localStorage.sittingJSON){
+        pie_Default_wheel = JSON.parse(localStorage.sittingJSON).wheel_changes;
+    }else{
+        pie_Default_wheel = json_no_sitting.wheel_changes;
+    }
+    if(localStorage.plussittingWheel){
+        wheelNums = localStorage.plussittingWheel.split("\n")
+    }else{
+        wheelNums = [];
+    }
+    
+    for(i in pie_Default_wheel){
+        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    }
+    dataDaresPie = datadares;
+    spinValuesPie = CalculateSpinValues(datadares);
+    totalValue = datadares.reduce((sum, s) => sum + s.value, 0);
+}
+
+
+function confessionRoll(){
+    text2.innerHTML = 
+            `<div id="confession">CONFESSION: 
+            <div class="rotating-text-container">
+                
+                <div class="rotating-text">
+                    <span>${confessionWheel[mod(currentConfessionCount, confessionWheelLength)]}</span>
+                    <span>Last lie you told (preferably to one of the boys) / TEOLLE JOURNAL PAGE (FUCK YOU)</span>
+                    <span>Who is your idol</span>
+                    <span>Name a person you DESPISE and why</span>
+                    <span>Pick your death row meal</span>
+                    <span>Last lie you told (preferably to one of the boys) / TEOLLE JOURNAL PAGE (FUCK YOU)</span>
+                    <span>Reveal one thing on your bucket list</span>
+                    <span>Fictional character (Movie/TV/Game/Anime) you'd bang</span>
+                    <span>Favourite or least favourite cliche in fiction</span>
+                    <span>Dodgy thing you've done alone</span>
+                    <span>Reveal your kink</span>
+                    <span>Most perverted thing you've done</span>
+                    <span>Biggest pet peeve about one of the boys</span>
+                    <span>Most embarassing bathroom story</span>
+                    <span>Tell us a morally bad thing you've done</span>
+                    <span>Reveal your first or most recent celebrity crush</span>
+                    <span>What is your dream blunt rotation 2-4 people (living or dead, fictional or real)</span>
+                    <span>What's the pettiest thing you've done</span>
+                    <span>Tell us the dumbest thing you ever believed 100%</span>
+                    <span>What's your GUILTY pleasure that you shouldn't admit</span>
+                    <span>Cringiest thing you've done to impress someone</span>
+                    <span>${confessionWheel[mod(currentConfessionCount, confessionWheelLength)]}</span>
+                </div>
+            </div>
+            <button id="confessionButton" onclick="confessionRoll()"><i class="fa-solid fa-dice"></i></button>
+            </div>`
+    currentConfessionCount += 1;
+}

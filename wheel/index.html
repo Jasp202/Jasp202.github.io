@@ -29,14 +29,19 @@
 
     
 
+
   <h1 id="HeaderElement1">
-    <p style="text-align: center;">ENVIRONMENT: </p>
-    <p id="textE" contentEditable="true" spellcheck="false" style="text-align: center;">none yet...</p>
+    <p id="headerText" style="text-align: center;" class="defaulHeader"> DEFAULT WHEEL</p>
+    <p id="textE" contentEditable="true" spellcheck="false" style="text-align: center; display: none">none yet...</p>
     </h1>
   <div class="container" id="containerTest">
      <div class="wheel_box">
-      <img id="spinImage"  />
-      <canvas id="spinWheel"></canvas>
+      <img id="spinImage"  style="display: none!important;"/>
+      
+        <div style="width:500px; height:500px; position:relative;" id="pieHolder">
+            <canvas id="pieCanvas" width="500px" height="500px"></canvas>
+        </div>
+      
       <button id="spin_btn">Spin</button>
     <div class="triangle-down" style="scale: 0.6; border-top: 55px solid rgb(37, 37, 37); padding-top: 5px;"></div> <!-- this is a shodow for the shape -->
       <div id="triangleCSS" class="triangle-down"></div>   <!-- this is the shape itself -->
@@ -639,7 +644,7 @@
           </label>
           <label for="extraShots"> extra fun for the pokernight (round of shots multiplier is active) </label>
           <label id="sliderContainer" class="slidecontainer disabled">
-            <input id = "sliderMul" type="range" min="10" max="50" value="10" class="sliderLong" id="myRange" disabled>
+            <input id = "sliderMul" type="range" min="1" max="99" value="10" class="sliderLong" id="myRange" disabled>
             <label id = "labelSliderMul"for="sliderMul" style = "text-align: center;"> defautl error not changed</label><br>
           </label><br>
 
@@ -1028,19 +1033,6 @@
 </script>
 
 
-<script>
-    var slider = document.getElementById("sliderMul");
-var output = document.getElementById("labelSliderMul");
-output.innerHTML = "Amount of rolls that are rounds of shots: 10%"; // Display the default slider value
-
-// Update the current slider value (each time you drag the slider handle)
-slider.oninput = function() {
-  output.innerHTML = "Amount of rolls that are rounds of shots: " + (this.value) + "%";
-  shotMultiplier = inverseSecretShotPercent(this.value / 100.0);
-}
-</script>
-
-
 
 
 <script>
@@ -1180,6 +1172,7 @@ slider.oninput = function() {
                                 </button> 
 
                         <button type="button" 
+                                style = "display: none!important"
                                 onclick="fLoadPain()" 
                                 class="btn shadow-sm btn-outline-primary" 
                                 data-toggle="tooltip" 
@@ -1282,8 +1275,8 @@ slider.oninput = function() {
             
                     </div><br><br>
 
-                    <p style="text-align: center;">Environments:</p><br>
-                    <div class="flex-box"> 
+                    <p style="text-align: center; display: none">Environments:</p><br>
+                    <div class="flex-box" style="display: none;"> 
 
                         <div class="textAreaColumn" style="margin-left: 170px!important;">
                             <div  id="buttonsMinus2" class="wrapperB minus env" >

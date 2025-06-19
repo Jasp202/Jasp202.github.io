@@ -1,5 +1,23 @@
 /*-----------------  GOOGLE FONTS  -----------------*/
 @import url('https://fonts.googleapis.com/css2?family=PT+Serif&display=swap');
+@font-face {
+  font-family: 'Cyberpunk OG';
+  src: url('./fonts/Cyberpunk.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Vinland';
+  src: url('./fonts/Vinland.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Army font';
+  src: url('./fonts/Capture\ it.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 /*-----------------  VARIABLES  -----------------*/
 :root {
@@ -28,6 +46,7 @@ body {
   
   
 }
+
 #video-background {
     position: absolute;
     top: 0;
@@ -44,20 +63,46 @@ h1 {
   top: 10%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--gold_color);
-  outline: 0.5rem solid  #32a1ce;
+  
+}
+.defaulHeader{
+    color: var(--gold_color);
+  outline: 5px solid  #030303;
   outline-offset: 0rem;
   border-radius: 30px;
   background-color: rgba(128, 128, 128, 0.5); 
     padding-left: 1rem;
     padding-right: 1rem;
     white-space: nowrap;
-    
+    text-shadow: #000 3px 0px 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
-
+.cyberFont{
+    font-family: 'Cyberpunk OG', sans-serif;
+    color: #F8EF02;
+    font-size: 80px;
+    font-weight: bold;
+    letter-spacing: -5px;
+    filter: drop-shadow(5px 0px 0px black);
+}
+.vinlandFont{
+    font-family: 'vinland', sans-serif;
+    font-size: 80px;
+    color: black;
+    letter-spacing: 10px;
+    filter: drop-shadow(2px 0px 5px rgb(167, 162, 162));
+}
+.armyFont{
+    font-family: 'Army font', sans-serif;
+    font-size: 100px;
+    font-weight: 100;
+    color: rgb(22, 60, 22);
+    filter: drop-shadow(1px 0px 2px rgb(167, 162, 162));
+}
 .container {
   width: 90%;
-  max-width: 34.37rem; /* this is almost irrelevant wheelchanger handles max width*/
+  max-width: 34.37rem; 
   margin-top: 3rem;
   max-height: 90vh;
   position: absolute;
@@ -67,7 +112,21 @@ h1 {
   padding: 3rem; 
   border-radius: 1rem;
 }
-
+#pieCanvas {
+  position: absolute;
+ transform: translate(0%, -50%);
+  top: 50%;
+ 
+  z-index: 100;
+  pointer-events: none;
+  z-index: 1;
+  border: none;
+}
+#pieHolder{
+    position: absolute;
+    border: none;
+     left: -100px;
+}
 .wheel_box {
   position: relative;
   width: 100%;
@@ -81,8 +140,7 @@ h1 {
   }
   
 #spinWheel {
-    border: 0;
-    clip: rect(0 0 0 0);
+    
     height: 100%;
     margin-top: -100px;
     margin-left: -100px;
@@ -97,19 +155,21 @@ h1 {
   transform: translate(-50%, -50%);
   top: 50%;
   left: 50%;
-  height: 26%;
-  width: 26%;
+  height: 8rem;
+  width: 8rem;
+  
   border-radius: 50%;
   cursor: pointer;
-  border: 0;
-  background: var(--spin_background);
+  border: 2px black solid;
+  background: orange;
   color: var(--white_color);
   text-transform: uppercase;
   font-size: 1.8rem;
   letter-spacing: 0.1rem;
   font-weight: 600;
-  
+  z-index: 2;
 }
+
 
 .triangle-down {
     width: 0;
@@ -132,30 +192,7 @@ h1 {
   margin-top: 1.5rem;
   color: white;
   font-weight: 500;
-  text-shadow: 1px 1px 2px #000,
-  -1px 1px 2px #000,
-  1px -1px 2px #000,
-  -1px -1px 2px #000,
-  0px 1px 2px #000,
-  0px -1px 2px #000,
-  -1px 0px 2px #000,
-  1px 0px 2px #000,
-  2px 2px 2px #000,
-  -2px 2px 2px #000,
-  2px -2px 2px #000,
-  -2px -2px 2px #000,
-  0px 2px 2px #000,
-  0px -2px 2px #000,
-  -2px 0px 2px #000,
-  2px 0px 2px #000,
-  1px 2px 2px #000,
-  -1px 2px 2px #000,
-  1px -2px 2px #000,
-  -1px -2px 2px #000,
-  2px 1px 2px #000,
-  -2px 1px 2px #000,
-  2px -1px 2px #000,
-  -2px -1px 2px #000;
+  filter: drop-shadow(  2px  0px 1px black)drop-shadow(  -2px  0px 1px black)drop-shadow(  0px  2px 1px black)drop-shadow(  0px  -2px 1px black);
 }
 #draggableDiv {
     position: absolute;
@@ -286,8 +323,10 @@ h2 {
     box-shadow: inset 0 0 0 100vw rgba(0, 0, 0, 0.4);
     z-index: 2;
     position: absolute;
-    height: 100%;
-    width: 100%;
+    top: -50%;
+    left: -50%;
+    height: 200%;
+    width: 200%;
     display: none;
 }
 
@@ -316,12 +355,14 @@ h2 {
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
     display: none;
+
 }
 .wheelpopup-content {
+    
     background-color: white;
     margin: 10% auto;
     padding: 20px;
-    border: 1px solid #888888;
+   border: #000 3px solid;
     width: 30%;
     font-weight: bolder;
     display: grid;
@@ -343,6 +384,7 @@ h2 {
 }
 
 #wheelChoosePain{
+    display: none;
     position: relative;
     background: none;
     border: none;
@@ -468,6 +510,7 @@ h2 {
 }
 
 #addDareButton{
+    display: none;
     position: absolute;
     top: 10px;
     right: 115px;
@@ -2200,3 +2243,130 @@ section {
     transform: rotate(50deg);
   }
 }
+
+
+@font-face {
+  font-family: neon;
+  src: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/707108/neon.ttf);
+}
+.containerh1Text {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.neon {
+  font-family: neon;
+  color: #f32e2e;
+  font-size: 75px;
+  line-height: 75px;
+  text-shadow: 0 0 70px #F40A35;
+}
+
+.flux {
+  font-family: neon;
+  color: #426DFB;
+  font-size: 75px;
+  line-height: 75px;
+  text-shadow: 0 0 70px #2356FF;
+}
+
+.neon {
+  text-shadow: 0 0 1vw #FA1C16, 0 0 3vw #FA1C16, 0 0 10vw #FA1C16, 0 0 10vw #FA1C16, 0 0 .4vw #FED128, .5vw .5vw .1vw #806914;
+    color: #FED128;
+}
+
+
+.flux {
+  text-shadow: 0 0 1vw #1041FF, 0 0 3vw #1041FF, 0 0 10vw #1041FF, 0 0 10vw #1041FF, 0 0 .4vw #8BFDFE, .5vw .5vw .1vw #147280;
+    color: #28D7FE;
+}
+
+#confession{
+    justify-self: center;
+    text-align: center;
+    background: white;
+    width: fit-content;
+    padding: 10px;
+    padding-bottom: 20px;
+    outline: #a7e5a7 20px solid;
+    border-radius: 20px;
+}
+
+.rotating-text-container {
+    position: relative;
+    overflow: hidden;
+    height: 2.5em;  /* height of one line */
+    width: fit-content;    /* enough width */
+    
+    justify-self: center;
+    
+     text-align: center;
+     background: rgb(255, 255, 255);
+     border: none;
+   
+    
+    
+  }
+
+  .rotating-text {
+    display: flex;
+    flex-direction: column;
+    animation: scrollUp 3s linear infinite;
+    animation-iteration-count: 1;
+    border: none;
+  }
+
+  .rotating-text span {
+    height: 2.5em;
+    line-height: 2.5em;
+    white-space: nowrap;
+  }
+
+  
+  /* Fade overlay */
+  .rotating-text-container::before,
+  .rotating-text-container::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 0.8em; /* fade height */
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .rotating-text-container::before {
+    top: 0;
+    background: linear-gradient(to bottom, #ffffff, transparent);
+    
+  }
+ 
+
+  .rotating-text-container::after {
+    bottom: 0;
+    background: linear-gradient(to top, #ffffff, transparent);
+  }
+
+  @keyframes scrollUp {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-100%);
+    }
+  }
+
+#confessionButton{
+    background: none;
+    width: 50px;
+    height: 50px;
+    border: #00BD68 4px solid;
+    border-radius: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #00bd6817;
+  }
+  #confessionButton i{
+    transform: scale(2);
+  }

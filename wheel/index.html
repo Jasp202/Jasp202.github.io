@@ -249,9 +249,17 @@
 
 <div id="shotPopup" class="shotpopup">
     <div class="shotpopup-content">
-        <input type="text" id="shotText" size="20" placeholder='Name of the mentalist'spellcheck="false" style = "padding: 15px 1px;" autocomplete="off"/>
 
-          <div class="dropdown">
+
+        <button onclick="getRandomShotImg()" id="shotRandom"><img src="./Images/icons/random_icon.png" width="30px"></button>
+        <div id="selectImgHolder">
+        <img id="selectImg" src = "./Images\icons\shot_icon.png">
+        </div>
+        
+        <div id="shotInfoDiv">
+            <input type="text" id="shotText" size="20" placeholder='Name of the mentalist'spellcheck="false" style = "padding: 15px 1px;" autocomplete="off"/>
+            
+            <div class="dropdown">
             <button class="dropdown-toggle" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false">
                 Shot glass
             </button>
@@ -353,17 +361,36 @@
                 
             </div>
             
+            </div>
+
+            <div class="shotColor-dropdown">
+            <div class="shotColor-button" id="shotColorBtn">
+                <div class="shotColor-indicator" id="shotColorIndicator" style="background-color: white;"></div>
+                <span>Your color</span>
+            </div>
+            <div class="shotColor-menu" id="shotColorMenu">
+                <div class="shotColor-square" style="background-color: white;" data-shotcolor="white" title="Default White"></div>
+                <div class="shotColor-square" style="background-color: #7DF9FF;" data-shotcolor="#7DF9FF" title="Electric Blue"></div>
+                <div class="shotColor-square" style="background-color: #00FFFF;" data-shotcolor="#00FFFF" title="Neon Cyan"></div>
+                <div class="shotColor-square" style="background-color: #00FFA3;" data-shotcolor="#00FFA3" title="Neon Mint"></div>
+                <div class="shotColor-square" style="background-color: #39FF14;" data-shotcolor="#39FF14" title="Toxic Green"></div>
+                <div class="shotColor-square" style="background-color: #FFFF33;" data-shotcolor="#FFFF33" title="Laser Lemon"></div>
+                <div class="shotColor-square" style="background-color: #FF5F1F;" data-shotcolor="#FF5F1F" title="Acid Orange"></div>
+                <div class="shotColor-square" style="background-color: #FF073A;" data-shotcolor="#FF073A" title="Infrared Red"></div>
+                <div class="shotColor-square" style="background-color: #FF00FF;" data-shotcolor="#FF00FF" title="Neon Magenta"></div>
+                <div class="shotColor-square" style="background-color: #FF69B4;" data-shotcolor="#FF69B4" title="Hot Pink"></div>
+                
+            </div>
+            </div>
         </div>
 
-          <img id="selectImg" src = "./Images\icons\shot_icon.png" width="80" height="104"><button style="position: absolute; top: 22%; right: 35%; background: none; box-shadow:none" onclick="getRandomShotImg()" id="shotRandom"><img src="./Images/icons/random_icon.png" width="30px"></button>
-         
         <button id="shotSubmitOne">
             <div> 
                 Create shot counter 
             </div>
         </button>
 
-        
+
         
         <form>
             <select  id="mySelect" 
@@ -435,6 +462,13 @@
         <button id="powerReset" class="repeat"> <i class="fa fa-repeat" aria-hidden="true"></i> reset powers</button> 
     </ul> 
 </div> 
+<div id="contextMenuTurns" class="context-menu" style="display: none"> 
+    <ul class="menu"> 
+        <button id="rollAgainButton" class="trash"> <i class="fa-solid fa-dice"></i> Roll for same person</button> 
+        <button id="resetRolledButton" class="remove"> <i class="fa fa-repeat" aria-hidden="true"></i> reset rolled dares for player</button>
+        <button id="nextTurnButton" class="repeat"> <i class="fa-solid fa-arrow-right"></i> change turn</button> 
+    </ul> 
+</div> 
 
 <!--hide menu hides the contextmenu but also removes all eventlisteners associated with it so it can be reuced for other elemetns-->
 <script>
@@ -464,6 +498,8 @@
 
         document.getElementById("contextMenu3") 
                 .style.display = "none"         
+        document.getElementById("contextMenuTurns") 
+                .style.display = "none"   
     } 
 
     function rightClick(e) { 
@@ -480,6 +516,21 @@
             return true;
         } 
     } 
+
+    function rightClickTurns(e) {
+        e.preventDefault();
+
+        if (document.getElementById("contextMenuTurns") .style.display == "block"){ 
+            hideMenu(); 
+            return false;
+        }else{ 
+            var menu = document.getElementById("contextMenuTurns")      
+            menu.style.display = 'block'; 
+            menu.style.left = e.pageX + "px"; 
+            menu.style.top = e.pageY + "px"; 
+            return true;
+        } 
+    }
 </script>
 
  <!---------------  clock  --------------------->
@@ -619,6 +670,12 @@
             <span class="slider round"></span>
           </label>
           <label for="check3"> Disable environment rolls</label><br>
+
+          <label class="switch">
+            <input id="checkTurns" type="checkbox" value="car">
+            <span class="slider round"></span>
+          </label>
+          <label for="checkTurns"> Enable turn-based pokernight</label><br>
 
           <hr class="rounded">
           <br>

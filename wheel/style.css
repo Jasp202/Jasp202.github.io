@@ -673,16 +673,15 @@ border: 3px solid #48abe0;
     background-color: white;
     margin: 10% auto;
     padding: 20px;
+    padding-bottom: 40px;
     border: 1px solid #888888;
-    width: 30%;
+    width: fit-content;
     font-weight: bolder;
-    display: grid;
-    grid-template: 
-    "top1 top2 top3" 
-    "b1 b2 b3" ;  
-            column-gap: 10px;
-            row-gap: 10px;
-    
+    border: 3px solid #48abe0;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
 }
 .shotpopup-content button {
@@ -696,11 +695,58 @@ border: 3px solid #48abe0;
   box-shadow: 0 2px 4px darkslategray;
   cursor: pointer;
  transition: all 0.2s ease;
+ height: 45px;
+ 
 }
 .shotpopup-content button:hover {
     background-color: #65b9e6;
+    align-items: center;
+    justify-content: baseline;
 }
+.shotpopup-content input[type=text] {
+    border: 3px solid #48abe0;
+    border-radius: 3px;
+    transition: 0.5s;
+    outline: none;
+    box-sizing: border-box;
+    height: 45px!important;
+    
+  }
 
+.shotpopup-content input[type=text]:focus {
+    border: 3px solid #0d7db9;
+    height: 45px!important;
+}
+#shotInfoDiv{
+    margin-bottom: 30px;
+    display: flex;
+    column-gap: 15px;
+}
+#shotRandom {
+    
+    background: none; 
+    box-shadow:none;
+}
+#shotRandom :hover {
+    filter: drop-shadow(0 0 0.2rem blue);
+}
+#selectImg{
+    height: 160px;
+    width: 123px;
+    
+}
+#selectImgHolder{
+    background-color: #e2f3ff;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 3px solid #156794;
+    border-radius: 10%;
+    box-shadow: 0 0px 4px darkslategray;
+}
 .show {
     display: block;
 }
@@ -2075,9 +2121,7 @@ section {
 	}
 	
 
-#shotRandom :hover {
-    filter: drop-shadow(0 0 0.2rem blue)
-}
+
 
 .containerRad {
     display: block;
@@ -2370,3 +2414,90 @@ section {
   #confessionButton i{
     transform: scale(2);
   }
+
+  .shotColor-dropdown {
+      position: relative;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .shotColor-button {
+      padding: 5px 20px;
+      background-color: #ffffff;
+      border: 3px solid #48abe0;
+      color: #1c1c1c;
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: 160px;
+      transition: box-shadow 0.3s ease;
+      height: 45px!important;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .shotColor-button:hover {
+      box-shadow: 0 2px 8px rgba(0, 255, 163, 0.4);
+    }
+
+    .shotColor-indicator {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      border: 1px solid #333;
+      border-radius: 50%;
+    }
+
+    .shotColor-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px) scale(0.95);
+      background-color: #ffffff;
+      border: 2px solid #48abe0;
+      padding: 10px;
+      border-radius: 6px;
+      grid-template-columns: repeat(5, 30px);
+      gap: 10px;
+      margin-top: 6px;
+      overflow: hidden;
+      display: grid;
+      max-height: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.3s ease,
+        max-height 0.4s ease;
+      z-index: 1000;
+    }
+
+    .shotColor-menu.open {
+      max-height: 200px;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0px) scale(1);
+    }
+
+    .shotColor-square {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 1px solid #48abe0;
+      transition: border 0.2s ease;
+    }
+
+    .shotColor-square.selected {
+      border: 2px solid #1a6d99;
+      box-shadow: 0 0 10px #1879ad
+    }
+
+.glow-text {
+  
+  filter: drop-shadow(-4px 0 1px cyan)drop-shadow(4px 0 1px cyan)drop-shadow(0 4px 1px cyan)drop-shadow(0 -4px 1px cyan)
+    
+}

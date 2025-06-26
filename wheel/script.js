@@ -17,6 +17,8 @@ counterAdd.addEventListener("click", function () {
         return void(0);
     }
     CreateNewDom();
+    peoplePlaying.push(new PersonPlaying(counterTextInput.value, [], tempShotColor))
+    console.log(peoplePlaying)
     counterTextInput.value = '';
     document.getElementById("shotPopup").classList.remove("show");
 });
@@ -28,6 +30,30 @@ document.getElementById("repeatButton").addEventListener('click', function() {
     document.getElementById("textE").innerHTML = e_disabled ? 'disabled' : 'none yet...';
     textE.style.fontSize =  "" + (2.8 * Math.min(1, 0.9*(32.0 / textE.innerText.length)))   + "rem";
     previous_environment = "";
+});
+
+document.getElementById("containerTest").addEventListener("contextmenu", function(e){
+    rightClickTurns(e);
+});
+document.getElementById("rollAgainButton").addEventListener('click', function() {
+    rollForSamePerson = true;
+    spinBtn.click();
+});
+document.getElementById("resetRolledButton").addEventListener('click', function() {
+    removeDaresFromPlayer(peoplePlaying, currentPlayer);
+    drawPie(dataDaresPie);
+});
+function removeDaresFromPlayer(array, index){
+    if(array.length == 0) return;
+    array[mod(index, array.length)].dares = [];
+}
+document.getElementById("nextTurnButton").addEventListener('click', function() {
+
+    if(turnsEnabled) {
+        currentPlayer += 1;
+        highlightCurrentPlayer(getShotButtonDivs());
+        drawPie(dataDaresPie);
+    }
 });
 
 var functionName = 0;
@@ -49,6 +75,8 @@ function CreateNewDom() {
     clone.getElementsByTagName('div')[0].style.width = "100px";
     clone.getElementsByTagName('img')[0].src = document.getElementById("mySelect").value;
     clone.getElementsByTagName('img')[0].style.height = "129px";
+    clone.querySelectorAll("*").forEach(el => {
+            el.style.color = tempShotColor})
 
     var shadowColor = "rgb(255, 217, 0)";
     getAverageColorFromImageSrc(clone.getElementsByTagName('img')[0].src, (avgColor) => {
@@ -93,6 +121,8 @@ function CreateNewDom() {
             dataShots.names.splice(index, 1);
             dataShots.counts.splice(index, 1);
             dataShots.images.splice(index, 1);
+            dataShots.colors.splice(index, 1);
+            peoplePlaying.splice(index, 1);
             localStorage.dataShots = JSON.stringify(dataShots);
             document.getElementById("shotClass").removeChild(clone);
             img.remove();
@@ -180,6 +210,7 @@ function CreateNewDom() {
    dataShots.names.push(counterTextInput.value);
    dataShots.counts.push(0);
    dataShots.images.push(document.getElementById("mySelect").value);
+   dataShots.colors.push(tempShotColor);
    localStorage.dataShots = JSON.stringify(dataShots);
     
    return clone;
@@ -190,6 +221,9 @@ function shotStorageChange(dataGiven) {
 }
 
 function mod(n, m) {
+    if (m === 0) {
+    return 0;
+    }
     return ((n % m) + m) % m;
   }
 
@@ -648,26 +682,34 @@ var dataShots = {
     names: [],
     counts: [],
     images: [],
+    colors: [],
 };
+var tempShotColor = "white";
 
 if (localStorage.dataShots) {
     // there is something
+    
     let dataShotsTemp = JSON.parse(localStorage.dataShots);
+    normalizeDataShotsColors(dataShotsTemp);
+    console.log(dataShotsTemp);
     localStorage.dataShots = JSON.stringify(dataShots);
 
     for (let i = 0; i < dataShotsTemp.names.length; i++){
 
         counterTextInput.value = dataShotsTemp.names[i];
         document.getElementById("mySelect").value = dataShotsTemp.images[i];
+        tempShotColor = getSafeShotColorAtIndex(dataShotsTemp, i);
+
         let item = CreateNewDom();
         item.getElementsByTagName('div')[1].innerHTML = dataShotsTemp.counts[i];
+
 
         //set default settings back for shot creator
         counterTextInput.value = '';
         document.getElementById("mySelect").value = "./Images\icons/default_icon.png";
         document.getElementById("mySelect").options[0].selected = true;
     }
-
+    tempShotColor = "white";
     localStorage.dataShots = JSON.stringify(dataShotsTemp);
     dataShots = dataShotsTemp;
   } else {
@@ -1554,8 +1596,15 @@ const confessionWheel = shuffle([
 var currentConfessionCount = 0;
 var confessionWheelLength = confessionWheel.length;
 //#region spinning
+var rollForSamePerson = false;
 spinBtn.addEventListener("click", () => {
     
+    if(!(peoplePlaying.length == 0) && turnsEnabled){
+            if(current_type !== "W" && !rollForSamePerson) currentPlayer += 1;
+            rollForSamePerson = false;
+        }
+    drawPie(dataDaresPie);
+    if(turnsEnabled) highlightCurrentPlayer(getShotButtonDivs())
     let count = 100;
     spinBtn.disabled = true;
     let test_dare = "";
@@ -1565,71 +1614,73 @@ spinBtn.addEventListener("click", () => {
 
     // check that dare is not the same as previous one /(#¤/(#))
     //
-    if (!(current_type == "E" || current_type == "W")) {
-
-        do {
-        rolledDare = 360 * Math.random();
-    
+    let rosPer = calculateRoundOfShotsPercantege(dataDaresPie);
+    let rosRand = Math.random();
+    console.log(rosPer,rosRand)
+    if(rosPer > rosRand){ // roll analog round of shots
+        console.log("ros roller")
+        let safeSlice = 360 / (2 * totalValue);
+        let safeStartAngle = 360 * Math.random();
+        let indices = Array.from({ length: 2 * totalValue }, (_, i) => i);
+        indices = shuffle(indices);
+        for (let i = 0; i < indices.length; i++) {
+            rolledDare = indices[i] * safeSlice + safeStartAngle;
             current_type = pullPieType(rolledDare, totalValue);
             test_dare = pullPieDare(rolledDare, totalValue);
-            console.log(test_dare, "test")
-            if(test_dare.toLowerCase().includes(". round of shots")){
-                break;
-            }    
-        
-        
-        }while(test_dare == previous_dare || test_dare == previous_environment || (teamJengaIsDisabled && test_dare.includes("Team Jenga")) || disabledWheels.includes(test_dare));
-
-      if ( (e_disabled == true) && (w_disabled == true) && (current_type == "E" || current_type == "W") ){
-
-        do {
-            rolledDare = 360 * Math.random();
             
+            if (
+                test_dare.toLowerCase().includes(". round of shots")
+            ) {
+                break; // Found a valid one
+            }
+        }
+    }else if((current_type == "W") || (w_disabled == true)){ // roll for dare and we dont want W or round of shots or prev.
+        console.log("no w roller", w_disabled, current_type)
+        let safeSlice = 360 / (2 * totalValue);
+        let safeStartAngle = 360 * Math.random();
+        let indices = Array.from({ length: 2 * totalValue }, (_, i) => i);
+        indices = shuffle(indices);
+        let currentPlayerDares = (peoplePlaying.length == 0 || !turnsEnabled) ? [] : peoplePlaying[mod(currentPlayer, peoplePlaying.length)].dares;
+        for (let i = 0; i < indices.length; i++) {
+            rolledDare = indices[i] * safeSlice + safeStartAngle;
             current_type = pullPieType(rolledDare, totalValue);
             test_dare = pullPieDare(rolledDare, totalValue);
-            if(test_dare.toLowerCase().includes(". round of shots")){
-                break;
-            }  
-
-        }while(current_type == "E" || current_type == "W" || test_dare == previous_dare || test_dare == previous_environment)
-      }
-      
-      if ((e_disabled == true) && (current_type == "E")){
-        do {
-            rolledDare = 360 * Math.random();
             
+            if (
+                test_dare !== previous_dare &&
+                current_type !== "W" &&
+                !test_dare.toLowerCase().includes(". round of shots") &&
+                !currentPlayerDares.includes(current_wheel + test_dare)
+            ) {
+                console.log("currenttype", current_type)
+                break; // Found a valid one
+            }
+        }
+    }else{ // roll for dare we dont want prev or round of shots
+        console.log("general roller")
+        let safeSlice = 360 / (2 * totalValue);
+        let safeStartAngle = 360 * Math.random();
+        let indices = Array.from({ length: 2 * totalValue }, (_, i) => i);
+        indices = shuffle(indices);
+        let currentPlayerDares = (peoplePlaying.length == 0 || !turnsEnabled) ? [] :peoplePlaying[mod(currentPlayer, peoplePlaying.length)].dares;
+        for (let i = 0; i < indices.length; i++) {
+            rolledDare = indices[i] * safeSlice + safeStartAngle;
             current_type = pullPieType(rolledDare, totalValue);
             test_dare = pullPieDare(rolledDare, totalValue);
-            if(test_dare.toLowerCase().includes(". round of shots")){
-                break;
-            }  
-        }while(current_type == "E" || test_dare == previous_dare || test_dare == previous_environment || disabledWheels.includes(test_dare))
-      }
-
-      if ((w_disabled == true) && (current_type == "W")){
-        do {
-            rolledDare = 360 * Math.random();
             
-            current_type = pullPieType(rolledDare, totalValue);
-            test_dare = pullPieDare(rolledDare, totalValue);
-            if(test_dare.toLowerCase().includes(". round of shots")){
-                break;
-            }  
-        }while(current_type == "W" || test_dare == previous_dare || test_dare == previous_environment || (teamJengaIsDisabled && test_dare.includes("Team Jenga")))
-      }
-
-    } 
-    else {
-        do {
-            rolledDare = 360 * Math.random();
-            
-            current_type = pullPieType(rolledDare, totalValue);
-            test_dare = pullPieDare(rolledDare, totalValue);
-            if(test_dare.toLowerCase().includes(". round of shots")){
-                break;
-            }  
-        }while(current_type == "E" || current_type == "W" || test_dare == previous_dare)
+            if (
+                test_dare !== previous_dare &&
+                !test_dare.toLowerCase().includes(". round of shots") &&
+                !currentPlayerDares.includes(current_wheel + test_dare)
+            ) {
+                break; // Found a valid one
+            }
+        }
     }
+
+
+    //old
+
     
     // if secret is activated then this replaces rolled dare
     //if (secret == true && Math.random() > 1.0-inverseSecretShotPercent(shotMultiplier) && !(previous_dare.toLowerCase().includes(". round of shots")) && current_wheel != "no pain"){
@@ -1675,7 +1726,7 @@ spinBtn.addEventListener("click", () => {
             text.innerHTML = test_dare;
             text2.innerHTML = test_dare;
         }
-        if (current_type == "E") {
+        if (current_type == "notUsed") {
             textE.innerHTML = test_dare.replace("ENVIRONMENT : ", "");
             textE.style.fontSize =  "" + (2.8 * Math.min(1, 0.9*(32.0 / textE.innerText.length)))   + "rem";
             previous_environment = test_dare;
@@ -1683,6 +1734,15 @@ spinBtn.addEventListener("click", () => {
         else{
             previous_dare = test_dare;
         };
+
+        //glow for people playing. 
+        if(!(peoplePlaying.length == 0) && turnsEnabled){
+            peoplePlaying[mod(currentPlayer, peoplePlaying.length)].pushDare(current_wheel + test_dare);
+            drawPie(dataDaresPie);
+            
+        }
+        
+
         //log it to dares history
         dares_history.push(test_dare.replaceAll(",", ";"));
         let dareHistoryHTML = "<li>" + dares_history.toString().replaceAll("," , "</li><li>") + "</li>";
@@ -3826,23 +3886,68 @@ function fSoftCommit(item){
 
 
 //#region spinwheel 
+class PersonPlaying {
+     constructor(name, dares, color) {
+    this.name = name;
+    this.dares = dares;
+    this.color = color;
+  }
+  pushDare(dare){
+    this.dares.push(dare);
+  }
+}
+
+var peoplePlaying = [];
+var currentPlayer = -1;
+var turnsEnabled = false;
+
+const checkboxTurns = document.getElementById('checkTurns');
+
+if(localStorage.turnsEnabled == "true"){
+    checkboxTurns.checked = true;
+    turnsEnabled = true
+}
+else{
+    turnsEnabled = false;
+    
+}
+checkboxTurns.addEventListener('change', (event) => {
+if (event.currentTarget.checked) {
+    turnsEnabled = true;
+    localStorage.turnsEnabled = true;
+    
+} else {
+    turnsEnabled = false;
+    localStorage.turnsEnabled = false;
+    removeHighlight(getShotButtonDivs());
+    drawPie(dataDaresPie);
+}
+});
 
 
-
-
-// 🔁 Draw once
 function drawPie(data) {
-    const canvas = document.getElementById("pieCanvas");
-const ctx = canvas.getContext("2d");
-const centerX = 250, centerY = 250, radius = 248;
-    let total = data.reduce((sum, s) => sum + s.value, 0);
+  const canvas = document.getElementById("pieCanvas");
+  const ctx = canvas.getContext("2d");
 
+  // 🔹 Clear previous content
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const centerX = 250, centerY = 250, radius = 248;
+  let total = data.reduce((sum, s) => sum + s.value, 0);
   let startAngle = -Math.PI / 2;
+
+  const sliceAngles = [];
+
+  // 🔹 Pass 1: fill and stroke all slices with black outline
   data.forEach(slice => {
-    if(slice.value == 0){
-    }else{
+    if (slice.value === 0) {
+      sliceAngles.push(null);
+      return;
+    }
+
     const angle = (slice.value / total) * 2 * Math.PI;
     const endAngle = startAngle + angle;
+    sliceAngles.push([startAngle, endAngle]);
 
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
@@ -3851,10 +3956,14 @@ const centerX = 250, centerY = 250, radius = 248;
     ctx.fillStyle = slice.color;
     ctx.fill();
 
+    // 🟤 Default black outline for all
+    ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = "";
     ctx.stroke();
 
+    // Label logic (unchanged)
     const midAngle = (startAngle + endAngle) / 2;
     const textEndX = centerX + Math.cos(midAngle) * 80;
     const textEndY = centerY + Math.sin(midAngle) * 80;
@@ -3881,7 +3990,35 @@ const centerX = 250, centerY = 250, radius = 248;
     ctx.restore();
 
     startAngle = endAngle;
-    }
+  });
+
+  // 🔹 Pass 2: glowing stroke on top for matching slices
+  const currentPlayerId = mod(currentPlayer, peoplePlaying.length);
+
+
+  const glowColor = peoplePlaying.length == 0 ? "black" : peoplePlaying[currentPlayerId].color;
+
+  sliceAngles.forEach((angles, i) => {
+    const slice = data[i];
+    if(!turnsEnabled) return;
+    if(peoplePlaying.length == 0) return;
+    if (!angles || !peoplePlaying[currentPlayerId].dares.includes(current_wheel + slice.label)) return;
+
+    const [startAngle, endAngle] = angles;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.closePath();
+
+
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = glowColor;
+    ctx.shadowColor = glowColor;
+    ctx.shadowBlur = 5;
+    ctx.stroke();
+    ctx.restore();
   });
 }
 
@@ -3898,8 +4035,18 @@ var totalValue = 1;
 var dataDaresPie;
 
 window.onload = () => {
+    let playernames = getShotButtonDivs();
+    playernames.forEach(btn => {
+        peoplePlaying.push(new PersonPlaying(btn.getElementsByTagName('div')[0].innerHTML, [], btn.getElementsByTagName('div')[1].style.color))
+    })
+    console.log(peoplePlaying, playernames);
     getDataDareDefault();
     drawPie(dataDaresPie);
+    if(turnsEnabled) {
+        currentPlayer += 1;
+        highlightCurrentPlayer(getShotButtonDivs())
+        currentPlayer -= 1;
+    }
 }
 
 function findAngleByString(name){
@@ -3990,6 +4137,11 @@ function returnValueOfShots(array){
     totalValue = dataDaresPie.reduce((sum, s) => sum + s.value, 0);
     spinValuesPie = CalculateSpinValues(dataDaresPie);
     drawPie(dataDaresPie);
+}
+function calculateRoundOfShotsPercantege(array){
+    const svalue = array.find(obj => (obj.label).toLowerCase().includes(". round of shots")).value;
+    const spercent =  svalue / totalValue;
+    return spercent;
 }
 
 var sliderS = document.getElementById("sliderMul");
@@ -4225,4 +4377,117 @@ function confessionRoll(){
             <button id="confessionButton" onclick="confessionRoll()"><i class="fa-solid fa-dice"></i></button>
             </div>`
     currentConfessionCount += 1;
+}
+
+function getShotButtonDivs() {
+  // Get the container element by id
+  const container = document.getElementById('shotClass');
+  if (!container) return [];
+
+  // Get all buttons inside the container
+  const buttons = container.getElementsByTagName('button');
+
+  // Filter buttons that have id="newID"
+  const result = [];
+  for (const btn of buttons) {
+    if (btn.id === 'newID') {
+      result.push(btn);
+    }
+  }
+  return result;
+}
+
+
+function highlightCurrentPlayer(shotButtonDivs){
+    if(shotButtonDivs.length==0 || peoplePlaying.length != shotButtonDivs.length) return;
+    shotButtonDivs.forEach((button, index) => {
+        if(mod(currentPlayer, peoplePlaying.length) == index){
+            
+            button.querySelector("#shotCount").classList.add("glow-text");
+            
+        }else{
+            button.querySelector("#shotCount").classList.remove("glow-text");
+        }
+        
+    })
+}
+function removeHighlight(shotButtonDivs){
+    if(shotButtonDivs.length==0 || peoplePlaying.length != shotButtonDivs.length) return;
+    shotButtonDivs.forEach((button) => {
+        button.querySelector("#shotCount").classList.remove("glow-text");
+        
+    })}
+
+//#region shotcolor
+const shotColorBtn = document.getElementById('shotColorBtn');
+const shotColorMenu = document.getElementById('shotColorMenu');
+const shotColorSquares = shotColorMenu.querySelectorAll('.shotColor-square');
+const shotColorIndicator = document.getElementById('shotColorIndicator');
+
+
+// Default selected
+let selectedShotColor = shotColorSquares[0];
+selectedShotColor.classList.add('selected');
+
+shotColorBtn.addEventListener('click', () => {
+shotColorMenu.classList.toggle('open');
+});
+
+shotColorSquares.forEach(square => {
+square.addEventListener('click', () => {
+    selectedShotColor.classList.remove('selected');
+    square.classList.add('selected');
+    selectedShotColor = square;
+    tempShotColor = selectedShotColor.dataset.shotcolor;
+
+    shotColorIndicator.style.backgroundColor = square.dataset.shotcolor;
+    shotColorMenu.classList.remove('open');
+});
+});
+
+document.addEventListener('click', (e) => {
+if (!shotColorBtn.contains(e.target) && !shotColorMenu.contains(e.target)) {
+    shotColorMenu.classList.remove('open');
+}
+});
+
+function getSelectedShotColor() {
+  return selectedShotColor.dataset.shotcolor;
+}
+
+function getSafeShotColorAtIndex(json, index) {
+  try {
+    if (
+      json &&
+      Array.isArray(json.colors) &&
+      typeof json.colors[index] === 'string'
+    ) {
+      return json.colors[index];
+    }
+  } catch (e) {
+    // Do nothing, will return default
+  }
+  return 'white';
+}
+
+
+function normalizeDataShotsColors(dataShots) {
+  const n = Math.max(
+    dataShots.names?.length || 0,
+    dataShots.counts?.length || 0,
+    dataShots.images?.length || 0
+  );
+
+  if (!Array.isArray(dataShots.colors)) {
+    dataShots.colors = [];
+  }
+
+  for (let i = 0; i < n; i++) {
+    if (typeof dataShots.colors[i] !== 'string') {
+      dataShots.colors[i] = 'white';
+    }
+  }
+
+  // Truncate if colors has more than n items (optional, remove if undesired)
+  dataShots.colors.length = n;
 }

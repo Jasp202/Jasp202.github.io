@@ -363,17 +363,11 @@ h2 {
     margin: 10% auto;
     padding: 20px;
    border: #000 3px solid;
-    width: 30%;
+    width: fit-content;
     font-weight: bolder;
-    display: grid;
-    grid-template-areas: 
-            "a a a " 
-            "b c c" 
-            "b c c"; 
-            column-gap: 10px;
-            row-gap: 10px;
-    
-
+    display: flex;
+    column-gap: 50px;
+    padding: 30px;
 }
 .wheelpopup-content button {
     display: block;
@@ -594,8 +588,8 @@ border: 3px solid #48abe0;
 
 #shotButton {
     position: absolute;
-    top: 140px;
-    right: 20px;
+    top: 10px;
+    right: 140px;
     background: none;
     border: none;
     padding: 0;
@@ -815,7 +809,7 @@ border: 3px solid #48abe0;
 #clockButton{
     position: absolute;
     top: 5px;
-    right: 170px;
+    right: 190px;
     background: none;
     border: none;
     padding: 0;
@@ -1337,7 +1331,7 @@ section {
 #editorButton{
     position: absolute;
     top: 8px;
-    left: 50px;
+    left: 70px;
     background: none;
     border: none;
     padding: 0;
@@ -1408,7 +1402,7 @@ section {
 #addDareHistory{
     position: absolute;
     top: 5px;
-    left: 95px;
+    left: 115px;
     background: none;
     border: none;
     padding: 0;
@@ -1497,7 +1491,7 @@ section {
 #coinButton{
     position: absolute;
     top: 10px;
-    right: 220px;
+    right: 250px;
     background: none;
     border: none;
     padding: 0;
@@ -1815,7 +1809,7 @@ section {
 #ytbutton {
     position: absolute;
     top: 5px;
-    left: 140px;
+    left: 180px;
     background: none;
     border: none;
     padding: 0;
@@ -2191,7 +2185,7 @@ section {
   #slotsButton{
     position: absolute;
     top: 10px;
-    right: 280px;
+    right: 310px;
     background: none;
     border: none;
     padding: 0;

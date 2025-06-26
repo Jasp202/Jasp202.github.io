@@ -88,7 +88,7 @@
 
 
     <button id="wheelButton">
-        <img src="./Images\icons\wheel_icon.png" width="100">
+        <img src="./Images\icons\wheel_icon.png" width="120">
         <div id="wheelNameIcon"> 
             default  
         </div>
@@ -535,7 +535,7 @@
 
  <!---------------  clock  --------------------->
  <button id="clockButton" >
-    <img src="./Images\icons\clock_icon.png" width="50">
+    <img src="./Images\icons\clock_icon.png" width="60">
 </button>
 <div id="clockPopup" class="clockpopup">
     <div class="clockpopup-content">
@@ -652,7 +652,7 @@
  <!---------------  Settings  --------------------->
 
 <button id="settingsButton">
-    <img src="./Images\icons\settings_icon.png" width="40">
+    <img src="./Images\icons\settings_icon.png" width="60">
   </button>
 
   <div id="SettingsPopup" class="settingspopup">
@@ -665,20 +665,17 @@
           <label for="check2"> Disable wheel change rolls</label><br>
           
 
-          <label class="switch">
+          <label class="switch" style="display: none;">
             <input id="check3" type="checkbox" value="car">
             <span class="slider round"></span>
           </label>
-          <label for="check3"> Disable environment rolls</label><br>
+          <label for="check3" style="display: none;"> Disable environment rolls</label>
 
           <label class="switch">
             <input id="checkTurns" type="checkbox" value="car">
             <span class="slider round"></span>
           </label>
           <label for="checkTurns"> Enable turn-based pokernight</label><br>
-
-          <hr class="rounded">
-          <br>
 
           <label class="switch">
             <input id="check4" type="checkbox" value="car" checked>
@@ -692,9 +689,14 @@
             <span class="slider round"></span>
           </label>
           <label for="check5"> fast roll</label><br>
+          
+          <label class="switch">
+            <input id="powerDisButton" type="checkbox" value="car">
+            <span class="slider round"></span>
+          </label>
+          <label for="powerDisButton">disable power-ups</label><br>
           <hr class="rounded">
           <br>
-          
           <label class="switch">
             <input id="extraShots" type="checkbox" value="car">
             <span class="slider round"></span>
@@ -714,14 +716,13 @@
           </label>
           <label for="check" id="checklabel"> shot counter has 2 column(s)</label><br>
 
-          <hr class="rounded">
-          <br>
+          
 
-          <label class="switch">
+          <label class="switch" style="display: none;">
             <input id="check6" type="checkbox" value="car">
             <span class="slider round"></span>
           </label>
-          <label for="check6">disable team jenga</label><br>
+          <label for="check6" style="display: none;">disable team jenga</label>
 
           <hr class="rounded">
           <br>
@@ -749,25 +750,18 @@
             <source src="./Sounds/slot_win.mp3" type="audio/mp3">
         </audio>
 
-          <hr class="rounded">
-          <br>
-          <button id="wheelDisButton">
+          
+          <button id="wheelDisButton" style="display: none;">
             
             <div> 
                 Disable Wheels 
             </div>
         </button>
-          <br>
-          <hr class="rounded">
-          <br>
+          
     
-          <label class="switch">
-            <input id="powerDisButton" type="checkbox" value="car">
-            <span class="slider round"></span>
-          </label>
-          <label for="powerDisButton">disable power-ups</label><br>
+          
 
-          <br>
+          
           <hr class="rounded">
           <br>
           Round of shots Animation style:
@@ -792,9 +786,10 @@
           <span style="color: red;">z + x</span>  : secret menu,<br>
           <span style="color: red;">Enter</span>, <span style="color: red;">Spacebar</span> : SpinWheel / disable menu,<br>
           <span style="color: red; font-size: large">↑</span> (arrow up) : add 1 shot to all shotcounters,<br>
-          <span style="color: red; font-size: large">↓</span> (arrow down) : remove 1 shot from all shotcounters
+          <span style="color: red; font-size: large">↓</span> (arrow down) : remove 1 shot from all shotcounters<br>
+          <span style="color: red">Right click</span> (on items): open extra menu
         </p>
-        <button id="msgbutton" >
+        <button id="msgbutton" style="display: none;">
             New Ideas
         </button>
     </div>
@@ -887,7 +882,7 @@
 
   
   <button id="addDareHistory">
-    <img src="./Images\icons\history_icon.png" width="40">
+    <img src="./Images\icons\history_icon.png" width="58px">
   </button>
 
 
@@ -1140,7 +1135,7 @@
  
  <div> 
     <button id="editorButton">
-        <img src="./Images\icons\scroll_icon.png" width="45">
+        <img src="./Images\icons\scroll_icon.png" width="45px">
     </button>
     
 </div>
@@ -1418,7 +1413,7 @@
 
 
 <button id="coinButton">
-    <img src="./Images/icons/coin_tails_icon.png" width="50">
+    <img src="./Images/icons/coin_tails_icon.png" width="55px">
 
   </button>
 
@@ -1519,7 +1514,7 @@
 
 
     <button id="ytbutton" >
-        <img src="./Images/icons/youtube_icon.png" width="50">
+        <img src="./Images/icons/youtube_icon.png" width="60px">
     </button>
     <div id="ytPopup" class="ytpopup">
         <div class="ytpopup-content">
@@ -1688,7 +1683,7 @@
 
 </div>
 <button id="slotsButton">
-    <img src="./Images/icons/slot_machine_icon.png" width="60">
+    <img src="./Images/icons/slot_machine_icon.png" width="70">
 
   </button>
   <script>

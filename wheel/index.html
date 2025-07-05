@@ -466,6 +466,7 @@
     <ul class="menu"> 
         <button id="rollAgainButton" class="trash"> <i class="fa-solid fa-dice"></i> Roll for same person</button> 
         <button id="resetRolledButton" class="remove"> <i class="fa fa-repeat" aria-hidden="true"></i> reset rolled dares for player</button>
+        <button id="resetRolledAllButton" class="remove"> <i class="fa-solid fa-arrows-rotate"></i> reset rolled dares for all player</button>
         <button id="nextTurnButton" class="repeat"> <i class="fa-solid fa-arrow-right"></i> change turn</button> 
     </ul> 
 </div> 
@@ -658,60 +659,92 @@
   <div id="SettingsPopup" class="settingspopup">
     <div class="settingspopup-content">
 
+    <div id="settingsDivOne">
           <label class="switch">
             <input id="check2" type="checkbox" value="car">
-            <span class="slider round"></span>
+            <span class="slider round blueSlider"></span>
           </label>
-          <label for="check2"> Disable wheel change rolls</label><br>
+          <label for="check2"> disable wheel change rolls</label><br>
           
 
           <label class="switch" style="display: none;">
             <input id="check3" type="checkbox" value="car">
-            <span class="slider round"></span>
+            <span class="slider round "></span>
           </label>
-          <label for="check3" style="display: none;"> Disable environment rolls</label>
+          <label for="check3" style="display: none;"> disable environment rolls</label>
 
           <label class="switch">
             <input id="checkTurns" type="checkbox" value="car">
-            <span class="slider round"></span>
+            <span class="slider round yellowSlider"></span>
           </label>
-          <label for="checkTurns"> Enable turn-based pokernight</label><br>
+          <label for="checkTurns"> enable turn-based pokernight</label>
+
+          <label class="switch">
+            <input id="checkTurnsStorage" type="checkbox" value="car" disabled>
+            <span class="slider round yellowSlider subSlider disabledSlider" id="checkTurnsStorageSpan"></span>
+          </label>
+          <label for="checkTurnsStorage" id="checkTurnsStorageLabel" class="disabledSlider">retain rolled dares on f5</label>
+          <br>
 
           <label class="switch">
             <input id="check4" type="checkbox" value="car" checked>
-            <span class="slider round"></span>
+            <span class="slider round orangeSlider"></span>
           </label>
           <label for="check4"> auto change wheel</label><br>
 
           
           <label class="switch">
             <input id="check5" type="checkbox" value="car">
-            <span class="slider round"></span>
+            <span class="slider round greenSlider"></span>
           </label>
           <label for="check5"> fast roll</label><br>
           
           <label class="switch">
             <input id="powerDisButton" type="checkbox" value="car">
-            <span class="slider round"></span>
+            <span class="slider round purpleSlider"></span>
           </label>
           <label for="powerDisButton">disable power-ups</label><br>
-          <hr class="rounded">
-          <br>
+          
+    </div>
+    <div id="settingsDivTwo">
+        <div id="settingsDivTwoOne">
           <label class="switch">
             <input id="extraShots" type="checkbox" value="car">
-            <span class="slider round"></span>
+            <span class="slider round beerSlider"></span>
           </label>
-          <label for="extraShots"> extra fun for the pokernight (round of shots multiplier is active) </label>
+          <label for="extraShots">activate round of shots multiplier</label>
           <label id="sliderContainer" class="slidecontainer disabled">
+            <div class="background-layer">
+                <div class="white-overlay" id="whiteOverlay"></div>
+            </div>
             <input id = "sliderMul" type="range" min="1" max="99" value="10" class="sliderLong" id="myRange" disabled>
-            <label id = "labelSliderMul"for="sliderMul" style = "text-align: center;"> defautl error not changed</label><br>
-          </label><br>
+            
+            <label id = "labelSliderMul"for="sliderMul" style = "text-align: center; "> defautl error not changed</label><br>
+          </label>
 
-          <hr class="rounded">
-          <br>
+          
+          </div>
+          <div id="settingsDivTwoTwo">
+          Round of shots Animation style:
 
+          <label class="containerRad">Default
+            <input type="radio" checked="checked" name="radio" id="radioDefault">
+            <span class="checkmark"></span>
+          </label>
+          <label class="containerRad"><img src="./Images/icons/teo.jpg" height="50px" width="100px">
+            <input type="radio" name="radio" id="radioBoom">
+            <span class="checkmark"></span>
+          </label>
+          <label class="containerRad">Slot-machine
+            <input type="radio" name="radio" id="radioSlots">
+            <span class="checkmark"></span>
+          </label>
+
+          
+          </div>
+          <div id="settingsDivTwoThree">
           <label class="slidecontainer">
-            <input id="check" type="range" min="1" max="3" value="2">
+            <input id="check" type="range" min="1" max="3" value="2" class="counterSlider">
             
           </label>
           <label for="check" id="checklabel"> shot counter has 2 column(s)</label><br>
@@ -723,9 +756,12 @@
             <span class="slider round"></span>
           </label>
           <label for="check6" style="display: none;">disable team jenga</label>
-
-          <hr class="rounded">
-          <br>
+          </div>
+        
+         
+    </div>
+    <div id="settingsDivThree">
+        <div id="settingsDivThreeOne">
           Volume contols:
           <br><br>
           <audio id="audio1"loop controls preload="auto">
@@ -736,7 +772,7 @@
           <audio id="audio2"loop controls preload="auto">
             <source src="./Sounds/spinning_sound_effect.mp3">
           </audio>
-          <p id="audio2p">wheelspin: <span class="lava">100 %</span></p><br>
+          <p id="audio2p">wheelspin: <span class="lava">100 %</span></p>
           <audio id="sound1" preload="auto" style="display: none;">
             <source src="./Sounds/coinflip_sound.mp3" type="audio/mp3">
         </audio>
@@ -759,39 +795,24 @@
         </button>
           
     
-          
+        
 
+        </div>  
           
-          <hr class="rounded">
-          <br>
-          Round of shots Animation style:
-
-          <label class="containerRad">Default
-            <input type="radio" checked="checked" name="radio" id="radioDefault">
-            <span class="checkmark"></span>
-          </label>
-          <label class="containerRad"><img src="./Images/icons/teo.jpg" height="50px" width="100px">
-            <input type="radio" name="radio" id="radioBoom">
-            <span class="checkmark"></span>
-          </label>
-          <label class="containerRad">Slot-machine
-            <input type="radio" name="radio" id="radioSlots">
-            <span class="checkmark"></span>
-          </label>
-          
-          <hr class="rounded">
-          <br>
+        <div id="settingsDivThreeTwo">
           <p>
-          Controls:<br><br>
+          Controls:<br>
           <span style="color: red;">z + x</span>  : secret menu,<br>
           <span style="color: red;">Enter</span>, <span style="color: red;">Spacebar</span> : SpinWheel / disable menu,<br>
           <span style="color: red; font-size: large">↑</span> (arrow up) : add 1 shot to all shotcounters,<br>
-          <span style="color: red; font-size: large">↓</span> (arrow down) : remove 1 shot from all shotcounters<br>
+          <span style="color: red; font-size: large">↓</span> (arrow down) : remove 1 shot from all shotcounters,<br>
           <span style="color: red">Right click</span> (on items): open extra menu
         </p>
         <button id="msgbutton" style="display: none;">
             New Ideas
         </button>
+        </div>
+    </div>
     </div>
 </div>
 

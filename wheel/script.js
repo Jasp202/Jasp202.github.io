@@ -43,9 +43,15 @@ document.getElementById("resetRolledButton").addEventListener('click', function(
     removeDaresFromPlayer(peoplePlaying, currentPlayer);
     drawPie(dataDaresPie);
 });
+document.getElementById("resetRolledAllButton").addEventListener('click', function() {
+    peoplePlaying.forEach((plr) => {
+        plr.cleanDares();
+    })
+    drawPie(dataDaresPie);
+});
 function removeDaresFromPlayer(array, index){
     if(array.length == 0) return;
-    array[mod(index, array.length)].dares = [];
+    array[mod(index, array.length)].cleanDares();
 }
 document.getElementById("nextTurnButton").addEventListener('click', function() {
 
@@ -117,15 +123,16 @@ function CreateNewDom() {
             if (flagClick == true){
             const trash = document.getElementById("trashButton")
             trash.addEventListener('click', function () {
-            let index = dataShots.names.indexOf(clone.getElementsByTagName('div')[0].innerHTML);
-            dataShots.names.splice(index, 1);
-            dataShots.counts.splice(index, 1);
-            dataShots.images.splice(index, 1);
-            dataShots.colors.splice(index, 1);
-            peoplePlaying.splice(index, 1);
-            localStorage.dataShots = JSON.stringify(dataShots);
-            document.getElementById("shotClass").removeChild(clone);
-            img.remove();
+                let index = dataShots.names.indexOf(clone.getElementsByTagName('div')[0].innerHTML);
+                peoplePlaying[index].cleanDares();
+                dataShots.names.splice(index, 1);
+                dataShots.counts.splice(index, 1);
+                dataShots.images.splice(index, 1);
+                dataShots.colors.splice(index, 1);
+                peoplePlaying.splice(index, 1);
+                localStorage.dataShots = JSON.stringify(dataShots);
+                document.getElementById("shotClass").removeChild(clone);
+                img.remove();
             });
 
             const remove = document.getElementById("removeButton")
@@ -244,9 +251,7 @@ function shuffle(array) {
   
     return array;
 };
-function myFunction() {
-    alert("Hello! I am an alert box!");
-  }
+
 
 function wheelSound(src, speed, vol) {
     switch(src){
@@ -1439,7 +1444,30 @@ function inverseSecretShotPercent(x){ // polynomial ivese made with machine lear
     return -0.050716-0.207709*x+9.451340*x*x-26.148516*x*x*x+32.922510*x*x*x*x
 }
 let shotMultiplier = 0.1;
+let extraShotsCheck = false;
+
 const extraShots = document.getElementById('extraShots');
+document.getElementById("labelSliderMul").innerHTML = "Amount of rolls that are rounds of shots: <span class='beerColor'>10%</span>"; // Display the default slider value
+
+if(localStorage.extraShotsCheck == "true"){
+    extraShots.checked = true;
+    extraShotsCheck = true;
+    secret = true;
+    document.getElementById("sliderContainer").classList.remove("disabled");
+    document.getElementById("sliderMul").style.cursor = "pointer"
+    document.getElementById("sliderMul").disabled = false;
+}
+else{
+    extraShotsCheck = false;
+}
+if(localStorage.extraShotsMult && extraShotsCheck){
+    const mult = Number(localStorage.extraShotsMult);
+    document.getElementById("sliderMul").value = Math.round(100 * mult);
+    document.getElementById("labelSliderMul").innerHTML = "Amount of rolls that are rounds of shots: <span class='beerColor'>" + Math.round(100 * mult) + "%</span>";
+    document.getElementById('whiteOverlay').style.transform = `scaleX(${1-mult})`
+    shotMultiplier = mult;
+    
+}
 
 extraShots.addEventListener('change', (event) => {
 if (event.currentTarget.checked) {
@@ -1448,12 +1476,14 @@ if (event.currentTarget.checked) {
     document.getElementById("sliderMul").style.cursor = "pointer"
     document.getElementById("sliderMul").disabled = false;
     updateValueOfShots(dataDaresPie)
+    localStorage.extraShotsCheck = true;
 } else {
     secret = false;
     document.getElementById("sliderContainer").classList.add("disabled");
     document.getElementById("sliderMul").style.cursor = "not-allowed"
     document.getElementById("sliderMul").disabled = true;
     returnValueOfShots(dataDaresPie)
+    localStorage.extraShotsCheck = false;
 }
 });
 
@@ -3894,6 +3924,17 @@ class PersonPlaying {
   }
   pushDare(dare){
     this.dares.push(dare);
+    localStorage.setItem("DaresAlreadyRolled" + this.name, JSON.stringify(this.dares));
+  }
+  cleanDares(){
+    this.dares = [];
+    localStorage.removeItem("DaresAlreadyRolled" + this.name);
+  }
+  setDaresFromLocal(){
+    const localDares = localStorage.getItem("DaresAlreadyRolled" + this.name);
+    if(localDares !== null){
+        this.dares = JSON.parse(localDares);
+    }
   }
 }
 
@@ -3903,27 +3944,64 @@ var turnsEnabled = false;
 
 const checkboxTurns = document.getElementById('checkTurns');
 
+var turnsSave = false;
+const checkboxTurnsStorage = document.getElementById('checkTurnsStorage');
+const checkTurnsStorageSpan = document.getElementById('checkTurnsStorageSpan');
+const checkTurnsStorageLabel = document.getElementById('checkTurnsStorageLabel');
+
 if(localStorage.turnsEnabled == "true"){
     checkboxTurns.checked = true;
     turnsEnabled = true
+    checkTurnsStorageSpan.classList.remove("disabledSlider")
+    checkTurnsStorageLabel.classList.remove("disabledSlider")
+    checkboxTurnsStorage.disabled = false;
 }
 else{
     turnsEnabled = false;
-    
 }
 checkboxTurns.addEventListener('change', (event) => {
 if (event.currentTarget.checked) {
     turnsEnabled = true;
     localStorage.turnsEnabled = true;
+
+    //lower button
+    checkTurnsStorageSpan.classList.remove("disabledSlider")
+    checkTurnsStorageLabel.classList.remove("disabledSlider")
+    checkboxTurnsStorage.disabled = false;
     
 } else {
     turnsEnabled = false;
     localStorage.turnsEnabled = false;
     removeHighlight(getShotButtonDivs());
     drawPie(dataDaresPie);
+
+    //lower button
+    checkTurnsStorageSpan.classList.add("disabledSlider")
+    checkTurnsStorageLabel.classList.add("disabledSlider")
+    checkboxTurnsStorage.checked = false;
+    checkboxTurnsStorage.disabled = true;
+    turnsSave = false;
+    localStorage.turnsSave = false;
 }
 });
 
+if(localStorage.turnsSave == "true"){
+    checkboxTurnsStorage.checked = true;
+    turnsSave = true
+}
+else{
+    turnsSave = false;
+}
+checkboxTurnsStorage.addEventListener('change', (event) => {
+if (event.currentTarget.checked) {
+    turnsSave = true;
+    localStorage.turnsSave = true;
+    
+} else {
+    turnsSave = false;
+    localStorage.turnsSave = false;
+    }
+});
 
 function drawPie(data) {
   const canvas = document.getElementById("pieCanvas");
@@ -4040,13 +4118,21 @@ window.onload = () => {
         peoplePlaying.push(new PersonPlaying(btn.getElementsByTagName('div')[0].innerHTML, [], btn.getElementsByTagName('div')[1].style.color))
     })
     console.log(peoplePlaying, playernames);
+    if(turnsSave){
+    peoplePlaying.forEach((plr) =>{
+            plr.setDaresFromLocal();
+        })}
     getDataDareDefault();
+    if(extraShotsCheck) {updateValueOfShots(dataDaresPie)};
+    currentPlayer += 1;
     drawPie(dataDaresPie);
+    currentPlayer -= 1;
     if(turnsEnabled) {
         currentPlayer += 1;
         highlightCurrentPlayer(getShotButtonDivs())
         currentPlayer -= 1;
     }
+
 }
 
 function findAngleByString(name){
@@ -4146,13 +4232,16 @@ function calculateRoundOfShotsPercantege(array){
 
 var sliderS = document.getElementById("sliderMul");
 var outputS = document.getElementById("labelSliderMul");
-outputS.innerHTML = "Amount of rolls that are rounds of shots: 10%"; // Display the default slider value
+var whiteOverlay = document.getElementById('whiteOverlay');
 
 // Update the current slider value (each time you drag the slider handle)
 sliderS.oninput = function() {
-  outputS.innerHTML = "Amount of rolls that are rounds of shots: " + (this.value) + "%";
+  outputS.innerHTML = "Amount of rolls that are rounds of shots: <span class='beerColor'>" + (this.value) + "%</span>";
   shotMultiplier = (this.value / 100.0);
+  whiteOverlay.style.transform = `scaleX(${1-shotMultiplier})`
   updateValueOfShots(dataDaresPie);
+  localStorage.extraShotsMult = shotMultiplier;
+
 }
 
 

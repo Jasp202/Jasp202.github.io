@@ -1059,15 +1059,13 @@ padding-bottom: 30px;
     background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
+    outline: rgb(0, 0, 0) 2px solid;
   }
   
   input:checked + .slider {
     background-color: #2196F3;
   }
   
-  input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
-  }
   
   input:checked + .slider:before {
     -webkit-transform: translateX(26px);
@@ -1077,11 +1075,11 @@ padding-bottom: 30px;
   
   /* Rounded sliders */
   .slider.round {
-    border-radius: 34px;
+    border-radius: 3px;
   }
   
   .slider.round:before {
-    border-radius: 50%;
+    border-radius: 10%;
 }
 
 .settingspopup {
@@ -1097,16 +1095,83 @@ padding-bottom: 30px;
     
     
 }
+.rounded{
+    background: red;
+    border: none;
+    position: relative;
+    height: 2px;
+    
+}
 .settingspopup-content {
     background-color: white;
-    margin: 10% auto;
-    padding: 20px;
+    margin: auto;
+    
     border: 1px solid #888888;
-    width: 30%;
+    width: fit-content;
     font-weight: bolder;
+    display: flex;
+    flex-direction: row;
+    
+    transform: translate(0%, 30%);
+    outline: rgb(0, 0, 0) 2px solid;
+}
+#settingsDivOne{
+    display: grid;    
+    
+    padding-right: 40px;
+    padding-top: 30px;
+    padding-left: 30px;
+    padding-bottom: 10px;
+    background: rgba(109, 109, 242, 0.29);
+    outline: 1px black solid;
+    
+}
+#settingsDivTwo{
+    
     display: grid;
-    row-gap: 5px;
+    outline: 1px black solid;
+    
+}
+#settingsDivThree{
+   
+    display: grid;
+    outline: 1px black solid;
+}
+#settingsDivTwoOne{
+    display: grid;
+    padding: 20px;
+    padding-top: 30px;
+    padding-bottom: 40px;
+    background-color: rgba(110, 194, 240, 0.256);
+    outline: 1px black solid;
+    width: 500px;
 
+}
+#settingsDivTwoTwo{
+    display: grid;
+    padding: 20px;
+    background-color: rgba(200, 60, 202, 0.184);
+    outline: 1px black solid;
+}
+#settingsDivTwoThree{
+    display: grid;
+    padding: 20px;
+    padding-top: 30px;
+    padding-bottom: 0px;
+    background-color: rgba(0, 255, 38, 0.256);
+    outline: 1px black solid;
+}
+#settingsDivThreeOne{
+    display: grid;
+    padding: 20px;
+    background-color: rgba(204, 125, 33, 0.256);
+    outline: 1px black solid;
+}
+#settingsDivThreeTwo{
+    display: grid;
+    padding: 20px;
+    background-color: rgba(109, 154, 169, 0.256);
+    outline: 1px black solid;
 }
 .settingspopup-content button {
     display: block;
@@ -1194,6 +1259,9 @@ background: none;
 }
 .lava{
     color: red;
+}
+.beerColor{
+    color: brown;
 }
 
 .hiddenpopup {
@@ -1355,44 +1423,119 @@ section {
 }
 
 .slidecontainer {
-    width: 100%;
-    height: 100%; /* Width of the outside container */
-  }
+  position: relative;
+  width: 100%;
+  height: 25px;
+  transition: opacity 0.2s;
+}
+
+/* Layer with the background image */
+.background-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('./Images/backgrounds/beer_bg.jpg');
+  background-size: 100% auto;
+  background-position: center center;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* The white overlay (on top of background) */
+.white-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgb(255, 255, 255);
+  transform-origin: right;
+
+  pointer-events: none;
+  z-index: 2;
+}
+#whiteOverlay{
+    transform: scaleX(0.9);
+}
+/* The slider input */
+.sliderLong {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  width: 100%;
+  height: 25px;
+  background: transparent; /* Let background-layer show through */
+  outline: none;
+  opacity: 1;
   
-  /* The slider itself */
-  .sliderLong {
-    -webkit-appearance: none;  /* Override default CSS styles */
+  z-index: 3; /* On top of both backgrounds */
+  cursor: pointer;
+  outline: 3px rgb(201, 118, 17) solid !important;
+  border-radius: 3px
+}
+.counterSlider{
+    -webkit-appearance: none;
     appearance: none;
-    width: 100%; /* Full-width */
-    height: 25px; /* Specified height */
-    background: #d3d3d3; /* Grey background */
-    outline: none; /* Remove outline */
-    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
-    transition: opacity .2s;
-    cursor: not-allowed; /* Cursor on hover */
-  }
-  
+    position: relative;
+    width: 20%;
+    height: 5px;
+    background: transparent; /* Let background-layer show through */
+    outline: none;
+    opacity: 1;
+    background: rgb(222, 248, 255);
+    z-index: 3; /* On top of both backgrounds */
+    cursor: pointer;
+    outline: 2px rgb(90, 126, 255) solid !important;
+    border-radius: 1px
+}
+.counterSlider::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: white;
+    box-shadow: 0 0 0 1px rgb(0, 0, 0);
+    border: 2px #2196F3 solid;
+    cursor: pointer;
+    position: relative;
+    z-index: 4;
+    scale: 1.1;
+    border-radius: 10%;
+    
+}
+/* Slider thumb */
+.sliderLong::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 25px;
+  background: #c41616;
+  box-shadow: 0 0 0 3px rgb(106, 4, 4);
+  cursor: pointer;
+  position: relative;
+  z-index: 4;
+  scale: 1.1;
+  border-radius: 10%;
+  border: none;
+}
+
+.sliderLong::-moz-range-thumb {
+  width: 15px;
+  height: 25px;
+  background: #c41616;
+  box-shadow: 0 0 0 3px rgb(106, 4, 4);
+  cursor: pointer;
+  position: relative;
+  z-index: 4;
+  scale: 1.1;
+  border-radius: 10%;
+  border: none;
+}
   /* Mouse-over effects */
   .sliderLong:hover {
     opacity: 1; /* Fully shown on mouse-over */
-  }
-  
-  /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-  .sliderLong::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Override default look */
-    appearance: none;
-    width: 25px; /* Set a specific slider handle width */
-    height: 25px; /* Slider handle height */
-    background: #0d7db9; /* Green background */
-    
-  }
-  
-  .sliderLong::-moz-range-thumb {
-    width: 25px; /* Set a specific slider handle width */
-    height: 25px; /* Slider handle height */
-    background: #0d7db9; /* Green background */
-    
   }
 
   .disabled {
@@ -2147,7 +2290,8 @@ section {
     height: 25px;
     width: 25px;
     background-color: #eee;
-    border-radius: 50%;
+    border-radius: 10%;
+    border: #000 1px solid;
   }
   
   /* On mouse-over, add a grey background color */
@@ -2174,11 +2318,11 @@ section {
   
   /* Style the indicator (dot/circle) */
   .containerRad .checkmark:after {
-       top: 9px;
-      left: 9px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
+        top: 7px;
+      left: 7px;
+      width: 10px;
+      height: 10px;
+      border-radius: 10%;
       background: white;
   }
 
@@ -2493,5 +2637,60 @@ section {
 .glow-text {
   
   filter: drop-shadow(-4px 0 1px cyan)drop-shadow(4px 0 1px cyan)drop-shadow(0 4px 1px cyan)drop-shadow(0 -4px 1px cyan)
+    
+}
+.greenSlider{
+    outline: 3px rgb(0, 56, 0) solid;
+}
+input:checked + .slider.greenSlider{
+    background-color: green;
+}
+
+.blueSlider{
+    outline: 3px rgb(57, 61, 149) solid;
+}
+
+.yellowSlider{
+    outline: 3px rgb(98, 136, 48) solid;
+}
+input:checked + .slider.yellowSlider{
+    background-color: yellowgreen;
+}
+
+.orangeSlider{
+    outline: 3px rgb(200, 109, 24) solid;
+}
+input:checked + .slider.orangeSlider{
+    background-color: orange;
+}
+
+.purpleSlider{
+    outline: 3px rgb(149, 76, 123) solid;
+}
+input:checked + .slider.purpleSlider{
+    background-color: pink;
+}
+.subSlider{
+    margin-left: 20px;
+    margin-right: -20px;
+    transform: scale(0.88);
+}
+.disabledSlider{
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+#checkTurnsStorageLabel{
+    margin-left: 20px;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.beerSlider{
+    outline: 3px rgb(129, 68, 12) solid;
+}
+input:checked + .slider.beerSlider{
+    background: url('./Images/backgrounds/beer_bg.jpg');
+    background-position: center center;
+    background-size: 200% 200%;
     
 }

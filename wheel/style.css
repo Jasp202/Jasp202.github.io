@@ -18,6 +18,10 @@
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+  font-family: 'neon';
+  src: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/707108/neon.ttf);
+}
 
 /*-----------------  VARIABLES  -----------------*/
 :root {
@@ -2427,10 +2431,6 @@ section {
 }
 
 
-@font-face {
-  font-family: neon;
-  src: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/707108/neon.ttf);
-}
 .containerh1Text {
   display: table-cell;
   text-align: center;

@@ -1487,6 +1487,27 @@ if (event.currentTarget.checked) {
 }
 });
 
+const checkboxConsecRos = document.getElementById('extraShotsFairness');
+let noConsecRos = false;
+if(localStorage.noConsecRos == "true"){
+    checkboxConsecRos.checked = true;
+    noConsecRos = true
+}
+else{
+    noConsecRos = false;
+    
+}
+checkboxConsecRos.addEventListener('change', (event) => {
+    if (event.currentTarget.checked) {
+        noConsecRos = true;
+        localStorage.noConsecRos = true;
+        
+    } else {
+        noConsecRos = false;
+        localStorage.noConsecRos = false;
+    }
+});
+
 // true hidden menu
 let keys = {
     a_key: false,
@@ -1645,9 +1666,9 @@ spinBtn.addEventListener("click", () => {
     // check that dare is not the same as previous one /(#¤/(#))
     //
     let rosPer = calculateRoundOfShotsPercantege(dataDaresPie);
-    let rosRand = Math.random();
-    console.log(rosPer,rosRand)
-    if(rosPer > rosRand){ // roll analog round of shots
+    markovCoin.pHeadsAfterTailChange(rosPer);
+
+    if(noConsecRos ? markovCoin.next() : markovCoin.nextFair()){ // roll analog round of shots
         console.log("ros roller")
         let safeSlice = 360 / (2 * totalValue);
         let safeStartAngle = 360 * Math.random();
@@ -4580,3 +4601,35 @@ function normalizeDataShotsColors(dataShots) {
   // Truncate if colors has more than n items (optional, remove if undesired)
   dataShots.colors.length = n;
 }
+
+
+//markov chain fair-unfair coin 
+class BiasedCoin {
+  constructor(desiredRate = 0.1) {
+    this.desiredRate = desiredRate;
+    this.lastWasHead = true;
+    this.pHeadsAfterTail = desiredRate / (1 - desiredRate);
+  }
+  pHeadsAfterTailChange(newDesired) {
+    this.desiredRate = newDesired;
+    this.pHeadsAfterTail = newDesired / (1 - newDesired);
+  }
+
+  next() {
+    let result;
+    if (this.lastWasHead) {
+      result = false; // force tail
+    } else {
+      result = Math.random() < this.pHeadsAfterTail;
+    }
+    this.lastWasHead = result;
+    return result;
+  }
+  nextFair() {
+    let result;
+    result = Math.random() < this.desiredRate;
+    this.lastWasHead = result;
+    return result;
+  }
+}
+const markovCoin = new BiasedCoin();

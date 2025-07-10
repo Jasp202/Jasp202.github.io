@@ -476,10 +476,10 @@
 </div> 
 <div id="contextMenuTurns" class="context-menu" style="display: none"> 
     <ul class="menu"> 
-        <button id="rollAgainButton" class="trash"> <i class="fa-solid fa-dice"></i> Roll for same person</button> 
-        <button id="resetRolledButton" class="remove"> <i class="fa fa-repeat" aria-hidden="true"></i> reset rolled dares for player</button>
-        <button id="resetRolledAllButton" class="remove"> <i class="fa-solid fa-arrows-rotate"></i> reset rolled dares for all player</button>
-        <button id="nextTurnButton" class="repeat"> <i class="fa-solid fa-arrow-right"></i> change turn</button> 
+        <button id="rollAgainButton" class="trash"> <i class="fa-solid fa-dice"></i> Roll for the same person</button> 
+        <button id="resetRolledButton" class="remove"> <i class="fa fa-repeat" aria-hidden="true"></i> clear rolled dares for this player</button>
+        <button id="resetRolledAllButton" class="remove"> <i class="fa-solid fa-arrows-rotate"></i> clear rolled dares for all players</button>
+        <button id="nextTurnButton" class="repeat"> <i class="fa-solid fa-arrow-right"></i> skip this turn</button> 
     </ul> 
 </div> 
 
@@ -720,11 +720,21 @@
     </div>
     <div id="settingsDivTwo">
         <div id="settingsDivTwoOne">
+
+            <label class="switch">
+            <input id="extraShotsFairness" type="checkbox" value="car">
+            <span class="slider round vodkaSlider"></span>
+          </label>
+          <label for="extraShotsFairness" style="padding-bottom: 10px;">no consecutive rounds of shots</label>
+
           <label class="switch">
             <input id="extraShots" type="checkbox" value="car">
             <span class="slider round beerSlider"></span>
           </label>
-          <label for="extraShots">activate round of shots multiplier</label>
+          <label for="extraShots" style="padding-bottom: 10px;">activate round of shots multiplier</label>
+
+
+
           <label id="sliderContainer" class="slidecontainer disabled">
             <div class="background-layer">
                 <div class="white-overlay" id="whiteOverlay"></div>

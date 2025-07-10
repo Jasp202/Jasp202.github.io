@@ -18,7 +18,7 @@ counterAdd.addEventListener("click", function () {
     }
     CreateNewDom();
     peoplePlaying.push(new PersonPlaying(counterTextInput.value, [], tempShotColor))
-    console.log(peoplePlaying)
+    
     counterTextInput.value = '';
     document.getElementById("shotPopup").classList.remove("show");
 });
@@ -403,7 +403,7 @@ if(localStorage.defaultJSON){
 
     if(localStorage.plusdefaultDare){
         dareNums = localStorage.plusdefaultDare.split("\n");
-        console.log(dareNums)
+        
         dareNames = wheeldata_Default.dares;
         arrr = [];
         for(i=0; i < dareNames.length; i++){
@@ -696,7 +696,7 @@ if (localStorage.dataShots) {
     
     let dataShotsTemp = JSON.parse(localStorage.dataShots);
     normalizeDataShotsColors(dataShotsTemp);
-    console.log(dataShotsTemp);
+    
     localStorage.dataShots = JSON.stringify(dataShots);
 
     for (let i = 0; i < dataShotsTemp.names.length; i++){
@@ -755,15 +755,44 @@ else{
     
 }
 checkbox2.addEventListener('change', (event) => {
-if (event.currentTarget.checked) {
-    w_disabled = true;
-    localStorage.w_disabled = true;
-    
-} else {
-    w_disabled = false;
-    localStorage.w_disabled = false;
-    
-}
+    if (event.currentTarget.checked) {
+        w_disabled = true;
+        localStorage.w_disabled = true;
+        
+    } else {
+        w_disabled = false;
+        localStorage.w_disabled = false;
+        
+    }
+    switch(current_wheel) {
+            case "no enemies":
+                getDataDareEnemies();
+                updateValueOfShots(dataDaresPie);
+                drawPie(dataDaresPie);
+                break;
+            case "memes":
+                getDataDareMeme();
+                updateValueOfShots(dataDaresPie);
+                drawPie(dataDaresPie);
+                break;
+            case "vergipsycho":
+                getDataDareVergi();
+                updateValueOfShots(dataDaresPie);
+                drawPie(dataDaresPie);
+                break;
+            case "no sitting":
+                getDataDareSitting();
+                updateValueOfShots(dataDaresPie);
+                drawPie(dataDaresPie);
+                break;
+            case "default":
+                getDataDareDefault();
+                updateValueOfShots(dataDaresPie);
+                drawPie(dataDaresPie);
+                break;
+            default:
+                break;
+    }    
 });
 
 const checkbox3 = document.getElementById('check3');
@@ -1669,7 +1698,7 @@ spinBtn.addEventListener("click", () => {
     markovCoin.pHeadsAfterTailChange(rosPer);
 
     if(noConsecRos ? markovCoin.next() : markovCoin.nextFair()){ // roll analog round of shots
-        console.log("ros roller")
+        
         let safeSlice = 360 / (2 * totalValue);
         let safeStartAngle = 360 * Math.random();
         let indices = Array.from({ length: 2 * totalValue }, (_, i) => i);
@@ -1686,7 +1715,7 @@ spinBtn.addEventListener("click", () => {
             }
         }
     }else if((current_type == "W") || (w_disabled == true)){ // roll for dare and we dont want W or round of shots or prev.
-        console.log("no w roller", w_disabled, current_type)
+        
         let safeSlice = 360 / (2 * totalValue);
         let safeStartAngle = 360 * Math.random();
         let indices = Array.from({ length: 2 * totalValue }, (_, i) => i);
@@ -1703,12 +1732,12 @@ spinBtn.addEventListener("click", () => {
                 !test_dare.toLowerCase().includes(". round of shots") &&
                 !currentPlayerDares.includes(current_wheel + test_dare)
             ) {
-                console.log("currenttype", current_type)
+                
                 break; // Found a valid one
             }
         }
     }else{ // roll for dare we dont want prev or round of shots
-        console.log("general roller")
+        
         let safeSlice = 360 / (2 * totalValue);
         let safeStartAngle = 360 * Math.random();
         let indices = Array.from({ length: 2 * totalValue }, (_, i) => i);
@@ -1857,7 +1886,7 @@ spinBtn.addEventListener("click", () => {
             confessionRoll();
             
         }
-        console.log(current_type)
+        
         if ((current_type == "W") && (auto_change == true)){
             let wheelChangeString = test_dare;
             wheelChangeString = wheelChangeString.toLowerCase();
@@ -4138,7 +4167,7 @@ window.onload = () => {
     playernames.forEach(btn => {
         peoplePlaying.push(new PersonPlaying(btn.getElementsByTagName('div')[0].innerHTML, [], btn.getElementsByTagName('div')[1].style.color))
     })
-    console.log(peoplePlaying, playernames);
+    
     if(turnsSave){
     peoplePlaying.forEach((plr) =>{
             plr.setDaresFromLocal();
@@ -4161,7 +4190,7 @@ function findAngleByString(name){
     for(i in spinValuesPie){
         if(spinValuesPie[i][2].toLowerCase().includes(name)){
             angle = (spinValuesPie[i][0] + spinValuesPie[i][1]) / 2;
-            console.log("dare ",spinValuesPie[i][2] )
+            
             break;
         }
     }
@@ -4177,7 +4206,7 @@ function inverseDareToAngle(dare) {
 function CalculateSpinValues(dataDares) {
     
     let totalValue = dataDares.reduce((sum, s) => sum + s.value, 0);
-    console.log(totalValue)
+    
     let startAngle = -90;
     let newSpinvalues = [];
     const angle = (1 / totalValue) * 360;
@@ -4188,7 +4217,7 @@ function CalculateSpinValues(dataDares) {
         startAngle = endAngle;
         }
     }
-    console.log(newSpinvalues)
+    
     return newSpinvalues;
 }
 
@@ -4204,7 +4233,7 @@ function generateValuePie(OriginalangleValue, total){
 function pullPieDare(OriginalangleValue, total){
     let angleValue = Math.floor(mod(90 - OriginalangleValue, 360))
         let dare = Math.floor(angleValue / 360 * total)
-        console.log(dare)
+        
     return `${spinValuesPie[dare][2]}`
 }
 function pullPieType(OriginalangleValue, total){
@@ -4296,8 +4325,10 @@ function getDataDareDefault() {
         wheelNums = [];
     }
     
-    for(i in pie_Default_wheel){
-        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    if(!w_disabled){
+        for(i in pie_Default_wheel){
+            datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+        }
     }
     dataDaresPie = datadares;
     spinValuesPie = CalculateSpinValues(datadares);
@@ -4333,8 +4364,10 @@ function getDataDareEnemies() {
         wheelNums = [];
     }
     
-    for(i in pie_Default_wheel){
-        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    if(!w_disabled){
+        for(i in pie_Default_wheel){
+            datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+        }
     }
     dataDaresPie = datadares;
     spinValuesPie = CalculateSpinValues(datadares);
@@ -4370,8 +4403,10 @@ function getDataDareVergi() {
         wheelNums = [];
     }
     
-    for(i in pie_Default_wheel){
-        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    if(!w_disabled){
+        for(i in pie_Default_wheel){
+            datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+        }
     }
     dataDaresPie = datadares;
     spinValuesPie = CalculateSpinValues(datadares);
@@ -4407,8 +4442,10 @@ function getDataDareMeme() {
         wheelNums = [];
     }
     
-    for(i in pie_Default_wheel){
-        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    if(!w_disabled){
+        for(i in pie_Default_wheel){
+            datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+        }
     }
     dataDaresPie = datadares;
     spinValuesPie = CalculateSpinValues(datadares);
@@ -4445,8 +4482,10 @@ function getDataDareSitting() {
         wheelNums = [];
     }
     
-    for(i in pie_Default_wheel){
-        datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+    if(!w_disabled){
+        for(i in pie_Default_wheel){
+            datadares.push({label: pie_Default_wheel[i], value: parseOrDefault(wheelNums[i]), color: "pink"})
+        }
     }
     dataDaresPie = datadares;
     spinValuesPie = CalculateSpinValues(datadares);

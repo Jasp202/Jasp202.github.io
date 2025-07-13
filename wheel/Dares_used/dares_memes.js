@@ -25,6 +25,7 @@ dares: [
 '22. Freestyle GOOFY AHH BEAT / Pokernight poem IN ARABIC',
 '23. Recreate an old meme picture',
 '24. Ass slap round + NOISE',
+'25. Song recommendation meme song',
 '100. Round of Shots',
 ],
 

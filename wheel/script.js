@@ -278,6 +278,28 @@ function wheelSound(src, speed, vol) {
     this.stop = function(){
         this.sound.pause();
     }
+    this.fadeOut = function(duration = 500) {
+    const steps = 20;
+    const stepTime = duration / steps;
+    let currentStep = 0;
+    const originalVolume = this.sound.volume;
+
+    const fade = () => {
+        currentStep++;
+        const newVolume = originalVolume * (1 - currentStep / steps);
+        this.sound.volume = Math.max(newVolume, 0);
+
+        if (currentStep < steps) {
+        setTimeout(fade, stepTime);
+        } else {
+        // Restore volume after fade out
+        this.sound.volume = originalVolume;
+        this.stop();
+        }
+    };
+
+    fade();
+    };
 }
 
 function alarmSound(src, vol) {
@@ -1677,6 +1699,12 @@ var currentConfessionCount = 0;
 var confessionWheelLength = confessionWheel.length;
 //#region spinning
 var rollForSamePerson = false;
+count = 0;
+let rolledDare = 0;
+let test_dare = "";
+let startTime = null;
+let targetDuration = 600 * 20 / fast_roll; // duration in ms based on fast_roll
+var mySoundSpin;
 spinBtn.addEventListener("click", () => {
     
     if(!(peoplePlaying.length == 0) && turnsEnabled){
@@ -1685,12 +1713,12 @@ spinBtn.addEventListener("click", () => {
         }
     drawPie(dataDaresPie);
     if(turnsEnabled) highlightCurrentPlayer(getShotButtonDivs())
-    let count = 100;
+    count = 100;
     spinBtn.disabled = true;
-    let test_dare = "";
+    test_dare = "";
     //roll dare and check for flags
 
-    let rolledDare = 360 * Math.random(); // angle for the initial dare rolled this spin
+    rolledDare = 360 * Math.random(); // angle for the initial dare rolled this spin
 
     // check that dare is not the same as previous one /(#¤/(#))
     //
@@ -1776,30 +1804,51 @@ spinBtn.addEventListener("click", () => {
     }
     
     //dare has been rolled 
-    var mySound = new wheelSound("wheel", fast_roll, wheelVolume);
-    mySound.play();
+    if(!(fast_roll == 1)){
+        mySoundSpin = new wheelSound("wheel", 4, wheelVolume);
+    }
+    else{
+        mySoundSpin = new wheelSound("wheel", 1, wheelVolume);
+    }
+    mySoundSpin.play();
 
     // roate pic 
-    let rotationInterval = window.setInterval(() => {
+    startTime = null;
+    targetDuration = (600 - 100) * 20 / fast_roll;
+    requestAnimationFrame(spinLoop);
+});
+function spinLoop(timestamp) {
+  if (!startTime) startTime = timestamp;
 
-    if (count < 200) {
-        pieHolder.style.transform = "rotate(" + 360 * Math.random() + "deg)" ;
-        if(count % 2 == 0){
-            generateValuePie(180 * Math.random(), totalValue);
-        };
+  const elapsed = timestamp - startTime;
+  const progress = Math.min(elapsed / targetDuration, 1); // 0 to 1
+
+  count = Math.floor(100 + progress * (600 - 100)); // count from 100 to 600
+
+  if (count < 200) {
+   
+    if (count % 2 === 0) {
+         pieHolder.style.transform = "rotate(" + 360 * Math.random() + "deg)";
+      generateValuePie(180 * Math.random(), totalValue);
     }
-    else {
-        pieHolder.style.transform = "rotate("  +  (-100000/Math.pow(count-199, 1.5) + 12.4533 - 36000 / (1 + 10 *count)  + rolledDare + 6 - 90) + "deg)";
-        if(count % 2 == 0){
-            generateValuePie((-100000/Math.pow(count-199, 1.5) + 12.4533 -36000 / (1 + 10*count)  + rolledDare + 6 ), totalValue);
-        };
+  } else {
+    let rotation = -100000 / Math.pow(count - 199, 1.5) + 12.4533 - 36000 / (1 + 10 * count) + rolledDare + 6 - 90;
+    pieHolder.style.transform = `rotate(${rotation}deg)`;
+    if (count % 2 === 0) {
+      generateValuePie(rotation + 90, totalValue);
     }
+  }
 
-    
-    count = count + fast_roll; // fast roll is 1 or 10 
-    if (count >= 600) {
-
-        clearInterval(rotationInterval);
+  if (count < 600) {
+    requestAnimationFrame(spinLoop);
+  } else {
+    finalizeSpin();
+  }
+}
+function finalizeSpin() {
+        if(fast_roll == 10){
+            mySoundSpin.fadeOut();
+        }
         generateValuePie(rolledDare, totalValue);
         if(hiddenPrimed){
             hiddenPrimed = false;
@@ -1919,12 +1968,7 @@ spinBtn.addEventListener("click", () => {
         ChangeDareCount(test_dare, 0); //used to referesh doesnt cahnge anything
         document.getElementById("currentDareCountMinus").onclick = function() {ChangeDareCount(test_dare, -1)}
         document.getElementById("currentDareCountPlus").onclick = function() {ChangeDareCount(test_dare, 1)}
-    }
-
-
-  }, 20);
-});
-
+}
 
 /* --------------- End Spin Wheel  --------------------- */
 
@@ -4226,8 +4270,8 @@ function generateValuePie(OriginalangleValue, total){
         let dare = Math.floor(angleValue / 360 * spinValuesPie.length)
         
 
-        text.innerHTML = `${spinValuesPie[dare][2]}`;
-        text2.innerHTML = `${spinValuesPie[dare][2]}`;      
+        text.innerText = `${spinValuesPie[dare][2]}`;
+        text2.innerText = `${spinValuesPie[dare][2]}`;      
 };
 
 function pullPieDare(OriginalangleValue, total){

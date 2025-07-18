@@ -130,6 +130,7 @@ h1 {
     position: absolute;
     border: none;
      left: -100px;
+     will-change: transform;
 }
 .wheel_box {
   position: relative;

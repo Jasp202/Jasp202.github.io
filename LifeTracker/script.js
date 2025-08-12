@@ -616,7 +616,7 @@ function loadWeatherData(){
                 else if(precipitationAmount[i+1]-precipitationAmount[i] < 0.25){
                     img.style.background = "#E5EDFF";
                     if(cloudCover[i] < 5/8*100){
-                        if(sunrise){
+                        if(sunset){
                         img.src = "./Images/20.svg";
                         }
                         else{
@@ -624,7 +624,7 @@ function loadWeatherData(){
                         }
                     }
                     else if(cloudCover[i] < 7/8*100){
-                        if(sunrise){
+                        if(sunset){
                         img.src = "./Images/30.svg";
                         }
                         else{
@@ -638,7 +638,7 @@ function loadWeatherData(){
                 else if(precipitationAmount[i+1]-precipitationAmount[i] < 1){
                     img.style.background = "#CCDBFF";
                     if(cloudCover[i] < 5/8*100){
-                        if(sunrise){
+                        if(sunset){
                         img.src = "./Images/21.svg";
                         }
                         else{
@@ -647,7 +647,7 @@ function loadWeatherData(){
                     }
                     
                     else if(cloudCover[i] < 7/8*100){
-                        if(sunrise){
+                        if(sunset){
                         img.src = "./Images/31.svg";
                         }
                         else{
@@ -661,7 +661,7 @@ function loadWeatherData(){
                 else{
                     img.style.background = "#99B8FF";
                     if(cloudCover[i] < 5/8){
-                        if(sunrise){
+                        if(sunset){
                         img.src = "./Images/22.svg";
                         }
                         else{
@@ -669,7 +669,7 @@ function loadWeatherData(){
                         }
                     }
                     else if(cloudCover[i] < 7/8){
-                        if(sunrise){
+                        if(sunset){
                         img.src = "./Images/32.svg";
                         }
                         else{

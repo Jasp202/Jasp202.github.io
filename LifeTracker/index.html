@@ -13,6 +13,9 @@
     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.1.0/chartjs-plugin-datalabels.min.js"></script> 
     
 </head>
 
@@ -87,6 +90,10 @@
     <br>
     <button id="lunchButton" onclick="showButtons()">
         <img src="./Images/lunch_icon.png"width=100%>
+    </button>
+    <br>
+    <button id="foodButton">
+
     </button>
     <div class="weatherContainer" id="WeatherContainer" onclick="hideWeather()">
         <div id="weatherUpperInfo"><img src="./Images/sunrise.svg" width="30px">Sunrise:&nbsp<p class="weatherClock" id="timeRise">19:00</p>,&nbspsunset:&nbsp<p class="weatherClock" id="timeSet"> 20:00</p></div>
@@ -209,6 +216,30 @@
     <button class="dailyButton" onclick="markButton(this, 'button7')">
         <img src="./Images/toothbrush_icon.png" alt="Button 7">
     </button>
+</div>
+
+<div id="foodTrackerDrop">
+    <div style="margin-top: 15vh;" class="foodTracker">
+    <input class="foodTracker input" type="number" placeholder="Calories" name="text" id="calInput" autocomplete="off" spellcheck="false" required>
+    </div>
+    <div style="margin-top: 30px;" class="foodTracker">
+        <input class="foodTracker input" type="text" placeholder="Food Item" name="text" id="nameInput" autocomplete="off" spellcheck="false" required>
+    </div>
+    <div style="margin-top: 40px;" class="foodTracker">
+    <button class="foodTracker round" id="saveButton">&#127838</button>
+    </div>
+    
+    <div class="foodTracker cal">
+        <img src="./Images/fat_icon.png" width="40px"><p id="calMeter">&nbsp0</p>
+    </div>
+    <div class=" foodTracker avg" onclick="drawChart()">
+        <img src="./Images/seven_days_icon.png" width="48px"><p id="avgMeter">&nbsp0</p>
+    </div>
+    
+    <button class="foodTracker backutton" id="closeFoodTracker">
+        return
+    </button>
+    <canvas id="myChart" width="50vw" height="50vh" style="margin-top: 1rem"></canvas>
 </div>
 
   <script src="sunrises.js"></script>

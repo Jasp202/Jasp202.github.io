@@ -3,7 +3,7 @@
     padding: 30px;
     padding-top: 30px;
   }
-div {
+.foodTracker div{
     
     max-width: fit-content;
   margin-left: auto;
@@ -14,7 +14,7 @@ div {
   line-height: 30px;
   text-align: center;
 }
-button.round {
+.foodTracker button.round {
     background-color: #abe048;
     color: white;
     border: none;
@@ -27,15 +27,15 @@ button.round {
     cursor: pointer;
     transition: transform 0.2s ease;
 }
-button.round:hover {
+.foodTracker button.round:hover {
     background-color: #9ebb68;
 }
 
-button.round:active {
+.foodTracker button.round:active {
     box-shadow: 0 0 2px darkslategray;
     transform: translateY(2px);
 }
-div.cal{
+.foodTracker div.cal{
     position: absolute;
     top: 10px;
     left: 20px;
@@ -46,7 +46,7 @@ div.cal{
   align-items: center;
   
 }
-div.avg{
+.foodTracker div.avg{
     position: absolute;
     top: 10px;
     right: 10px;
@@ -57,7 +57,7 @@ div.avg{
   align-items: center;
   
 }
-.input {
+.foodTracker.input {
     border-radius: 5px;
     outline: 4px solid #abe048;
     border: 0;
@@ -72,7 +72,7 @@ div.avg{
     touch-action: manipulation;
   }
   
-.input:focus {
+.foodTracker.input:focus {
     outline-offset: 6px;
     background-color: #fff;
     outline: 4px solid #c7e68c;

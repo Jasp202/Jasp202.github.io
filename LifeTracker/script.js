@@ -149,6 +149,7 @@ function dailyReward() {
         return;
     }
     else if(claimedReward == 0 && bikeReward >= 1 && pushReward >= 1 && sitReward >= 1 && squatReward >= 1){
+        document.getElementById("soloButton").classList.add("shinyImage");
         DropChestWith(0,100,100,0);
         claimedReward = 1;
         localStorage.claimedReward = 1;
@@ -290,6 +291,9 @@ function showDaily() {
     
 if(localStorage.claimedReward){
         claimedReward = Number(localStorage.claimedReward);
+        if(claimedReward != 0){
+            document.getElementById("soloButton").classList.add("shinyImage");
+        }
         console.log("claimed",claimedReward)
       }
 if(localStorage.Sit){
@@ -322,6 +326,7 @@ function checkDateOnFocus() {
         console.log("claimed",claimedReward)
       }
     } else {
+    document.getElementById("soloButton").classList.remove("shinyImage");
     localStorage.claimedReward = 0;
     currentSitUps = -10;
     currentPushUps = -10;
@@ -373,28 +378,39 @@ function addProgress(key, counter, progress) {
             localStorage.gymCounter = gymCounter;
             current = gymCounter;
             gottenCount = gottenGym;
+            gymShiny = 1;
+            localStorage.gymShiny = 1;
             break;
         case "alcohol":
             alcoholCounter += 1;
             localStorage.alcoholCounter = alcoholCounter;
             current = alcoholCounter;
             gottenCount = gottenAlcohol;
+            alcoholShiny = 1;
+            localStorage.alcoholShiny = 1;
             break;
         case "diet":
             dietCounter +=1;
             localStorage.dietCounter = dietCounter;
             current = dietCounter;
             gottenCount = gottenDiet;
+            dietShiny = 1;
+            localStorage.dietShiny = 1;
             break;
         case "piano":
             pianoCounter +=1;
             localStorage.pianoCounter = pianoCounter;
             current = pianoCounter;
             gottenCount = gottenPiano;
+            pianoShiny = 1;
+            localStorage.pianoShiny = 1;
             break;
     }
 counter.textContent = ` ${current}/${Math.floor(current/10 + 1)*10} Days`;
 progress.style.width = `${current / Math.floor(current/10 + 1) * 10}%`
+if(pianoShiny == 1 && gymShiny == 1 && dietShiny == 1 && alcoholShiny == 1){
+    document.getElementById("gameButton").classList.add("shinyImage");
+}
 
 if(rewardCheckPoints.includes(current) &&  current > gottenCount){
     DropChestWith(1,0,0,0);
@@ -506,6 +522,47 @@ AddHoldEvent(document.getElementById("gym"), () =>resetProgress('gym', document.
 AddHoldEvent(document.getElementById("alcohol"), () =>resetProgress('alcohol', document.getElementById('alcoholCounter'), document.getElementById('alcoholProgress')))
 AddHoldEvent(document.getElementById("diet"), () =>resetProgress('diet', document.getElementById('dietCounter'), document.getElementById('dietProgress')))
 AddHoldEvent(document.getElementById("piano"), () =>resetProgress('piano', document.getElementById('pianoCounter'), document.getElementById('pianoProgress')))
+
+var pianoShiny = 0;
+var gymShiny = 0;
+var dietShiny = 0;
+var alcoholShiny = 0;
+if(localStorage.pianoShiny){
+    pianoShiny = localStorage.pianoShiny;
+}
+if(localStorage.gymShiny){
+    gymShiny = localStorage.gymShiny;
+}
+if(localStorage.dietShiny){
+    dietShiny = localStorage.dietShiny;
+}
+if(localStorage.alcoholShiny){
+    alcoholShiny = localStorage.alcoholShiny;
+}
+
+if(pianoShiny == 1 && gymShiny == 1 && dietShiny == 1 && alcoholShiny == 1){
+    document.getElementById("gameButton").classList.add("shinyImage");
+}
+progressFocus();
+
+window.addEventListener('focus', progressFocus);
+
+function progressFocus() {
+    const today = new Date().toLocaleDateString("en-CA");
+    const saved = localStorage.getItem("lastVisitDate");
+  
+    if (today !== saved) {
+        pianoShiny = 0;
+        gymShiny = 0;
+        dietShiny = 0;
+        alcoholShiny = 0;
+        localStorage.pianoShiny = 0;
+        localStorage.gymShiny = 0;
+        localStorage.dietShiny = 0;
+        localStorage.alcoholShiny = 0;
+        document.getElementById("gameButton").classList.remove("shinyImage");
+    }
+}
 //#endregion
 
 //#region Weather
@@ -538,11 +595,20 @@ function loadWeatherData(){
             const valueMatch = /<BsWfs:ParameterValue>(.*?)<\/BsWfs:ParameterValue>/i.exec(member);
   
             if (timeMatch && valueMatch) {
-              const timeRaw = new Date(timeMatch[1]).toISOString().replace('T', ' ').split('.')[0];
-              const value = valueMatch[1];
-              const boolTime = checkTime(timeRaw);
-              const time = timeRaw.split(' ')[1].split(':')[0];
-              if(boolTime) temperatureData.push({ time, value, boolTime });
+              const timeRaw = new Date(timeMatch[1])         // from "...Z"
+                    .toISOString()                                // still UTC
+                    .replace('T', ' ')
+                    .split('.')[0];                               // "YYYY-MM-DD HH:mm:ss" (UTC)
+
+                    const value = valueMatch[1];
+                    const boolTime = checkTime(timeRaw);
+                    const time = new Intl.DateTimeFormat('en-GB', {  // show Helsinki hour, not UTC
+                    timeZone: 'Europe/Helsinki',
+                    hour: '2-digit',
+                    hour12: false
+                    }).format(new Date(timeMatch[1]));
+
+                    if (boolTime) temperatureData.push({ time, value, boolTime });
             }
           }
           if (member.includes('<BsWfs:ParameterName>PrecipitationAmount</BsWfs:ParameterName>')) {
@@ -577,7 +643,11 @@ function loadWeatherData(){
               var cellCloud = rowI.insertCell(2);
               var cellWind = rowI.insertCell(3);
               var cellwater = rowI.insertCell(4);
-              cellwater.innerHTML = Math.max(0, precipitationAmount[i+1]-precipitationAmount[i]).toFixed(1) + " mm";
+              var precipitationExplicit = precipitationAmount[i]-precipitationAmount[i-1];
+              if(Number.isNaN(precipitationExplicit)){
+                precipitationExplicit = precipitationAmount[i];
+              }
+              cellwater.innerHTML = Math.max(0,  precipitationExplicit).toFixed(1) + " mm";
               cellWind.innerHTML = Math.round(windSpeed[i]) + ' m/s';
               cellTime.innerHTML = temperatureData[i].time + ":00";
               cellWeather.innerHTML = Math.round(temperatureData[i].value) + "°";
@@ -590,8 +660,8 @@ function loadWeatherData(){
                 cellTime.style.color = "yellow"
                 cellTime.style.textShadow = "0 0 4px black"
               }
-                console.log(precipitationAmount[i+1]-precipitationAmount[i])
-                if(precipitationAmount[i+1]-precipitationAmount[i] < 0.1){
+               
+                if(precipitationExplicit < 0.1){
                     if(cloudCover[i] < 1/8*100){
                         if(sunset) {
                         img.src = "./Images/0.svg";
@@ -630,7 +700,7 @@ function loadWeatherData(){
                         
                     }
                 }
-                else if(precipitationAmount[i+1]-precipitationAmount[i] < 0.25){
+                else if(precipitationExplicit < 0.25){
                     img.style.background = "#E5EDFF";
                     if(cloudCover[i] < 5/8*100){
                         if(sunset){
@@ -652,7 +722,7 @@ function loadWeatherData(){
                         img.src = "./Images/40.svg";
                     }
                 }
-                else if(precipitationAmount[i+1]-precipitationAmount[i] < 1){
+                else if(precipitationExplicit < 1){
                     img.style.background = "#CCDBFF";
                     if(cloudCover[i] < 5/8*100){
                         if(sunset){
@@ -713,24 +783,21 @@ function loadWeatherData(){
       });
   };
   
-  function checkTime(inputTimeStr) {
-      const now = new Date();
-      const input = new Date(inputTimeStr.replace(" ", "T")); // Local time
+  
+function checkTime(inputTimeStr) {
+  const now = new Date();
+  // ⬇️ Force UTC parse to avoid treating it as local time
+  const input = new Date(inputTimeStr.replace(' ', 'T') + 'Z');
 
-      const sameDate =
-          input.getFullYear() === now.getFullYear() &&
-          input.getMonth() === now.getMonth() &&
-          input.getDate() === now.getDate();
+  const sameDate =
+    input.getFullYear() === now.getFullYear() &&
+    input.getMonth() === now.getMonth() &&
+    input.getDate() === now.getDate();
 
-      const sameHour = input.getHours() === now.getHours();
+  const sameHour = input.getHours() === now.getHours();
 
-      if (sameDate && (input > now || sameHour)) {
-          return true;
-        } 
-      else {
-          return false;
-        }
-  }
+  return sameDate && (input > now || sameHour);
+}
 
 function hideWeather(){
     document.getElementById("WeatherContainer").style.display = "none";
@@ -921,6 +988,25 @@ function mapPeakXToTime(peakX) {
 
 //#region Buttons
 
+var buttonsShiny = 0;
+if(localStorage.buttonsShiny){
+    buttonsShiny = localStorage.buttonsShiny;
+}
+function buttonsFocus() {
+    const today = new Date().toLocaleDateString("en-CA");
+    const saved = localStorage.getItem("lastVisitDate");
+  
+    if (today !== saved) {
+        buttonsShiny = 0;
+        localStorage.buttonsShiny = 0;
+        document.getElementById("lunchButton").classList.remove("shinyImage");
+    }
+}
+window.addEventListener("focus", buttonsFocus)
+buttonsFocus();
+if(buttonsShiny == 1){
+    document.getElementById("lunchButton").classList.add("shinyImage");
+}
 
 const currentDate = new Date().toISOString().split('T')[0];
 
@@ -945,6 +1031,9 @@ function markButton(button, buttonId) {
     console.log(button.getBoundingClientRect())
     if(buttonId == "button7"){
         DropChestWith(0,50,0,0);
+        buttonsShiny = 1;
+        localStorage.buttonsShiny = 1;
+        document.getElementById("lunchButton").classList.add("shinyImage");
     }
 
   // Get the position and size of the main div relative to its parent container
@@ -1375,7 +1464,7 @@ request.onsuccess = function(event) {
     console.log("Database opened successfully!");
     oldCalories();   
     processCalories();
-    
+    window.addEventListener("focus", oldCalories);
 };
 request.onerror = function(event) {
     console.error("Database error: " + event.target.errorCode);
@@ -1506,8 +1595,10 @@ async function oldCalories() {
              
              document.getElementById("calMeter").innerHTML = "&nbsp" + calCount;
              document.getElementById("foodButton").innerHTML = "&nbsp" + calCount + " Cal";
+             return;
          }
      }
+     document.getElementById("foodButton").innerHTML = "&nbsp" + "0" + " Cal";
 }
 
 // load seven days to the future

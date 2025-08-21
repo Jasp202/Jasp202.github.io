@@ -374,7 +374,6 @@ th, td {
     position: relative;
     top: 20px;
     left: 4px;
-    filter: drop-shadow(0 0 1px black);
     
 }
 .currency{
@@ -1078,3 +1077,23 @@ input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none; /* For Chrome/Safari */
 }
 
+.shinyImage {
+  position: relative; /* Needed so the pseudo-element is positioned relative to this element */
+    filter: 
+    drop-shadow(  2px  0px 1px rgb(221, 190, 16))
+     drop-shadow(  -2px  0px 1px rgb(255, 219, 57))
+     drop-shadow(  0px  2px 1px rgb(231, 146, 19))
+    drop-shadow(  0px  -2px 1px rgb(255, 254, 183))
+}
+
+.shinyImage::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;  /* adjust to your image size */
+  height: 30px;
+  background: url("./Images/shiny_icon.png") no-repeat center center;
+  background-size: contain; /* makes sure the image fits */
+  pointer-events: none; /* so the image doesn't block clicks */
+}

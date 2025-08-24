@@ -312,7 +312,7 @@ if(localStorage.Bike){
     currentBike = localStorage.Bike -10;
     document.getElementById("counterBike").click();
 }
-checkDateOnFocus();
+
 
 function checkDateOnFocus() {
     const today = new Date().toLocaleDateString("en-CA");
@@ -351,8 +351,6 @@ function checkDateOnFocus() {
     }
 }
 
-// Run again every time the tab gains focus
-window.addEventListener("focus", checkDateOnFocus);
 
 //#endregion
 
@@ -369,7 +367,7 @@ var alcoholCounter = 0;
 var dietCounter = 0;
 var pianoCounter = 0;
 
-function addProgress(key, counter, progress) {
+function addProgress(key, counter, progress, updateDailyShiny = true) {
     let current;
     let gottenCount;
     switch(key){
@@ -378,32 +376,40 @@ function addProgress(key, counter, progress) {
             localStorage.gymCounter = gymCounter;
             current = gymCounter;
             gottenCount = gottenGym;
-            gymShiny = 1;
-            localStorage.gymShiny = 1;
+            if(updateDailyShiny){
+                gymShiny = 1;
+                localStorage.gymShiny = 1;
+            }
             break;
         case "alcohol":
             alcoholCounter += 1;
             localStorage.alcoholCounter = alcoholCounter;
             current = alcoholCounter;
             gottenCount = gottenAlcohol;
-            alcoholShiny = 1;
-            localStorage.alcoholShiny = 1;
+            if(updateDailyShiny){
+                alcoholShiny = 1;
+                localStorage.alcoholShiny = 1;
+            }
             break;
         case "diet":
             dietCounter +=1;
             localStorage.dietCounter = dietCounter;
             current = dietCounter;
             gottenCount = gottenDiet;
-            dietShiny = 1;
-            localStorage.dietShiny = 1;
+            if(updateDailyShiny){
+                dietShiny = 1;
+                localStorage.dietShiny = 1;
+            }
             break;
         case "piano":
             pianoCounter +=1;
             localStorage.pianoCounter = pianoCounter;
             current = pianoCounter;
             gottenCount = gottenPiano;
-            pianoShiny = 1;
-            localStorage.pianoShiny = 1;
+            if(updateDailyShiny){
+                pianoShiny = 1;
+                localStorage.pianoShiny = 1;
+            }
             break;
     }
 counter.textContent = ` ${current}/${Math.floor(current/10 + 1)*10} Days`;
@@ -469,19 +475,19 @@ if(localStorage.gottenPiano){
 
 if(localStorage.gymCounter){
     gymCounter = localStorage.gymCounter -1;
-    document.getElementById("gym").click();
+    addProgress('gym', document.getElementById('gymCounter'), document.getElementById('gymProgress'), false)
 }
 if(localStorage.alcoholCounter){
     alcoholCounter = localStorage.alcoholCounter -1;
-    document.getElementById("alcohol").click();
+    addProgress('alcohol', document.getElementById('alcoholCounter'), document.getElementById('alcoholProgress'), false)
 }
 if(localStorage.dietCounter){
     dietCounter = localStorage.dietCounter -1;
-    document.getElementById("diet").click();
+    addProgress('diet', document.getElementById('dietCounter'), document.getElementById('dietProgress'), false)
 }
 if(localStorage.pianoCounter){
     pianoCounter = localStorage.pianoCounter -1;
-    document.getElementById("piano").click();
+    addProgress('piano', document.getElementById('pianoCounter'), document.getElementById('pianoProgress'), false)
 }
 
 function showProgress(){
@@ -988,26 +994,6 @@ function mapPeakXToTime(peakX) {
 
 //#region Buttons
 
-var buttonsShiny = 0;
-if(localStorage.buttonsShiny){
-    buttonsShiny = localStorage.buttonsShiny;
-}
-function buttonsFocus() {
-    const today = new Date().toLocaleDateString("en-CA");
-    const saved = localStorage.getItem("lastVisitDate");
-  
-    if (today !== saved) {
-        buttonsShiny = 0;
-        localStorage.buttonsShiny = 0;
-        document.getElementById("lunchButton").classList.remove("shinyImage");
-    }
-}
-window.addEventListener("focus", buttonsFocus)
-buttonsFocus();
-if(buttonsShiny == 1){
-    document.getElementById("lunchButton").classList.add("shinyImage");
-}
-
 const currentDate = new Date().toISOString().split('T')[0];
 
 function checkButtonState(buttonId, buttonElement) {
@@ -1030,10 +1016,9 @@ function markButton(button, buttonId) {
     localStorage.setItem(buttonId, currentDate);
     console.log(button.getBoundingClientRect())
     if(buttonId == "button7"){
-        DropChestWith(0,50,0,0);
-        buttonsShiny = 1;
-        localStorage.buttonsShiny = 1;
         document.getElementById("lunchButton").classList.add("shinyImage");
+        DropChestWith(0,50,0,0);
+        
     }
 
   // Get the position and size of the main div relative to its parent container
@@ -1070,8 +1055,13 @@ function checkDateOnFocusButtons(){
     document.querySelectorAll('.dailyButton').forEach((button, index) => {
         checkButtonState(`button${index + 1}`, button);
     });    
+    if(document.getElementById("lastButton").disabled){
+        document.getElementById("lunchButton").classList.add("shinyImage");
+    }
 }
-
+if(document.getElementById("lastButton").disabled){
+        document.getElementById("lunchButton").classList.add("shinyImage");
+    }
 
 //#endregion
 
@@ -1778,3 +1768,9 @@ document.getElementById("foodButton").addEventListener("click", () => {
     document.getElementById("foodTrackerDrop").style.display = "block"
 })
 //#endregion
+
+
+
+// Run again every time the tab gains focus
+window.addEventListener("focus", checkDateOnFocus);
+checkDateOnFocus();

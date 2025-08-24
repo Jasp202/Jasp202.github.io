@@ -546,13 +546,6 @@ if(localStorage.alcoholShiny){
     alcoholShiny = localStorage.alcoholShiny;
 }
 
-if(pianoShiny == 1 && gymShiny == 1 && dietShiny == 1 && alcoholShiny == 1){
-    document.getElementById("gameButton").classList.add("shinyImage");
-}
-progressFocus();
-
-window.addEventListener('focus', progressFocus);
-
 function progressFocus() {
     const today = new Date().toLocaleDateString("en-CA");
     const saved = localStorage.getItem("lastVisitDate");
@@ -569,6 +562,14 @@ function progressFocus() {
         document.getElementById("gameButton").classList.remove("shinyImage");
     }
 }
+
+
+if(pianoShiny == 1 && gymShiny == 1 && dietShiny == 1 && alcoholShiny == 1){
+    document.getElementById("gameButton").classList.add("shinyImage");
+}
+progressFocus();
+
+window.addEventListener('focus', progressFocus);
 //#endregion
 
 //#region Weather

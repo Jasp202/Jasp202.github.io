@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Collaborative Video Queue</title>
+</head>
+<body>
+  <h1>Collaborative Video Queue</h1>
+
+  <form id="video-form">
+    <input type="url" id="video-url" placeholder="YouTube URL" required />
+    <button type="submit">Add to Queue</button>
+  </form>
+
+  <h2>Now Playing:</h2>
+  <div id="now-playing"></div>
+
+  <h2>Queue:</h2>
+  <ul id="video-list"></ul>
+
+  <button id="ytbutton" >
+        <img src="./Images/icons/youtube_icon.png" width="60px">
+    </button>
+    <div id="ytPopup" class="ytpopup">
+        <div class="ytpopup-content">
+
+            <label><span>Search youtube videos</span></label><br><br>
+            <label class="switch">
+                <input id="checkyt" type="checkbox" value="car">
+                <span class="slider round"></span>
+              </label>
+              <label for="checkyt"> Video player active</label><br><br>
+              
+            <div id="buttons">
+
+                <label> <input id="query" value='' autocomplete="off" type="text"/><button id="search-button"  onclick="keyWordsearch()">Search</button></label>    
+                <div id="container">
+                <p>Search Results:</p>
+                <ul id="results"></ul>
+                </div>  
+
+            </div>
+            
+
+        </div>
+    </div>
+
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+      <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://apis.google.com/js/client.js?onload=googleApiClientReady">   </script>
+
+  <script type="module">
+    import { 
+      initializeApp 
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, deleteDoc 
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBkfk1Uc7DnKAQoHV67RPgYX77wfqov-rA",
+      authDomain: "my-static-firebase-demo.firebaseapp.com",
+      projectId: "my-static-firebase-demo",
+      storageBucket: "my-static-firebase-demo.firebasestorage.app",
+      messagingSenderId: "809904428695",
+      appId: "1:809904428695:web:3a8c65f6c2f448bcaa7bd2",
+      measurementId: "G-0JRKKFR4LZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const videosCol = collection(db, "videos");
+
+    const nowPlayingDiv = document.getElementById("now-playing");
+    const queueList = document.getElementById("video-list");
+
+    let player = null;
+    let currentVideoID = null;
+    let queueDocs = [];
+
+    // Extract video ID from YouTube URL
+    function extractVideoID(url) {
+      const regExp = /^.*((youtu.be\/)|(v\/)|(u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[7].length === 11) ? match[7] : null;
+    }
+
+    // Play a video in the player
+    function playVideo(url) {
+      const videoID = extractVideoID(url);
+      if (!videoID) return;
+
+      if (!player) {
+        player = new YT.Player('now-playing', {
+          height: '360',
+          width: '640',
+          videoId: videoID,
+          events: {
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      } else {
+        player.loadVideoById(videoID);
+      }
+      currentVideoID = url;
+    }
+
+    // Handle video ended
+    async function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.ENDED && queueDocs.length > 0) {
+        // Remove the first video from Firestore
+        const firstVideoDoc = queueDocs[0];
+        await deleteDoc(doc(db, "videos", firstVideoDoc.id));
+      }
+    }
+
+    // Listen for the queue in real-time
+    onSnapshot(query(videosCol, orderBy("createdAt", "asc")), (snapshot) => {
+      queueDocs = snapshot.docs;
+
+      // Play next video only if first video changes
+      if (queueDocs.length > 0) {
+        const firstVideo = queueDocs[0].data();
+        if (firstVideo.url !== currentVideoID) {
+          playVideo(firstVideo.url);
+        }
+      } else {
+        currentVideoID = null;
+        nowPlayingDiv.innerHTML = "<p>No videos in the queue</p>";
+      }
+
+      // Render queue list
+      queueList.innerHTML = "";
+      queueDocs.forEach((docItem, index) => {
+        const li = document.createElement("li");
+        const data = docItem.data();
+        li.textContent = data.url;
+
+        const btn = document.createElement("button");
+        btn.textContent = "Remove";
+        btn.addEventListener("click", async () => {
+          await deleteDoc(doc(db, "videos", docItem.id));
+        });
+
+        li.appendChild(btn);
+        queueList.appendChild(li);
+      });
+    });
+
+    // Add video form
+    document.getElementById("video-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const url = document.getElementById("video-url").value.trim();
+      if (!url) return;
+
+      await addDoc(videosCol, {
+        url,
+        createdAt: serverTimestamp()
+      });
+      e.target.reset();
+    });
+
+    window.addVideoToQueue = async function(videoId) {
+  try {
+    await addDoc(videosCol, {
+      url: "https://www.youtube.com/watch?v=" + videoId,
+      createdAt: serverTimestamp()
+    });
+    alert("Video added to queue!"); // optional for confirmation
+  } catch (err) {
+    alert("Error adding video:");
+  }
+};
+  </script>
+
+  
+
+  <!---------------  YOUTUBE API DOWNLOAD --------------------->
+<!---------------  jQuery  --------------------->
+
+
+    
+
+<script>
+    
+    ytbutton.addEventListener("click", function () {
+        
+        ytPopup.classList.add("show");
+        
+    });
+
+    window.addEventListener('click', function () {
+        if ((event.target == ytPopup)) {
+            ytPopup.classList.remove("show");
+            
+        }
+    });
+    checkyt.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+            document.getElementById("video-background").style.display = "block"
+
+        } else {
+            document.getElementById("video-background").style.display = "none"
+            document.getElementById("video-background").src = ""
+            
+        }})
+
+    function keyWordsearch(){
+        $('#results').append(
+                    '<pre>' + "sercherd"+ '</pre>'
+                    );  
+        gapi.client.setApiKey('AIzaSyDFmmtvaShc4ADiWtDmQEl-UYwqH5ZiEvc');
+        gapi.client.load('youtube', 'v3', function(){
+                makeRequest();
+        });
+        $('#results').append(
+                    '<pre>' + "got thru"+ '</pre>'
+                    );  
+    }
+
+    function makeRequest(){
+        
+        var q = $('#query').val();
+        $('#results').append(
+                    '<pre>' + q + '</pre>'
+                    );  
+        var request = gapi.client.youtube.search.list({
+                q: q,
+                part: "snippet", 
+                maxResults: 10,
+                videoEmbeddable: "true",
+                type: "video"
+        });
+
+        $('#results').append(
+                    '<pre>' + "request" + '</pre>'
+                    );  
+        request.execute(function(response)  {                                                                                    
+                 $('#results').empty()
+                var srchItems = response.result.items;                      
+                $.each(srchItems, function(index, item){
+                    const vidTitle = '<pre style="width: 100%; white-space: pre-wrap; word-wrap: break-word;">'+item.snippet.title+'</pre>';  
+                    const vidThumburl =  item.snippet.thumbnails.default.url;                 
+                    const vidThumbimg = '<pre><img src="'+vidThumburl+'" alt="No  Image  Available." style="width:204px;height:128px"></pre>';  
+
+                    // Instead of loadVideo, clicking adds video to Firebase
+                    const vidButton = '<pre><a href="#" onclick="addVideoToQueue(\'' + item.id.videoId + '\')">Add to Queue</a></pre><br>';
+
+                    $('#results').append('<pre>' + vidTitle + vidThumbimg + vidButton + '</pre>');                 
+        })  
+      })  
+    }
+     // Function to update the video iframe's source
+     function loadVideo(videoId) {
+        document.getElementById("video-background").src = "https://www.youtube.com/embed/" + videoId + "?&autoplay=1&controls=1&loop=1";
+        document.getElementById("ytPopup").classList.remove("show");
+        document.getElementById("video-background").style.display = "block"
+        document.getElementById('checkyt').checked = true
+    }
+     </script> 
+
+
+</body>
+</html>

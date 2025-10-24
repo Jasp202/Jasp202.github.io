@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Spotify Callback</title>
-  </head>
-  <body>
-    <script>
-      // Redirect the user back to your app with the authorization code
-      window.location.href = "/index2.html" + window.location.search + window.location.hash;
-    </script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spotify Callback</title>
+</head>
+<body>
+  <script>
+    // Forward Spotify redirect to index2.html with query params
+    window.location.href = "/index2.html" + window.location.search + window.location.hash;
+  </script>
+</body>
 </html>

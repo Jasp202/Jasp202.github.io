@@ -1,7 +1,4 @@
 export async function handler(event) {
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-
   const params = new URLSearchParams(event.body);
   const code = params.get("code");
   const redirectUri = params.get("redirect_uri");
@@ -19,13 +16,12 @@ export async function handler(event) {
         grant_type: "authorization_code",
         code,
         redirect_uri: redirectUri,
-        client_id: clientId,
-        client_secret: clientSecret,
         code_verifier: codeVerifier,
       }),
     });
 
     const data = await response.json();
+
     return {
       statusCode: 200,
       body: JSON.stringify(data),

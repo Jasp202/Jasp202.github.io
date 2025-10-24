@@ -9,12 +9,13 @@
   <button id="login">Login with Spotify</button>
   <button id="play" style="display:none;">Play Song</button>
 
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script>
-    const clientId = "YOUR_SPOTIFY_CLIENT_ID"; // or read from env on build
+    const clientId = "YOUR_SPOTIFY_CLIENT_ID"; // replace with your Spotify client ID
     const redirectUri = window.location.origin + "/callback";
     let accessToken = null;
 
-    // 1️⃣ Login flow (PKCE)
+    // --- 1️⃣ Login flow (PKCE)
     document.getElementById("login").onclick = async () => {
       const codeVerifier = generateRandomString(128);
       const codeChallenge = await sha256Challenge(codeVerifier);
@@ -33,13 +34,14 @@
       window.location.href = authUrl.toString();
     };
 
-    // 2️⃣ Handle redirect callback
+    // --- 2️⃣ Handle redirect callback
     async function handleCallback() {
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
       if (!code) return;
 
       const codeVerifier = localStorage.getItem("code_verifier");
+
       const res = await fetch("/.netlify/functions/spotify-token", {
         method: "POST",
         body: new URLSearchParams({
@@ -54,12 +56,12 @@
 
       document.getElementById("login").style.display = "none";
       document.getElementById("play").style.display = "inline";
-      history.replaceState({}, document.title, "/"); // clean URL
+      history.replaceState({}, document.title, "/index2.html"); // clean URL
     }
 
     handleCallback();
 
-    // 3️⃣ Initialize Web Playback SDK
+    // --- 3️⃣ Initialize Web Playback SDK
     window.onSpotifyWebPlaybackSDKReady = () => {
       const token = localStorage.getItem("access_token");
       if (!token) return;
@@ -72,7 +74,12 @@
       player.connect();
 
       document.getElementById("play").onclick = async () => {
-        const deviceId = player._options.id;
+        const devices = await fetch("https://api.spotify.com/v1/me/player/devices", {
+          headers: { Authorization: `Bearer ${token}` },
+        }).then(res => res.json());
+
+        const deviceId = devices.devices[0].id;
+
         await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
           method: "PUT",
           headers: {
@@ -84,7 +91,7 @@
       };
     };
 
-    // 4️⃣ Helper functions for PKCE
+    // --- 4️⃣ PKCE helpers
     function generateRandomString(length) {
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       let str = "";
@@ -101,7 +108,5 @@
         .replace(/=+$/, "");
     }
   </script>
-
-  <script src="https://sdk.scdn.co/spotify-player.js"></script>
 </body>
 </html>

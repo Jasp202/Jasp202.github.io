@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 exports.handler = async (event, context) => {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -27,7 +25,7 @@ exports.handler = async (event, context) => {
 
     // Get search query from URL query string
     const query = event.queryStringParameters?.q || 'Eminem';
-    
+
     // Perform search on Spotify
     const searchResponse = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=5`, {
       headers: {

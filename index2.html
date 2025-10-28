@@ -13,10 +13,12 @@
 
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script>
-    const clientId = "8c55c19acece4032b9d007fdb22d88b9"
+    const clientId = "8c55c19acece4032b9d007fdb22d88b9"; // your client ID
     const redirectUri = window.location.origin + "/callback";
     let accessToken = null;
+    let currentDeviceId = null;
 
+    // Debug helper
     function debug(...args) {
       console.log(...args);
       const el = document.getElementById("debug");
@@ -25,8 +27,12 @@
         .join(" ") + "\n";
     }
 
-    window.addEventListener("error", e => debug("Global error:", e.message, e.filename, e.lineno));
-    window.addEventListener("unhandledrejection", e => debug("Unhandled promise rejection:", e.reason));
+    window.addEventListener("error", e =>
+      debug("Global error:", e.message, e.filename, e.lineno)
+    );
+    window.addEventListener("unhandledrejection", e =>
+      debug("Unhandled promise rejection:", e.reason)
+    );
 
     // --- 1️⃣ Login flow (PKCE)
     document.getElementById("login").onclick = async () => {
@@ -38,13 +44,14 @@
       authUrl.search = new URLSearchParams({
         response_type: "code",
         client_id: clientId,
-        scope: "streaming user-read-email user-read-private user-modify-playback-state user-read-playback-state",
+        scope:
+          "streaming user-read-email user-read-private user-modify-playback-state user-read-playback-state",
         redirect_uri: redirectUri,
         code_challenge_method: "S256",
         code_challenge: codeChallenge,
       });
 
-      debug("Auth URL:", authUrl.toString());
+      debug("Redirecting to:", authUrl.toString());
       window.location.href = authUrl.toString();
     };
 
@@ -81,8 +88,23 @@
         localStorage.setItem("access_token", accessToken);
         debug("Access token stored successfully!");
 
+        // ✅ Verify which account is authorized
+        const me = await fetch("https://api.spotify.com/v1/me", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }).then(r => r.json());
+        debug("Logged in as:", me.display_name, me.email, "Plan:", me.product);
+
+        if (me.product !== "premium") {
+          debug(
+            "⚠️ Account is not Premium. Web Playback SDK requires Premium."
+          );
+          return;
+        }
+
         document.getElementById("login").style.display = "none";
         document.getElementById("play").style.display = "inline";
+
+        // Clean up URL
         history.replaceState({}, document.title, "/index.html");
       } catch (err) {
         debug("Error during token exchange:", err);
@@ -94,52 +116,79 @@
     // --- 3️⃣ Initialize Spotify Web Playback SDK
     window.onSpotifyWebPlaybackSDKReady = () => {
       const token = localStorage.getItem("access_token");
-      if (!token) return;
+      if (!token) {
+        debug("No access token — please log in first.");
+        return;
+      }
 
       const player = new Spotify.Player({
         name: "My Web Player",
         getOAuthToken: cb => cb(token),
       });
 
-      player.addListener('initialization_error', ({ message }) => debug('Init error:', message));
-      player.addListener('authentication_error', ({ message }) => debug('Auth error:', message));
-      player.addListener('account_error', ({ message }) => debug('Account error:', message));
-      player.addListener('playback_error', ({ message }) => debug('Playback error:', message));
-      player.addListener('ready', ({ device_id }) => debug('Player ready with device_id', device_id));
-      player.addListener('not_ready', ({ device_id }) => debug('Device ID has gone offline', device_id));
+      player.addListener("initialization_error", ({ message }) =>
+        debug("Init error:", message)
+      );
+      player.addListener("authentication_error", ({ message }) =>
+        debug("Auth error:", message)
+      );
+      player.addListener("account_error", ({ message }) =>
+        debug("Account error:", message)
+      );
+      player.addListener("playback_error", ({ message }) =>
+        debug("Playback error:", message)
+      );
+
+      player.addListener("ready", ({ device_id }) => {
+        currentDeviceId = device_id;
+        debug("✅ Player ready with device_id:", device_id);
+      });
+
+      player.addListener("not_ready", ({ device_id }) =>
+        debug("Device ID has gone offline", device_id)
+      );
 
       player.connect();
 
       document.getElementById("play").onclick = async () => {
-        const devices = await fetch("https://api.spotify.com/v1/me/player/devices", {
-          headers: { Authorization: `Bearer ${token}` },
-        }).then(res => res.json());
-        debug("Devices:", devices);
-
-        const deviceId = devices.devices?.[0]?.id;
-        if (!deviceId) {
-          debug("No active device found.");
+        if (!currentDeviceId) {
+          debug("Waiting for device to be ready...");
           return;
         }
 
-        await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ uris: ["spotify:track:0pqnGHJpmpxLKifKRmU6WP"] }),
-        });
+        debug("Attempting to play on device:", currentDeviceId);
 
-        debug("Play command sent.");
+        const playRes = await fetch(
+          `https://api.spotify.com/v1/me/player/play?device_id=${currentDeviceId}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              uris: ["spotify:track:0pqnGHJpmpxLKifKRmU6WP"], // Believer
+            }),
+          }
+        );
+
+        debug("Play response status:", playRes.status);
+        if (!playRes.ok) {
+          const err = await playRes.text();
+          debug("Play failed:", err);
+        } else {
+          debug("✅ Play command sent successfully!");
+        }
       };
     };
 
     // --- 4️⃣ PKCE helpers
     function generateRandomString(length) {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       let str = "";
-      for (let i = 0; i < length; i++) str += chars.charAt(Math.floor(Math.random() * chars.length));
+      for (let i = 0; i < length; i++)
+        str += chars.charAt(Math.floor(Math.random() * chars.length));
       return str;
     }
 

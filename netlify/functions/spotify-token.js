@@ -1,32 +1,43 @@
+// File: netlify/functions/spotify-token.js
+import fetch from "node-fetch";
+
 export async function handler(event) {
-  const params = new URLSearchParams(event.body);
-  const code = params.get("code");
-  const redirectUri = params.get("redirect_uri");
-  const codeVerifier = params.get("code_verifier");
-
-  if (!code) {
-    return { statusCode: 400, body: "Missing code" };
-  }
-
   try {
+    const body = new URLSearchParams(event.body);
+    const code = body.get("code");
+    const redirect_uri = body.get("redirect_uri");
+    const code_verifier = body.get("code_verifier");
+
+    const client_id = process.env.SPOTIFY_CLIENT_ID;
+    const client_secret = process.env.SPOTIFY_CLIENT_SECRET; // optional for PKCE, but good to log if missing
+
+    const params = new URLSearchParams({
+      grant_type: "authorization_code",
+      code,
+      redirect_uri,
+      client_id,
+      code_verifier,
+    });
+
     const response = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: redirectUri,
-        code_verifier: codeVerifier,
-      }),
+      body: params.toString(),
     });
 
-    const data = await response.json();
+    const text = await response.text();
+
+    console.log("Spotify token response:", response.status, text);
 
     return {
-      statusCode: 200,
-      body: JSON.stringify(data),
+      statusCode: response.status,
+      body: text,
     };
-  } catch (error) {
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+  } catch (err) {
+    console.error("Token exchange error:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "server_error", message: err.message }),
+    };
   }
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Spotify Login + Play 🎧</title>
 </head>
 <body>
@@ -9,11 +9,24 @@
   <button id="login">Login with Spotify</button>
   <button id="play" style="display:none;">Play Song</button>
 
+  <pre id="debug" style="background:#111;color:#0f0;padding:10px;white-space:pre-wrap;"></pre>
+
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script>
     const clientId = "YOUR_SPOTIFY_CLIENT_ID"; // replace with your Spotify client ID
     const redirectUri = window.location.origin + "/callback";
     let accessToken = null;
+
+    function debug(...args) {
+      console.log(...args);
+      const el = document.getElementById("debug");
+      el.textContent += args
+        .map(a => (typeof a === "object" ? JSON.stringify(a, null, 2) : a))
+        .join(" ") + "\n";
+    }
+
+    window.addEventListener("error", e => debug("Global error:", e.message, e.filename, e.lineno));
+    window.addEventListener("unhandledrejection", e => debug("Unhandled promise rejection:", e.reason));
 
     // --- 1️⃣ Login flow (PKCE)
     document.getElementById("login").onclick = async () => {
@@ -31,6 +44,7 @@
         code_challenge: codeChallenge,
       });
 
+      debug("Auth URL:", authUrl.toString());
       window.location.href = authUrl.toString();
     };
 
@@ -41,27 +55,43 @@
       if (!code) return;
 
       const codeVerifier = localStorage.getItem("code_verifier");
+      debug("Exchanging code for token...");
 
-      const res = await fetch("/.netlify/functions/spotify-token", {
-        method: "POST",
-        body: new URLSearchParams({
-          code,
-          redirect_uri: redirectUri,
-          code_verifier: codeVerifier,
-        }),
-      });
-      const data = await res.json();
-      accessToken = data.access_token;
-      localStorage.setItem("access_token", accessToken);
+      try {
+        const res = await fetch("/.netlify/functions/spotify-token", {
+          method: "POST",
+          body: new URLSearchParams({
+            code,
+            redirect_uri: redirectUri,
+            code_verifier: codeVerifier,
+          }),
+        });
 
-      document.getElementById("login").style.display = "none";
-      document.getElementById("play").style.display = "inline";
-      history.replaceState({}, document.title, "/index2.html"); // clean URL
+        debug("Token response status:", res.status);
+        const text = await res.text();
+        debug("Raw token response:", text);
+
+        const data = JSON.parse(text);
+        if (data.error) {
+          debug("Token exchange error:", data.error, data.error_description);
+          return;
+        }
+
+        accessToken = data.access_token;
+        localStorage.setItem("access_token", accessToken);
+        debug("Access token stored successfully!");
+
+        document.getElementById("login").style.display = "none";
+        document.getElementById("play").style.display = "inline";
+        history.replaceState({}, document.title, "/index.html");
+      } catch (err) {
+        debug("Error during token exchange:", err);
+      }
     }
 
     handleCallback();
 
-    // --- 3️⃣ Initialize Web Playback SDK
+    // --- 3️⃣ Initialize Spotify Web Playback SDK
     window.onSpotifyWebPlaybackSDKReady = () => {
       const token = localStorage.getItem("access_token");
       if (!token) return;
@@ -71,14 +101,26 @@
         getOAuthToken: cb => cb(token),
       });
 
+      player.addListener('initialization_error', ({ message }) => debug('Init error:', message));
+      player.addListener('authentication_error', ({ message }) => debug('Auth error:', message));
+      player.addListener('account_error', ({ message }) => debug('Account error:', message));
+      player.addListener('playback_error', ({ message }) => debug('Playback error:', message));
+      player.addListener('ready', ({ device_id }) => debug('Player ready with device_id', device_id));
+      player.addListener('not_ready', ({ device_id }) => debug('Device ID has gone offline', device_id));
+
       player.connect();
 
       document.getElementById("play").onclick = async () => {
         const devices = await fetch("https://api.spotify.com/v1/me/player/devices", {
           headers: { Authorization: `Bearer ${token}` },
         }).then(res => res.json());
+        debug("Devices:", devices);
 
-        const deviceId = devices.devices[0].id;
+        const deviceId = devices.devices?.[0]?.id;
+        if (!deviceId) {
+          debug("No active device found.");
+          return;
+        }
 
         await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
           method: "PUT",
@@ -86,8 +128,10 @@
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ uris: ["spotify:track:0pqnGHJpmpxLKifKRmU6WP"] }) // Believer
+          body: JSON.stringify({ uris: ["spotify:track:0pqnGHJpmpxLKifKRmU6WP"] }),
         });
+
+        debug("Play command sent.");
       };
     };
 

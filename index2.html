@@ -156,38 +156,45 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 // 🔍 Detect when a song ends (more reliable)
 let lastSpotifyTrackId = null;
 let trackEnded = false;
+let lastTrackStartTime = 0;
+let lastEndTime = 0;
 
 player.addListener("player_state_changed", state => {
-    if (!state || !state.track_window?.current_track) {
-        debug("No track info in state.");
-        return;
-    }
+  if (!state || !state.track_window?.current_track) return;
 
-    const track = state.track_window.current_track;
-    const trackId = track.id;
-    const { paused, position, duration } = state;
+  const track = state.track_window.current_track;
+  const trackId = track.id;
+  const { paused, position, duration } = state;
 
-    debug(`🎧 State changed:| paused=${paused} | pos=${position}/${duration}`);
+  debug(`🎧 State: paused=${paused} | pos=${position}/${duration}`);
 
-    // Reset when track changes
-    if (trackId !== lastSpotifyTrackId) {
-        debug(`▶️ New track started: ${track.name} (${trackId})`);
-        lastSpotifyTrackId = trackId;
-        trackEnded = false;
-        return;
-    }
+  const now = Date.now();
 
-    if (!trackEnded && paused && position == 0) {
-        trackEnded = true;
-        debug(`🏁 Track ended detected: ${track.name} (${trackId})`);
-        onPlayerStateChangeNoCheck();
-    }
+  // Track changed → reset
+  if (trackId !== lastSpotifyTrackId) {
+    debug(`▶️ New track: ${track.name} (${trackId})`);
+    lastSpotifyTrackId = trackId;
+    trackEnded = false;
+    lastTrackStartTime = now;
+    return;
+  }
 
-    // Reset if user resumes playback (so next end can trigger)
-    if (!paused && trackEnded) {
-        debug(`🔁 Playback resumed for: ${track.name}`);
-        trackEnded = false;
-    }
+  // Don’t treat “paused at 0” as ended if it happens too soon after play (race guard)
+  const trackAge = now - lastTrackStartTime;
+  const recentPlay = trackAge < 2000; // within 2s of starting
+
+  if (!trackEnded && paused && position === 0 && !recentPlay && now - lastEndTime > 2000) {
+    trackEnded = true;
+    lastEndTime = now;
+    debug(`🏁 Track ended: ${track.name} (${trackId})`);
+    onPlayerStateChangeNoCheck();
+  }
+
+  // Reset if playback resumes
+  if (!paused && trackEnded) {
+    debug(`🔁 Playback resumed: ${track.name}`);
+    trackEnded = false;
+  }
 });
   // Connect player (idle)
   player.connect();

@@ -107,7 +107,7 @@
         document.getElementById("pause").style.display = "inline";
         document.getElementById("trackId").style.display = "inline";
         document.getElementById("idle").style.display = "inline";
-        
+
         history.replaceState({}, document.title, "/index2.html");
       } catch (err) {
         debug("Error during token exchange:", err);
@@ -160,9 +160,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
       const endedTrack = track_window.previous_tracks.slice(-1)[0];
       debug(`🎵 Track ended: ${endedTrack.name} (${endedTrack.id})`);
       // Custom callback if you want to hook into JS logic:
-      if (typeof window.onTrackEnd === "function") {
-        window.onTrackEnd(endedTrack);
-      }
+      makeIdle();
     }
   });
 
@@ -277,5 +275,129 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         .replace(/=+$/, "");
     }
   </script>
+
+
+
+
+
+
+
+
+  <!--youtube part -->
+
+  <h2>Now Playing:</h2>
+  <div id="now-playing"></div>
+
+  <h2>Queue:</h2>
+  <ul id="video-list"></ul>
+
+
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+      <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://apis.google.com/js/client.js?onload=googleApiClientReady">   </script>
+
+  <script type="module">
+    import { 
+      initializeApp 
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, deleteDoc, getDocs, limit, where, updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBkfk1Uc7DnKAQoHV67RPgYX77wfqov-rA",
+      authDomain: "my-static-firebase-demo.firebaseapp.com",
+      projectId: "my-static-firebase-demo",
+      storageBucket: "my-static-firebase-demo.firebasestorage.app",
+      messagingSenderId: "809904428695",
+      appId: "1:809904428695:web:3a8c65f6c2f448bcaa7bd2",
+      measurementId: "G-0JRKKFR4LZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const videosCol = collection(db, "videos");
+
+    const nowPlayingDiv = document.getElementById("now-playing");
+    const queueList = document.getElementById("video-list");
+
+    let player_yt = null;
+    let currentVideoID = null;
+    let queueDocs = [];
+
+
+    // Extract video ID from YouTube URL
+    function extractVideoID(url) {
+      const regExp = /^.*((youtu.be\/)|(v\/)|(u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[7].length === 11) ? match[7] : null;
+    }
+
+    // Play a video in the player
+    function playVideo(url) {
+      const videoID = extractVideoID(url);
+      if (!videoID) return;
+
+      if (!player_yt) {
+        player_yt = new YT.Player('now-playing', {
+          height: '360',
+          width: '640',
+          videoId: videoID,
+          events: {
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      } else {
+        player_yt.loadVideoById(videoID);
+      }
+      currentVideoID = url;
+    }
+
+    // Handle video ended
+    async function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.ENDED && queueDocs.length > 0) {
+        // Remove the first video from Firestore
+        const firstVideoDoc = queueDocs[0];
+        await deleteDoc(doc(db, "videos", firstVideoDoc.id));
+      }
+    }
+
+    // Listen for the queue in real-time
+    onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
+      queueDocs = snapshot.docs;
+
+      // Play next video only if first video changes
+    if (queueDocs.length > 0) {
+        const firstVideo = queueDocs[0].data();
+        if (firstVideo.url !== currentVideoID) {
+          playVideo(firstVideo.url);
+        }
+    } else {
+        currentVideoID = null;
+        nowPlayingDiv.innerHTML = "<p>No videos in the queue</p>";
+    }
+
+      // Render queue list
+      queueList.innerHTML = "";
+      var objects_li = [];
+      queueDocs.forEach((docItem, index) => {
+        const li = document.createElement("li");
+        const data = docItem.data();
+        objects_li.push(data);
+        li.textContent = data.url;
+
+        const btn = document.createElement("button");
+        btn.textContent = "Remove";
+        btn.addEventListener("click", async () => {
+          await deleteDoc(doc(db, "videos", docItem.id));
+        });
+
+        li.appendChild(btn);
+        queueList.appendChild(li);
+      });
+    });
+</script>
 </body>
 </html>

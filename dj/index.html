@@ -83,7 +83,7 @@ window.addToEnd = async function(name, videoId, platform) {
     await addDoc(videosCol, {
       platform,
       name,
-      url: "https://www.youtube.com/watch?v=" + videoId,
+      url: videoId,
       order: maxOrder + 1,
       createdAt: serverTimestamp()
     });

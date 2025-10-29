@@ -153,43 +153,39 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   );
 
 
-// 🔍 Detect when a song ends (fires only once per track)
-let lastEndedTrackId = null;
+// 🔍 Detect when a song ends (more reliable)
+let lastTrackId = null;
+let lastWasPlaying = false;
 
 player.addListener("player_state_changed", state => {
-  if (!state) return;
+    if (!state || !state.track_window?.current_track) return;
 
-  const { paused, position, duration, track_window } = state;
-  if (!track_window || !track_window.current_track) return;
+    const { paused, position, duration, track_window } = state;
+    const currentTrack = track_window.current_track;
+    const trackId = currentTrack.id;
 
-  const currentTrack = track_window.current_track;
-  const prevTracks = track_window.previous_tracks;
-
-  // Detect a true "end of song" condition
-  const songHasEnded =
-    paused &&
-    position === 0 &&
-    prevTracks.length > 0 &&
-    currentTrack.id !== prevTracks.slice(-1)[0].id;
-
-  if (songHasEnded) {
-    const endedTrack = prevTracks.slice(-1)[0];
-
-    // Run only once per track end
-    if (endedTrack.id !== lastEndedTrackId) {
-      lastEndedTrackId = endedTrack.id;
-      debug(`🎵 Track ended: ${endedTrack.name} (${endedTrack.id})`);
-
-      // Trigger your callbacks safely
-      makeIdle();
-      onPlayerStateChangeNoCheck();
+    // Track change
+    if (trackId !== lastTrackId) {
+        debug(`🎧 Now playing: ${currentTrack.name} (${trackId})`);
+        lastTrackId = trackId;
+        lastWasPlaying = true;
     }
-  }
 
-  // Reset the guard if a new track starts playing
-  if (!paused && currentTrack.id !== lastEndedTrackId) {
-    lastEndedTrackId = null;
-  }
+    // Detect end of song (was playing, now paused, near start)
+    const nearZero = position < 500; // 0.5 second tolerance
+
+    if (lastWasPlaying && paused && nearZero) {
+        debug(`🏁 Track ended: ${currentTrack.name} (${trackId})`);
+
+        if (typeof window.onTrackEnd === "function") {
+        window.onTrackEnd(currentTrack);
+        }
+
+        lastWasPlaying = false;
+}
+
+// Update state flag
+if (!paused) lastWasPlaying = true;
 });
 
   // Connect player (idle)

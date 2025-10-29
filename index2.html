@@ -161,6 +161,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
       debug(`🎵 Track ended: ${endedTrack.name} (${endedTrack.id})`);
       // Custom callback if you want to hook into JS logic:
       makeIdle();
+      onPlayerStateChangeNoCheck();
     }
   });
 
@@ -336,43 +337,51 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     }
 
     // Play a video in the player
-    function playVideo(url) {
-      const videoID = extractVideoID(url);
-      if (!videoID) return;
+    function playVideo(url, platform) {
 
-      if (!player_yt) {
-        player_yt = new YT.Player('now-playing', {
-          height: '360',
-          width: '640',
-          videoId: videoID,
-          events: {
-            'onStateChange': onPlayerStateChange
-          }
-        });
-      } else {
-        player_yt.loadVideoById(videoID);
-      }
-      currentVideoID = url;
+        if(platform == "youtube"){
+            if (!player_yt) {
+                player_yt = new YT.Player('now-playing', {
+                height: '360',
+                width: '640',
+                videoId: url,
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+                });
+            } else {
+                player_yt.loadVideoById(videoID);
+            }
+        } else if (platform == "spotify") {
+            playSong(url);
+        }
+        currentVideoID = url;
     }
 
     // Handle video ended
-    async function onPlayerStateChange(event) {
+async function onPlayerStateChange(event) {
       if (event.data === YT.PlayerState.ENDED && queueDocs.length > 0) {
         // Remove the first video from Firestore
         const firstVideoDoc = queueDocs[0];
         await deleteDoc(doc(db, "videos", firstVideoDoc.id));
       }
+}
+window.onPlayerStateChangeNoCheck = async function(){
+    if (queueDocs.length > 0) {
+        const firstVideoDoc = queueDocs[0];
+        await deleteDoc(doc(db, "videos", firstVideoDoc.id));
     }
+} 
 
     // Listen for the queue in real-time
-    onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
+onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
       queueDocs = snapshot.docs;
 
       // Play next video only if first video changes
     if (queueDocs.length > 0) {
         const firstVideo = queueDocs[0].data();
         if (firstVideo.url !== currentVideoID) {
-          playVideo(firstVideo.url);
+          playVideo(firstVideo.url, firstVideo.platform);
         }
     } else {
         currentVideoID = null;
@@ -386,15 +395,8 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         const li = document.createElement("li");
         const data = docItem.data();
         objects_li.push(data);
-        li.textContent = data.url;
+        li.textContent = data.url + ", " + data.platform;
 
-        const btn = document.createElement("button");
-        btn.textContent = "Remove";
-        btn.addEventListener("click", async () => {
-          await deleteDoc(doc(db, "videos", docItem.id));
-        });
-
-        li.appendChild(btn);
         queueList.appendChild(li);
       });
     });

@@ -7,7 +7,9 @@
 <body>
   <h1>Spotify Full Song Playback</h1>
   <button id="login">Login with Spotify</button>
+  <input id="trackId" placeholder="Enter Spotify track ID" style="display:none;">
   <button id="play" style="display:none;">Play Song</button>
+  <button id="pause" style="display:none;">Pause</button>
 
   <pre id="debug" style="background:#111;color:#0f0;padding:10px;white-space:pre-wrap;"></pre>
 
@@ -17,6 +19,7 @@
     const redirectUri = window.location.origin + "/callback";
     let accessToken = null;
     let currentDeviceId = null;
+    let player = null;
 
     // Debug helper
     function debug(...args) {
@@ -88,23 +91,21 @@
         localStorage.setItem("access_token", accessToken);
         debug("Access token stored successfully!");
 
-        // ✅ Verify which account is authorized
         const me = await fetch("https://api.spotify.com/v1/me", {
           headers: { Authorization: `Bearer ${accessToken}` },
         }).then(r => r.json());
         debug("Logged in as:", me.display_name, me.email, "Plan:", me.product);
 
         if (me.product !== "premium") {
-          debug(
-            "⚠️ Account is not Premium. Web Playback SDK requires Premium."
-          );
+          debug("⚠️ Account is not Premium. Web Playback SDK requires Premium.");
           return;
         }
 
         document.getElementById("login").style.display = "none";
         document.getElementById("play").style.display = "inline";
+        document.getElementById("pause").style.display = "inline";
+        document.getElementById("trackId").style.display = "inline";
 
-        // Clean up URL
         history.replaceState({}, document.title, "/index.html");
       } catch (err) {
         debug("Error during token exchange:", err);
@@ -121,7 +122,7 @@
         return;
       }
 
-      const player = new Spotify.Player({
+      player = new Spotify.Player({
         name: "My Web Player",
         getOAuthToken: cb => cb(token),
       });
@@ -150,13 +151,17 @@
 
       player.connect();
 
+      // --- Play button handler
       document.getElementById("play").onclick = async () => {
         if (!currentDeviceId) {
           debug("Waiting for device to be ready...");
           return;
         }
 
-        debug("Attempting to play on device:", currentDeviceId);
+        const trackId = document.getElementById("trackId").value.trim() || "0pqnGHJpmpxLKifKRmU6WP";
+        const uri = `spotify:track:${trackId}`;
+
+        debug(`Attempting to play ${uri} on device:`, currentDeviceId);
 
         const playRes = await fetch(
           `https://api.spotify.com/v1/me/player/play?device_id=${currentDeviceId}`,
@@ -166,9 +171,7 @@
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              uris: ["spotify:track:0pqnGHJpmpxLKifKRmU6WP"], // Believer
-            }),
+            body: JSON.stringify({ uris: [uri] }),
           }
         );
 
@@ -178,6 +181,30 @@
           debug("Play failed:", err);
         } else {
           debug("✅ Play command sent successfully!");
+        }
+      };
+
+      // --- Pause button handler
+      document.getElementById("pause").onclick = async () => {
+        if (!currentDeviceId) {
+          debug("Device not ready yet.");
+          return;
+        }
+
+        const pauseRes = await fetch(
+          `https://api.spotify.com/v1/me/player/pause?device_id=${currentDeviceId}`,
+          {
+            method: "PUT",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        debug("Pause response status:", pauseRes.status);
+        if (!pauseRes.ok) {
+          const err = await pauseRes.text();
+          debug("Pause failed:", err);
+        } else {
+          debug("⏸️ Playback paused!");
         }
       };
     };

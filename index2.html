@@ -176,11 +176,7 @@ player.addListener("player_state_changed", state => {
 
     if (lastWasPlaying && paused && nearZero) {
         debug(`🏁 Track ended: ${currentTrack.name} (${trackId})`);
-
-        if (typeof window.onTrackEnd === "function") {
-        window.onTrackEnd(currentTrack);
-        }
-        lastWasPlaying = false;
+        onPlayerStateChangeNoCheck();
 }
 
 // Update state flag

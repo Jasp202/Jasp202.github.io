@@ -199,32 +199,33 @@ player.addListener("player_state_changed", state => {
   // Connect player (idle)
   player.connect();
 
-  // Expose helper functions globally
-  window.playSong = async function playSong(trackId) {
-    if (!currentDeviceId) {
-      debug("Device not ready yet.");
-      return;
+window.playSong = async function playSong(trackId) {
+  if (!currentDeviceId) {
+    debug("Device not ready yet.");
+    return;
+  }
+
+  const uri = `spotify:track:${trackId}`;
+  debug(`🎵 Playing track ${uri} on device ${currentDeviceId}`);
+
+  // Small delay to ensure device is active
+  await new Promise(resolve => setTimeout(resolve, 250));
+
+  const playRes = await fetch(
+    `https://api.spotify.com/v1/me/player/play?device_id=${currentDeviceId}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ uris: [uri], position_ms: 0 }),
     }
+  );
 
-    const uri = `spotify:track:${trackId}`;
-    debug(`🎵 Playing track ${uri} on device ${currentDeviceId}`);
-
-    const playRes = await fetch(
-      `https://api.spotify.com/v1/me/player/play?device_id=${currentDeviceId}`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ uris: [uri] }),
-      }
-    );
-
-    debug("Play response:", playRes.status);
-    if (!playRes.ok) debug(await playRes.text());
-  };
-
+  debug("Play response:", playRes.status);
+  if (!playRes.ok) debug(await playRes.text());
+};
   window.pausePlayback = async function pausePlayback() {
     if (!currentDeviceId) {
       debug("Device not ready yet.");

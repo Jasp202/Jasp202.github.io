@@ -177,9 +177,7 @@ player.addListener("player_state_changed", state => {
         return;
     }
 
-    // Detect end: paused AND near end AND not yet handled
-    const nearEnd = duration > 0 && position >= duration - 3000; // last 3 seconds
-    if (!trackEnded && paused && nearEnd) {
+    if (!trackEnded && paused && position == 0) {
         trackEnded = true;
         debug(`🏁 Track ended detected: ${track.name} (${trackId})`);
         onPlayerStateChangeNoCheck();

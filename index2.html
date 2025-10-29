@@ -152,18 +152,45 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     debug("Device ID has gone offline", device_id)
   );
 
-  // 🔍 Detect when a song ends
-  player.addListener("player_state_changed", state => {
-    if (!state) return;
-    const { paused, position, duration, track_window } = state;
-    if (paused && position === 0 && track_window.previous_tracks.length > 0) {
-      const endedTrack = track_window.previous_tracks.slice(-1)[0];
+
+// 🔍 Detect when a song ends (fires only once per track)
+let lastEndedTrackId = null;
+
+player.addListener("player_state_changed", state => {
+  if (!state) return;
+
+  const { paused, position, duration, track_window } = state;
+  if (!track_window || !track_window.current_track) return;
+
+  const currentTrack = track_window.current_track;
+  const prevTracks = track_window.previous_tracks;
+
+  // Detect a true "end of song" condition
+  const songHasEnded =
+    paused &&
+    position === 0 &&
+    prevTracks.length > 0 &&
+    currentTrack.id !== prevTracks.slice(-1)[0].id;
+
+  if (songHasEnded) {
+    const endedTrack = prevTracks.slice(-1)[0];
+
+    // Run only once per track end
+    if (endedTrack.id !== lastEndedTrackId) {
+      lastEndedTrackId = endedTrack.id;
       debug(`🎵 Track ended: ${endedTrack.name} (${endedTrack.id})`);
-      // Custom callback if you want to hook into JS logic:
+
+      // Trigger your callbacks safely
       makeIdle();
       onPlayerStateChangeNoCheck();
     }
-  });
+  }
+
+  // Reset the guard if a new track starts playing
+  if (!paused && currentTrack.id !== lastEndedTrackId) {
+    lastEndedTrackId = null;
+  }
+});
 
   // Connect player (idle)
   player.connect();
@@ -338,7 +365,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
     // Play a video in the player
     function playVideo(url, platform) {
-
+        debug("trying to play", url, platform)
         if(platform == "youtube"){
             if (!player_yt) {
                 player_yt = new YT.Player('now-playing', {

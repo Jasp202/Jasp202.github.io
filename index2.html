@@ -158,7 +158,6 @@ let lastSpotifyTrackId = null;
 let trackEnded = false;
 
 player.addListener("player_state_changed", state => {
-
     if (!state || !state.track_window?.current_track) {
         debug("No track info in state.");
         return;
@@ -166,10 +165,11 @@ player.addListener("player_state_changed", state => {
 
     const track = state.track_window.current_track;
     const trackId = track.id;
-    const { position, duration } = state;
-    debug("📝 Player state changed", position);
+    const { paused, position, duration } = state;
 
-     // Reset when track changes
+    debug(`🎧 State changed:| paused=${paused} | pos=${position}/${duration}`);
+
+    // Reset when track changes
     if (trackId !== lastSpotifyTrackId) {
         debug(`▶️ New track started: ${track.name} (${trackId})`);
         lastSpotifyTrackId = trackId;

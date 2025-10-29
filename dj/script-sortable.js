@@ -49,7 +49,7 @@ function createItem(object_data){
   upTwiceBtn.textContent = 'Top';
   upTwiceBtn.title = 'Top up';
   upTwiceBtn.addEventListener('click', ()=> {
-    swapWithSecondSmallest(Number(li.dataset.order))
+    moveToSecondSmallest(Number(li.dataset.order))
     content.focus();
   });
 

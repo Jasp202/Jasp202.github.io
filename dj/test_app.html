@@ -1,48 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Collaborative Video Queue</title>
-  <link rel="stylesheet" href="./style.css">
-  <!---------------  Font Aewsome  --------------------->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Collaborative Video Queue</title>
+    <link rel="stylesheet" href="./style.css">
+    <!---------------  Font Aewsome  --------------------->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" 
     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
-  <h1>Collaborative Video Queue</h1>
+<!-- search quorey and buutoons-->
+<div id="searchDiv">
+    <label> <input id="query" value='' autocomplete="off" type="text"/></label>
+    <button id="search-button"  onclick="keyWordsearch()">Search youtube</button>   
+    <button onclick="searchSpotify()">search spotify</button> 
+</div>
 
-    <ul id="itemList" aria-label="Items list">
+<ul id="itemList" aria-label="Items list">
     <!-- items added by JS -->
-    </ul>
+</ul>
 
-  <button id="ytbutton" >
-        <img src="./Images/icons/youtube_icon.png" width="60px">
-    </button>
-    <div id="ytPopup" class="ytpopup">
-        <div class="ytpopup-content">
-
-            <label><span>Search youtube videos</span></label><br><br>
-          
-              
-            <div id="buttons">
-
-                <label> <input id="query" value='' autocomplete="off" type="text"/><button id="search-button"  onclick="keyWordsearch()">Search</button></label>   
-                <button onclick="searchSpotify()">search spotify</button> 
-                <div id="container">
-                <p>Search Results:</p>
-                <ul id="results"></ul>
-                </div>  
-
-            </div>
-
-        </div>
+<div id="ytPopup" class="ytpopup">
+    <button id="cancelPop">go back</button>
+    <div id="container">
+        <p>Search Results:</p>
+        <ul id="results"></ul>
     </div>
-
-  <!-- YouTube IFrame API -->
-  <script src="https://www.youtube.com/iframe_api"></script>
-      <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</div>
+<script>
+     document.getElementById("cancelPop").addEventListener("click", () => {
+        document.getElementById("ytPopup").style.display = "none";
+     })
+</script>
+<!-- APIS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady">   </script>
 
 
@@ -72,6 +67,7 @@ const videosCol = collection(db, "videos");
 let queueDocs = [];
 
 window.addToEnd = async function(name, videoId, platform) {
+     $('#ytPopup').css("display", "none")
   try {
     // Get the video with the highest current order value
     const q = query(videosCol, orderBy("order", "desc"), limit(1));
@@ -91,11 +87,8 @@ window.addToEnd = async function(name, videoId, platform) {
       order: maxOrder + 1,
       createdAt: serverTimestamp()
     });
-
-    alert("✅ Video added to queue!");
   } catch (err) {
     console.error("Error adding video:", err);
-    alert("❌ Error adding video: " + err.message);
   }
 };
 
@@ -108,7 +101,6 @@ window.swapOrder = async function(orderA, orderB) {
     const [snapA, snapB] = await Promise.all([getDocs(qA), getDocs(qB)]);
 
     if (snapA.empty || snapB.empty) {
-      alert("One or both videos not found!");
       return;
     }
 
@@ -123,10 +115,8 @@ window.swapOrder = async function(orderA, orderB) {
     ]);
 
     console.log(`Swapped order ${orderA} ↔ ${orderB}`);
-    alert(`✅ Swapped videos ${orderA} and ${orderB}`);
   } catch (err) {
     console.error("Error swapping order:", err);
-    alert("❌ Error swapping order: " + err.message);
   }
 }
 
@@ -137,7 +127,6 @@ window.deleteByOrder = async function(orderValue) {
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      alert(`⚠️ No video found with order ${orderValue}`);
       return;
     }
 
@@ -146,91 +135,78 @@ window.deleteByOrder = async function(orderValue) {
     await Promise.all(deletions);
 
     console.log(`Deleted video(s) with order ${orderValue}`);
-    alert(`✅ Deleted video with order ${orderValue}`);
   } catch (err) {
     console.error("Error deleting video:", err);
-    alert("❌ Error deleting video: " + err.message);
   }
 }
 
 
-window.swapWithSecondSmallest =  async function(orderValue) {
+window.moveToSecondSmallest = async function(orderValue) {
   try {
     // Get all videos ordered by "order" ascending
     const q = query(videosCol, orderBy("order", "asc"));
     const snapshot = await getDocs(q);
 
     if (snapshot.size < 2) {
-      alert("⚠️ Not enough videos to perform a swap.");
       return;
     }
 
-    // Extract documents and order values
     const docs = snapshot.docs;
     const secondSmallestDoc = docs[1];
     const secondSmallestOrder = secondSmallestDoc.data().order;
 
-    // Check the target document
+    // Get target document
     const targetQuery = query(videosCol, where("order", "==", orderValue));
     const targetSnap = await getDocs(targetQuery);
 
     if (targetSnap.empty) {
-      alert(`⚠️ No video found with order ${orderValue}`);
       return;
     }
 
     const targetDoc = targetSnap.docs[0];
 
-    // Rule: only swap if orderValue > secondSmallestOrder
+    // Rule: only move if target order > secondSmallestOrder
     if (orderValue <= secondSmallestOrder) {
-      alert("⚠️ This video cannot be swapped (it's already one of the first two).");
       return;
     }
 
-    // Swap orders
-    await Promise.all([
-      updateDoc(targetDoc.ref, { order: secondSmallestOrder }),
-      updateDoc(secondSmallestDoc.ref, { order: orderValue })
-    ]);
+    // Shift all orders between second smallest and target up by 1
+    const updates = [];
+    for (let doc of docs) {
+      const docOrder = doc.data().order;
+      if (docOrder >= secondSmallestOrder && docOrder < orderValue) {
+        updates.push(updateDoc(doc.ref, { order: docOrder + 1 }));
+      }
+    }
 
-    console.log(`Swapped video with order ${orderValue} ↔ ${secondSmallestOrder}`);
-    alert(`✅ Swapped order ${orderValue} ↔ ${secondSmallestOrder}`);
+    // Move target to second smallest
+    updates.push(updateDoc(targetDoc.ref, { order: secondSmallestOrder }));
+
+    await Promise.all(updates);
+
+    console.log(`Moved video with order ${orderValue} → ${secondSmallestOrder}`);
   } catch (err) {
-    console.error("Error swapping orders:", err);
-    alert("❌ Error swapping orders: " + err.message);
+    console.error("Error moving to second smallest:", err);
   }
 }
 
-    // Listen for the queue in real-time
-    onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
-      queueDocs = snapshot.docs;
-      var objects_li = [];
-      queueDocs.forEach((docItem, index) => {
-        const data = docItem.data();
-        objects_li.push(data);
-      });
-      addMany(objects_li);
+// Listen for the queue in real-time
+onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
+    queueDocs = snapshot.docs;
+    var objects_li = [];
+    queueDocs.forEach((docItem, index) => {
+    const data = docItem.data();
+    objects_li.push(data);
     });
+    addMany(objects_li);
+});
 
   </script>
 
 <!--------------- youtube script --------------->
 <script>
     
-    ytbutton.addEventListener("click", function () {
-        
-        ytPopup.classList.add("show");
-        
-    });
-
-    window.addEventListener('click', function () {
-        if ((event.target == ytPopup)) {
-            ytPopup.classList.remove("show");
-            
-        }
-    });
-
-    function keyWordsearch(){
+function keyWordsearch(){
         $('#results').append(
                     '<pre>' + "sercherd"+ '</pre>'
                     );  
@@ -241,7 +217,7 @@ window.swapWithSecondSmallest =  async function(orderValue) {
         $('#results').append(
                     '<pre>' + "got thru"+ '</pre>'
                     );  
-    }
+}
 
 function makeRequest(){
         var q = $('#query').val();
@@ -260,10 +236,10 @@ function makeRequest(){
                     '<pre>' + "request" + '</pre>'
                     );  
         request.execute(function(response) {
-  $('#results').empty();
-  const srchItems = response.result.items;
+    $('#results').empty();
+    const srchItems = response.result.items;
 
-  srchItems.forEach(item => {
+    srchItems.forEach(item => {
     const vidTitle = $('<pre>')
       .css({
         width: '100%',
@@ -296,6 +272,7 @@ function makeRequest(){
     container.append(vidTitle, $('<div>').append(vidThumbimg), $('<div>').append(vidButton));
 
     $('#results').append(container);
+    $('#ytPopup').css("display", "block")
   });
 });
 }</script> 
@@ -332,8 +309,10 @@ async function searchSpotify() {
 
       const container = $('<div>').css({ marginBottom: '1em' });
       container.append(trackTitle, $('<div>').append(trackThumb), $('<div>').append(trackButton));
+        container.addClass("containerVid")
 
       $('#results').append(container);
+      $('#ytPopup').css("display", "block")
     });
   } catch (err) {
     $('#results').append('<pre>Error loading Spotify results.</pre>');
@@ -342,6 +321,6 @@ async function searchSpotify() {
 
 </script>
 
-     <script src="script-sortable.js"></script>
+<script src="script-sortable.js"></script>
 </body>
 </html>

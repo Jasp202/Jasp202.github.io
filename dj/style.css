@@ -1,4 +1,7 @@
-  .controls{
+:root{
+    background: url(../LifeTracker/Images/background_img.png)
+}
+.controls{
     display:flex;
     gap: 8px;
     margin-bottom: 16px;
@@ -126,10 +129,46 @@ li.item:first-child {
     font-size: 0.9rem;
   }
 
-  @media (max-width:520px){
+@media (max-width:520px){
     .actions{
-      gap:4px;
-      font-size: 0.85rem;
+    gap:4px;
+    font-size: 0.85rem;
     }
     .grab{ width:30px; height:30px; }
-  }
+}
+
+#searchDiv{
+    display: flex;
+    background: rgb(182, 182, 182);
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+    width: 100%;
+    gap: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    border-radius: 10px;
+    outline: 2px solid rgba(0, 0, 0, 0.247);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.404);
+    margin-bottom: 3rem;
+    margin-top: 3rem;
+}
+#ytPopup{
+    position: absolute;
+    top: 10rem;        /* center vertically */
+    left: 50%;       /* center horizontally */
+    transform: translate(-50%); /* center exactly */
+    width: 90%;
+    height: auto;
+    background: rgb(255, 255, 255);
+    border: black 3px solid;
+    padding: 20px;
+    display: none;
+}
+#container{
+  display: 'flex';         
+  align-items: 'center';    
+  justify-content: 'space-between';
+  margin-bottom: '1em';
+  text-align: center;
+}

@@ -158,30 +158,37 @@ let lastSpotifyTrackId = null;
 let lastCallTime = 0; // timestamp of last queue trigger
 
 player.addListener("player_state_changed", state => {
-    if (!state || !state.track_window?.current_track) return;
+    debug("📝 Player state changed:", state); // debug all state changes
+
+    if (!state || !state.track_window?.current_track) {
+        debug("No track info in state.");
+        return;
+    }
 
     const track = state.track_window.current_track;
     const trackId = track.id;
     const { paused, position, duration } = state;
 
+    debug(`Track: ${track.name} (${trackId}), paused: ${paused}, position: ${position} / ${duration}`);
+
     // Track changed
     if (trackId !== lastSpotifyTrackId) {
         debug(`🎧 Now playing: ${track.name} (${trackId})`);
         lastSpotifyTrackId = trackId;
-        return; // don't check end yet
+        return; // wait for end detection
     }
 
-    // Detect track end: paused near end
+    // Detect track end: near end or fully played
     const nearEnd = position >= duration - 500; // last 0.5s
     const now = Date.now();
 
-    if (paused && nearEnd && now - lastCallTime > 5000) {
+    // Call queue handler only if enough time has passed
+    if (nearEnd && now - lastCallTime > 5000) {
         debug(`🏁 Track ended: ${track.name} (${trackId})`);
         lastCallTime = now;
-        onPlayerStateChangeNoCheck(); // trigger queue logic
+        onPlayerStateChangeNoCheck(); // trigger your queue logic
     }
 });
-
   // Connect player (idle)
   player.connect();
 

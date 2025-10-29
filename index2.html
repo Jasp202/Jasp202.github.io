@@ -158,7 +158,6 @@ let lastSpotifyTrackId = null;
 let trackEnded = false;
 
 player.addListener("player_state_changed", state => {
-    debug("📝 Player state changed");
 
     if (!state || !state.track_window?.current_track) {
         debug("No track info in state.");
@@ -168,20 +167,28 @@ player.addListener("player_state_changed", state => {
     const track = state.track_window.current_track;
     const trackId = track.id;
     const { position, duration } = state;
+    debug("📝 Player state changed", position);
 
-    // Track changed: reset ended flag
+     // Reset when track changes
     if (trackId !== lastSpotifyTrackId) {
-        debug(`🎧 Now playing: ${track.name} (${trackId})`);
+        debug(`▶️ New track started: ${track.name} (${trackId})`);
         lastSpotifyTrackId = trackId;
-        trackEnded = false; // reset so we can detect end for this track
+        trackEnded = false;
         return;
     }
 
-    // Detect track end: position near duration AND not already ended
-    if (!trackEnded && position >= duration - 500) {
-        debug(`🏁 Track ended: ${track.name} (${trackId})`);
-        trackEnded = true; // mark as processed
-        onPlayerStateChangeNoCheck(); // fire only once
+    // Detect end: paused AND near end AND not yet handled
+    const nearEnd = duration > 0 && position >= duration - 3000; // last 3 seconds
+    if (!trackEnded && paused && nearEnd) {
+        trackEnded = true;
+        debug(`🏁 Track ended detected: ${track.name} (${trackId})`);
+        onPlayerStateChangeNoCheck();
+    }
+
+    // Reset if user resumes playback (so next end can trigger)
+    if (!paused && trackEnded) {
+        debug(`🔁 Playback resumed for: ${track.name}`);
+        trackEnded = false;
     }
 });
   // Connect player (idle)

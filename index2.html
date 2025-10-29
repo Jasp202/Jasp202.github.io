@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Spotify + YouTube Queue Player 🎧</title>
+  <title>Spotify Login + Play 🎧</title>
 </head>
 <body>
-  <h1>Mixed Queue Player</h1>
+  <h1>Spotify Full Song Playback</h1>
   <button id="login">Login with Spotify</button>
   <input id="trackId" placeholder="Enter Spotify track ID" style="display:none;">
   <button id="play" style="display:none;">Play Song</button>
@@ -14,45 +14,31 @@
 
   <pre id="debug" style="background:#111;color:#0f0;padding:10px;white-space:pre-wrap;"></pre>
 
-  <div id="now-playing"></div>
-  <h2>Queue:</h2>
-  <ul id="video-list"></ul>
-
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
-  <script src="https://www.youtube.com/iframe_api"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-  <script type="module">
-    import { 
-      initializeApp 
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { 
-      getFirestore, collection, query, orderBy, onSnapshot, doc, deleteDoc
-    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-
-    // Firebase config
-    const firebaseConfig = { /* your firebase config */ };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const videosCol = collection(db, "videos");
+  <script>
+    const clientId = "8c55c19acece4032b9d007fdb22d88b9"; // your client ID
+    const redirectUri = "https://jasp202-github-io.vercel.app/index2.html"
+    let accessToken = null;
+    let currentDeviceId = null;
+    let player = null;
 
     // Debug helper
     function debug(...args) {
       console.log(...args);
       const el = document.getElementById("debug");
-      el.textContent += args.map(a => (typeof a==="object"?JSON.stringify(a,null,2):a)).join(" ") + "\n";
+      el.textContent += args
+        .map(a => (typeof a === "object" ? JSON.stringify(a, null, 2) : a))
+        .join(" ") + "\n";
     }
 
-    // --- Spotify setup ---
-    const clientId = "8c55c19acece4032b9d007fdb22d88b9";
-    const redirectUri = "https://jasp202-github-io.vercel.app/index2.html";
-    let accessToken = null;
-    let player = null;
-    let currentDeviceId = null;
-    let lastSpotifyTrackId = null;
-    let spotifyTrackEnded = false;
-    let isSpotifyPlaying = false;
+    window.addEventListener("error", e =>
+      debug("Global error:", e.message, e.filename, e.lineno)
+    );
+    window.addEventListener("unhandledrejection", e =>
+      debug("Unhandled promise rejection:", e.reason)
+    );
 
+    // --- 1️⃣ Login flow (PKCE)
     document.getElementById("login").onclick = async () => {
       const codeVerifier = generateRandomString(128);
       const codeChallenge = await sha256Challenge(codeVerifier);
@@ -62,158 +48,374 @@
       authUrl.search = new URLSearchParams({
         response_type: "code",
         client_id: clientId,
-        scope: "streaming user-read-email user-read-private user-modify-playback-state user-read-playback-state",
+        scope:
+          "streaming user-read-email user-read-private user-modify-playback-state user-read-playback-state",
         redirect_uri: redirectUri,
         code_challenge_method: "S256",
         code_challenge: codeChallenge,
       });
+
       debug("Redirecting to:", authUrl.toString());
       window.location.href = authUrl.toString();
     };
 
+    // --- 2️⃣ Handle redirect callback
     async function handleCallback() {
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
       if (!code) return;
 
       const codeVerifier = localStorage.getItem("code_verifier");
+      debug("Exchanging code for token...");
+
       try {
         const res = await fetch("/api/spotify-token", {
-          method: "POST",
-          body: new URLSearchParams({ code, redirect_uri: redirectUri, code_verifier: codeVerifier }),
+        method: "POST",
+        body: new URLSearchParams({
+            code,
+            redirect_uri: redirectUri,
+            code_verifier: codeVerifier,
+        }),
         });
-        const data = await res.json();
-        accessToken = data.access_token;
-        localStorage.setItem("access_token", accessToken);
-        const me = await fetch("https://api.spotify.com/v1/me", { headers: { Authorization: `Bearer ${accessToken}` } }).then(r=>r.json());
-        if(me.product !== "premium"){ debug("⚠️ Spotify Premium required"); return; }
 
-        document.getElementById("login").style.display="none";
-        document.getElementById("play").style.display="inline";
-        document.getElementById("pause").style.display="inline";
-        document.getElementById("trackId").style.display="inline";
-        document.getElementById("idle").style.display="inline";
-        history.replaceState({}, document.title, "/index2.html");
-      } catch(err){ debug("Token exchange error:", err); }
-    }
-    handleCallback();
+        debug("Token response status:", res.status);
+        const text = await res.text();
+        debug("Raw token response:", text);
 
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      const token = localStorage.getItem("access_token");
-      if(!token){ debug("No access token"); return; }
-
-      player = new Spotify.Player({
-        name: "Web Player",
-        getOAuthToken: cb => cb(token),
-      });
-
-      player.addListener("ready", ({device_id})=>{
-        currentDeviceId=device_id;
-        debug("✅ Spotify ready", device_id);
-      });
-
-      player.addListener("player_state_changed", state=>{
-        if(!state?.track_window?.current_track) return;
-        const track=state.track_window.current_track;
-        const trackId=track.id;
-        const {paused, position, duration}=state;
-
-        if(trackId!==lastSpotifyTrackId){
-          lastSpotifyTrackId=trackId;
-          spotifyTrackEnded=false;
-          isSpotifyPlaying=true;
-          debug("🎧 Now playing:", track.name);
+        const data = JSON.parse(text);
+        if (data.error) {
+          debug("Token exchange error:", data.error, data.error_description);
           return;
         }
 
-        const nearEnd = position >= duration - 500;
-        if(!spotifyTrackEnded && paused && nearEnd){
-          spotifyTrackEnded=true;
-          isSpotifyPlaying=false;
-          debug("🏁 Spotify track ended:", track.name);
-          playNextFromQueue();
+        accessToken = data.access_token;
+        localStorage.setItem("access_token", accessToken);
+        debug("Access token stored successfully!");
+
+        const me = await fetch("https://api.spotify.com/v1/me", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }).then(r => r.json());
+        debug("Logged in as:", me.display_name, me.email, "Plan:", me.product);
+
+        if (me.product !== "premium") {
+          debug("⚠️ Account is not Premium. Web Playback SDK requires Premium.");
+          return;
         }
-      });
 
-      player.connect();
+        document.getElementById("login").style.display = "none";
+        document.getElementById("play").style.display = "inline";
+        document.getElementById("pause").style.display = "inline";
+        document.getElementById("trackId").style.display = "inline";
+        document.getElementById("idle").style.display = "inline";
 
-      window.playSong = async (trackId)=>{
-        if(!currentDeviceId){ debug("Device not ready"); return; }
-        isSpotifyPlaying=true;
-        spotifyTrackEnded=false;
-        const uri=`spotify:track:${trackId}`;
-        debug("🎵 Playing Spotify track", uri);
-        await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${currentDeviceId}`,{
-          method:"PUT",
-          headers:{Authorization:`Bearer ${token}`, "Content-Type":"application/json"},
-          body:JSON.stringify({uris:[uri]})
-        });
-      };
+        history.replaceState({}, document.title, "/index2.html");
+      } catch (err) {
+        debug("Error during token exchange:", err);
+      }
+    }
 
-      window.pausePlayback = async ()=>{
-        if(!currentDeviceId) return;
-        await fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${currentDeviceId}`,{method:"PUT", headers:{Authorization:`Bearer ${token}`}});
-        debug("⏸️ Spotify paused");
-      };
+    handleCallback();
+
+   // --- 3️⃣ Initialize Spotify Web Playback SDK
+window.onSpotifyWebPlaybackSDKReady = () => {
+  const token = localStorage.getItem("access_token");
+  if (!token) {
+    debug("No access token — please log in first.");
+    return;
+  }
+
+  player = new Spotify.Player({
+    name: "My Web Player",
+    getOAuthToken: cb => cb(token),
+  });
+
+  player.addListener("initialization_error", ({ message }) =>
+    debug("Init error:", message)
+  );
+  player.addListener("authentication_error", ({ message }) =>
+    debug("Auth error:", message)
+  );
+  player.addListener("account_error", ({ message }) =>
+    debug("Account error:", message)
+  );
+  player.addListener("playback_error", ({ message }) =>
+    debug("Playback error:", message)
+  );
+
+  player.addListener("ready", ({ device_id }) => {
+    currentDeviceId = device_id;
+    debug("✅ Player ready with device_id:", device_id);
+    debug("Player is idle and ready for playback commands.");
+  });
+
+  player.addListener("not_ready", ({ device_id }) =>
+    debug("Device ID has gone offline", device_id)
+  );
+
+
+// 🔍 Detect when a song ends (more reliable)
+let lastSpotifyTrackId = null;
+let spotifyTrackEnded = false;
+
+player.addListener("player_state_changed", state => {
+    if (!state || !state.track_window?.current_track) return;
+
+    const track = state.track_window.current_track;
+    const trackId = track.id;
+    const { paused, position, duration } = state;
+
+    // Track changed: reset flag
+    if (trackId !== lastSpotifyTrackId) {
+        debug(`🎧 Now playing: ${track.name} (${trackId})`);
+        lastSpotifyTrackId = trackId;
+        spotifyTrackEnded = false;
+        return; // don’t check end yet
+    }
+
+    // Detect track end (paused near end, and not already ended)
+    const nearEnd = position >= duration - 500; // last 0.5s
+    if (!spotifyTrackEnded && paused && nearEnd) {
+        debug(`🏁 Track ended: ${track.name} (${trackId})`);
+        spotifyTrackEnded = true; // mark as processed
+        onPlayerStateChangeNoCheck(); // trigger your queue logic
+    }
+});
+
+  // Connect player (idle)
+  player.connect();
+
+  // Expose helper functions globally
+  window.playSong = async function playSong(trackId) {
+    if (!currentDeviceId) {
+      debug("Device not ready yet.");
+      return;
+    }
+
+    const uri = `spotify:track:${trackId}`;
+    debug(`🎵 Playing track ${uri} on device ${currentDeviceId}`);
+
+    const playRes = await fetch(
+      `https://api.spotify.com/v1/me/player/play?device_id=${currentDeviceId}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uris: [uri] }),
+      }
+    );
+
+    debug("Play response:", playRes.status);
+    if (!playRes.ok) debug(await playRes.text());
+  };
+
+  window.pausePlayback = async function pausePlayback() {
+    if (!currentDeviceId) {
+      debug("Device not ready yet.");
+      return;
+    }
+
+    const pauseRes = await fetch(
+      `https://api.spotify.com/v1/me/player/pause?device_id=${currentDeviceId}`,
+      {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    debug("Pause response:", pauseRes.status);
+    if (!pauseRes.ok) debug(await pauseRes.text());
+    else debug("⏸️ Playback paused");
+  };
+
+  // 🧘 Make player idle (stop everything)
+  window.makeIdle = async function makeIdle() {
+    if (!currentDeviceId) {
+      debug("Device not ready yet.");
+      return;
+    }
+
+    // Pause playback, then transfer active device with no track context
+    await fetch(
+      `https://api.spotify.com/v1/me/player/pause?device_id=${currentDeviceId}`,
+      {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    // Clear current context (this keeps the device ready but with no active track)
+    await fetch(`https://api.spotify.com/v1/me/player`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        device_ids: [currentDeviceId],
+        play: false,
+      }),
+    });
+
+    debug("🕊️ Player set to idle (no song loaded)");
+  };
+
+  // --- Hook buttons
+  document.getElementById("play").onclick = () => {
+    const trackId =
+      document.getElementById("trackId")?.value.trim() || "0pqnGHJpmpxLKifKRmU6WP";
+    playSong(trackId);
+  };
+
+  document.getElementById("pause").onclick = () => pausePlayback();
+  document.getElementById("idle").onclick = () => makeIdle();
+};
+
+
+    // --- 4️⃣ PKCE helpers
+    function generateRandomString(length) {
+      const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      let str = "";
+      for (let i = 0; i < length; i++)
+        str += chars.charAt(Math.floor(Math.random() * chars.length));
+      return str;
+    }
+
+    async function sha256Challenge(verifier) {
+      const data = new TextEncoder().encode(verifier);
+      const digest = await crypto.subtle.digest("SHA-256", data);
+      return btoa(String.fromCharCode(...new Uint8Array(digest)))
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+    }
+  </script>
+
+
+
+
+
+
+
+
+  <!--youtube part -->
+
+  <h2>Now Playing:</h2>
+  <div id="now-playing"></div>
+
+  <h2>Queue:</h2>
+  <ul id="video-list"></ul>
+
+
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+      <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://apis.google.com/js/client.js?onload=googleApiClientReady">   </script>
+
+  <script type="module">
+    import { 
+      initializeApp 
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, deleteDoc, getDocs, limit, where, updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBkfk1Uc7DnKAQoHV67RPgYX77wfqov-rA",
+      authDomain: "my-static-firebase-demo.firebaseapp.com",
+      projectId: "my-static-firebase-demo",
+      storageBucket: "my-static-firebase-demo.firebasestorage.app",
+      messagingSenderId: "809904428695",
+      appId: "1:809904428695:web:3a8c65f6c2f448bcaa7bd2",
+      measurementId: "G-0JRKKFR4LZ"
     };
 
-    // --- PKCE helpers ---
-    function generateRandomString(length){ const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; let str=""; for(let i=0;i<length;i++) str+=chars.charAt(Math.floor(Math.random()*chars.length)); return str; }
-    async function sha256Challenge(verifier){ const data=new TextEncoder().encode(verifier); const digest=await crypto.subtle.digest("SHA-256", data); return btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const videosCol = collection(db, "videos");
 
-    // --- YouTube + Queue logic ---
-    let player_yt=null;
-    let currentVideoID=null;
-    let queueDocs=[];
+    const nowPlayingDiv = document.getElementById("now-playing");
+    const queueList = document.getElementById("video-list");
 
-    function playVideo(url, platform){
-      if(platform==="youtube"){
-        const videoId=url.length===11?url:null;
-        if(!player_yt){
-          player_yt=new YT.Player('now-playing',{height:'360',width:'640',videoId:videoId,events:{'onStateChange':onYTStateChange}});
-        }else{ player_yt.loadVideoById(videoId); }
-        currentVideoID=url;
-      }else if(platform==="spotify"){
-        if(!isSpotifyPlaying) playSong(url);
-        currentVideoID=url;
-      }
+    let player_yt = null;
+    let currentVideoID = null;
+    let queueDocs = [];
+
+
+    // Extract video ID from YouTube URL
+    function extractVideoID(url) {
+      const regExp = /^.*((youtu.be\/)|(v\/)|(u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[7].length === 11) ? match[7] : null;
     }
 
-    function onYTStateChange(event){
-      if(event.data===YT.PlayerState.ENDED) playNextFromQueue();
-    }
-
-    async function playNextFromQueue(){
-      if(queueDocs.length===0) { currentVideoID=null; return; }
-      await deleteDoc(doc(db,"videos",queueDocs[0].id));
-    }
-
-    onSnapshot(query(videosCol, orderBy("order","asc")), snapshot=>{
-      queueDocs=snapshot.docs;
-      if(queueDocs.length>0){
-        const first=queueDocs[0].data();
-        if(first.url!==currentVideoID){
-          playVideo(first.url,first.platform);
+    // Play a video in the player
+    function playVideo(url, platform) {
+        debug("trying to play", url, platform)
+        if(platform == "youtube"){
+            if (!player_yt) {
+                player_yt = new YT.Player('now-playing', {
+                height: '360',
+                width: '640',
+                videoId: url,
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+                });
+            } else {
+                player_yt.loadVideoById(url);
+            }
+        } else if (platform == "spotify") {
+            playSong(url);
         }
-      }else{
-        currentVideoID=null;
-        document.getElementById("now-playing").innerHTML="<p>No videos in the queue</p>";
-      }
+        currentVideoID = url;
+    }
 
-      // render queue
-      const queueList=document.getElementById("video-list");
-      queueList.innerHTML="";
-      queueDocs.forEach(docItem=>{
-        const li=document.createElement("li");
-        const data=docItem.data();
-        li.textContent=data.url+", "+data.platform;
+    // Handle video ended
+async function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.ENDED && queueDocs.length > 0) {
+        // Remove the first video from Firestore
+        const firstVideoDoc = queueDocs[0];
+        await deleteDoc(doc(db, "videos", firstVideoDoc.id));
+      }
+}
+window.onPlayerStateChangeNoCheck = async function(){
+    if (queueDocs.length > 0) {
+        const firstVideoDoc = queueDocs[0];
+        await deleteDoc(doc(db, "videos", firstVideoDoc.id));
+    }
+} 
+
+    // Listen for the queue in real-time
+onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
+      queueDocs = snapshot.docs;
+
+      // Play next video only if first video changes
+    if (queueDocs.length > 0) {
+        const firstVideo = queueDocs[0].data();
+        if (firstVideo.url !== currentVideoID) {
+          playVideo(firstVideo.url, firstVideo.platform);
+        }
+    } else {
+        currentVideoID = null;
+        nowPlayingDiv.innerHTML = "<p>No videos in the queue</p>";
+    }
+
+      // Render queue list
+      queueList.innerHTML = "";
+      var objects_li = [];
+      queueDocs.forEach((docItem, index) => {
+        const li = document.createElement("li");
+        const data = docItem.data();
+        objects_li.push(data);
+        li.textContent = data.url + ", " + data.platform;
+
         queueList.appendChild(li);
       });
     });
-
-    // --- Hook buttons ---
-    document.getElementById("play").onclick=()=>{ const trackId=document.getElementById("trackId").value.trim()||"0pqnGHJpmpxLKifKRmU6WP"; playSong(trackId); };
-    document.getElementById("pause").onclick=()=>pausePlayback();
-  </script>
+</script>
 </body>
 </html>

@@ -10,6 +10,7 @@
   <input id="trackId" placeholder="Enter Spotify track ID" style="display:none;">
   <button id="play" style="display:none;">Play Song</button>
   <button id="pause" style="display:none;">Pause</button>
+  <button id="idle" style="display:none;">Go Idle</button>
 
   <pre id="debug" style="background:#111;color:#0f0;padding:10px;white-space:pre-wrap;"></pre>
 
@@ -105,8 +106,9 @@
         document.getElementById("play").style.display = "inline";
         document.getElementById("pause").style.display = "inline";
         document.getElementById("trackId").style.display = "inline";
-
-        history.replaceState({}, document.title, "/index.html");
+        document.getElementById("idle").style.display = "inline";
+        
+        history.replaceState({}, document.title, "/index2.html");
       } catch (err) {
         debug("Error during token exchange:", err);
       }
@@ -114,100 +116,147 @@
 
     handleCallback();
 
-    // --- 3️⃣ Initialize Spotify Web Playback SDK
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      const token = localStorage.getItem("access_token");
-      if (!token) {
-        debug("No access token — please log in first.");
-        return;
+   // --- 3️⃣ Initialize Spotify Web Playback SDK
+window.onSpotifyWebPlaybackSDKReady = () => {
+  const token = localStorage.getItem("access_token");
+  if (!token) {
+    debug("No access token — please log in first.");
+    return;
+  }
+
+  player = new Spotify.Player({
+    name: "My Web Player",
+    getOAuthToken: cb => cb(token),
+  });
+
+  player.addListener("initialization_error", ({ message }) =>
+    debug("Init error:", message)
+  );
+  player.addListener("authentication_error", ({ message }) =>
+    debug("Auth error:", message)
+  );
+  player.addListener("account_error", ({ message }) =>
+    debug("Account error:", message)
+  );
+  player.addListener("playback_error", ({ message }) =>
+    debug("Playback error:", message)
+  );
+
+  player.addListener("ready", ({ device_id }) => {
+    currentDeviceId = device_id;
+    debug("✅ Player ready with device_id:", device_id);
+    debug("Player is idle and ready for playback commands.");
+  });
+
+  player.addListener("not_ready", ({ device_id }) =>
+    debug("Device ID has gone offline", device_id)
+  );
+
+  // 🔍 Detect when a song ends
+  player.addListener("player_state_changed", state => {
+    if (!state) return;
+    const { paused, position, duration, track_window } = state;
+    if (paused && position === 0 && track_window.previous_tracks.length > 0) {
+      const endedTrack = track_window.previous_tracks.slice(-1)[0];
+      debug(`🎵 Track ended: ${endedTrack.name} (${endedTrack.id})`);
+      // Custom callback if you want to hook into JS logic:
+      if (typeof window.onTrackEnd === "function") {
+        window.onTrackEnd(endedTrack);
       }
+    }
+  });
 
-      player = new Spotify.Player({
-        name: "My Web Player",
-        getOAuthToken: cb => cb(token),
-      });
+  // Connect player (idle)
+  player.connect();
 
-      player.addListener("initialization_error", ({ message }) =>
-        debug("Init error:", message)
-      );
-      player.addListener("authentication_error", ({ message }) =>
-        debug("Auth error:", message)
-      );
-      player.addListener("account_error", ({ message }) =>
-        debug("Account error:", message)
-      );
-      player.addListener("playback_error", ({ message }) =>
-        debug("Playback error:", message)
-      );
+  // Expose helper functions globally
+  window.playSong = async function playSong(trackId) {
+    if (!currentDeviceId) {
+      debug("Device not ready yet.");
+      return;
+    }
 
-      player.addListener("ready", ({ device_id }) => {
-        currentDeviceId = device_id;
-        debug("✅ Player ready with device_id:", device_id);
-      });
+    const uri = `spotify:track:${trackId}`;
+    debug(`🎵 Playing track ${uri} on device ${currentDeviceId}`);
 
-      player.addListener("not_ready", ({ device_id }) =>
-        debug("Device ID has gone offline", device_id)
-      );
+    const playRes = await fetch(
+      `https://api.spotify.com/v1/me/player/play?device_id=${currentDeviceId}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uris: [uri] }),
+      }
+    );
 
-      player.connect();
+    debug("Play response:", playRes.status);
+    if (!playRes.ok) debug(await playRes.text());
+  };
 
-      // --- Play button handler
-      document.getElementById("play").onclick = async () => {
-        if (!currentDeviceId) {
-          debug("Waiting for device to be ready...");
-          return;
-        }
+  window.pausePlayback = async function pausePlayback() {
+    if (!currentDeviceId) {
+      debug("Device not ready yet.");
+      return;
+    }
 
-        const trackId = document.getElementById("trackId").value.trim() || "0pqnGHJpmpxLKifKRmU6WP";
-        const uri = `spotify:track:${trackId}`;
+    const pauseRes = await fetch(
+      `https://api.spotify.com/v1/me/player/pause?device_id=${currentDeviceId}`,
+      {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-        debug(`Attempting to play ${uri} on device:`, currentDeviceId);
+    debug("Pause response:", pauseRes.status);
+    if (!pauseRes.ok) debug(await pauseRes.text());
+    else debug("⏸️ Playback paused");
+  };
 
-        const playRes = await fetch(
-          `https://api.spotify.com/v1/me/player/play?device_id=${currentDeviceId}`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ uris: [uri] }),
-          }
-        );
+  // 🧘 Make player idle (stop everything)
+  window.makeIdle = async function makeIdle() {
+    if (!currentDeviceId) {
+      debug("Device not ready yet.");
+      return;
+    }
 
-        debug("Play response status:", playRes.status);
-        if (!playRes.ok) {
-          const err = await playRes.text();
-          debug("Play failed:", err);
-        } else {
-          debug("✅ Play command sent successfully!");
-        }
-      };
+    // Pause playback, then transfer active device with no track context
+    await fetch(
+      `https://api.spotify.com/v1/me/player/pause?device_id=${currentDeviceId}`,
+      {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-      // --- Pause button handler
-      document.getElementById("pause").onclick = async () => {
-        if (!currentDeviceId) {
-          debug("Device not ready yet.");
-          return;
-        }
+    // Clear current context (this keeps the device ready but with no active track)
+    await fetch(`https://api.spotify.com/v1/me/player`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        device_ids: [currentDeviceId],
+        play: false,
+      }),
+    });
 
-        const pauseRes = await fetch(
-          `https://api.spotify.com/v1/me/player/pause?device_id=${currentDeviceId}`,
-          {
-            method: "PUT",
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+    debug("🕊️ Player set to idle (no song loaded)");
+  };
 
-        debug("Pause response status:", pauseRes.status);
-        if (!pauseRes.ok) {
-          const err = await pauseRes.text();
-          debug("Pause failed:", err);
-        } else {
-          debug("⏸️ Playback paused!");
-        }
-      };
-    };
+  // --- Hook buttons
+  document.getElementById("play").onclick = () => {
+    const trackId =
+      document.getElementById("trackId")?.value.trim() || "0pqnGHJpmpxLKifKRmU6WP";
+    playSong(trackId);
+  };
+
+  document.getElementById("pause").onclick = () => pausePlayback();
+  document.getElementById("idle").onclick = () => makeIdle();
+};
+
 
     // --- 4️⃣ PKCE helpers
     function generateRandomString(length) {

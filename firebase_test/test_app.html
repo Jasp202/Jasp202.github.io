@@ -28,14 +28,14 @@
               
             <div id="buttons">
 
-                <label> <input id="query" value='' autocomplete="off" type="text"/><button id="search-button"  onclick="keyWordsearch()">Search</button></label>    
+                <label> <input id="query" value='' autocomplete="off" type="text"/><button id="search-button"  onclick="keyWordsearch()">Search</button></label>   
+                <button onclick="searchSpotify()">search spotify</button> 
                 <div id="container">
                 <p>Search Results:</p>
                 <ul id="results"></ul>
                 </div>  
 
             </div>
-            
 
         </div>
     </div>
@@ -243,7 +243,7 @@ window.swapWithSecondSmallest =  async function(orderValue) {
                     );  
     }
 
-    function makeRequest(){
+function makeRequest(){
         var q = $('#query').val();
         $('#results').append(
                     '<pre>' + q + '</pre>'
@@ -300,6 +300,47 @@ window.swapWithSecondSmallest =  async function(orderValue) {
 });
 }</script> 
 
+<!---------------- spotify script --------------->
+<script>
+  
+async function searchSpotify() {
+  const q = $('#query').val();
+  $('#results').append('<pre>' + q + '</pre>');
+
+  try {
+    const res = await fetch(`https://jasp202.netlify.app/.netlify/functions/spotify-search?q=${encodeURIComponent(q)}`);
+    $('#results').append('<pre>' + res + '</pre>');
+    const tracks = await res.json();
+    $('#results').empty(); // clear previous results
+
+    tracks.forEach(track => {
+      const trackTitle = $('<pre>')
+        .css({ width: '100%', whiteSpace: 'pre-wrap', wordWrap: 'break-word' })
+        .text(track.name);
+
+      const trackThumb = $('<img>')
+        .attr({ src: track.image, alt: 'No Image Available.' })
+        .css({ width: '64px', height: '64px' });
+
+      const trackButton = $('<a>')
+        .attr('href', '#')
+        .text('Add to Queue')
+        .on('click', e => {
+          e.preventDefault();
+          addToEnd(track.name, track.id, 'spotify');
+        });
+
+      const container = $('<div>').css({ marginBottom: '1em' });
+      container.append(trackTitle, $('<div>').append(trackThumb), $('<div>').append(trackButton));
+
+      $('#results').append(container);
+    });
+  } catch (err) {
+    $('#results').append('<pre>Error loading Spotify results.</pre>');
+  }
+}
+
+</script>
 
      <script src="script-sortable.js"></script>
 </body>

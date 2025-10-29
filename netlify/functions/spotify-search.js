@@ -2,10 +2,16 @@ exports.handler = async (event, context) => {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
+  const headersCross = {
+    'Access-Control-Allow-Origin': '*', // allow any origin
+    'Content-Type': 'application/json',
+  };
+
   // Always return JSON (even for missing credentials)
   if (!clientId || !clientSecret) {
     return {
       statusCode: 200,
+      headersCross,
       body: JSON.stringify([]),
     };
   }
@@ -49,6 +55,7 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 200,
+      headersCross,
       body: JSON.stringify(tracks),
     };
 
@@ -56,6 +63,7 @@ exports.handler = async (event, context) => {
     // Always return valid JSON (empty array) on error
     return {
       statusCode: 200,
+      headersCross,
       body: JSON.stringify([]),
     };
   }

@@ -13,6 +13,23 @@
 <body>
   <h1>Collaborative Video Queue</h1>
 
+  <form id="video-form">
+    <input type="url" id="video-url" placeholder="YouTube URL" required />
+    <button type="submit">Add to Queue</button>
+  </form>
+
+  <h2>Now Playing:</h2>
+  <div id="now-playing"></div>
+
+  <h2>Queue:</h2>
+  <ul id="video-list"></ul>
+  
+<div class="controls" role="region" aria-label="Add item">
+  <input name="newItem" id="newItem" placeholder="New item text..." />
+  <button id="addBtn" class="primary">Add</button>
+  <button id="addSample">Add sample</button>
+</div>
+
     <ul id="itemList" aria-label="Items list">
     <!-- items added by JS -->
     </ul>
@@ -24,7 +41,11 @@
         <div class="ytpopup-content">
 
             <label><span>Search youtube videos</span></label><br><br>
-          
+            <label class="switch">
+                <input id="checkyt" type="checkbox" value="car">
+                <span class="slider round"></span>
+              </label>
+              <label for="checkyt"> Video player active</label><br><br>
               
             <div id="buttons">
 
@@ -45,33 +66,37 @@
       <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady">   </script>
 
+  <script type="module">
+    import { 
+      initializeApp 
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, deleteDoc, getDocs, limit, where, updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-<!---------------- firebase script ------------->
-<script type="module">
-import { 
-    initializeApp 
-} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-import { 
-    getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, deleteDoc, getDocs, limit, where, updateDoc
-} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBkfk1Uc7DnKAQoHV67RPgYX77wfqov-rA",
+      authDomain: "my-static-firebase-demo.firebaseapp.com",
+      projectId: "my-static-firebase-demo",
+      storageBucket: "my-static-firebase-demo.firebasestorage.app",
+      messagingSenderId: "809904428695",
+      appId: "1:809904428695:web:3a8c65f6c2f448bcaa7bd2",
+      measurementId: "G-0JRKKFR4LZ"
+    };
 
-// Firebase config
-const firebaseConfig = {
-    apiKey: "AIzaSyBkfk1Uc7DnKAQoHV67RPgYX77wfqov-rA",
-    authDomain: "my-static-firebase-demo.firebaseapp.com",
-    projectId: "my-static-firebase-demo",
-    storageBucket: "my-static-firebase-demo.firebasestorage.app",
-    messagingSenderId: "809904428695",
-    appId: "1:809904428695:web:3a8c65f6c2f448bcaa7bd2",
-    measurementId: "G-0JRKKFR4LZ"
-};
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const videosCol = collection(db, "videos");
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const videosCol = collection(db, "videos");
-let queueDocs = [];
+    const nowPlayingDiv = document.getElementById("now-playing");
+    const queueList = document.getElementById("video-list");
 
-window.addToEnd = async function(name, videoId, platform) {
+    let player = null;
+    let currentVideoID = null;
+    let queueDocs = [];
+
+    window.addToEnd = async function(name, videoId, platform) {
   try {
     // Get the video with the highest current order value
     const q = query(videosCol, orderBy("order", "desc"), limit(1));
@@ -98,7 +123,6 @@ window.addToEnd = async function(name, videoId, platform) {
     alert("❌ Error adding video: " + err.message);
   }
 };
-
 window.swapOrder = async function(orderA, orderB) {
   try {
     // Query for the two videos
@@ -129,7 +153,6 @@ window.swapOrder = async function(orderA, orderB) {
     alert("❌ Error swapping order: " + err.message);
   }
 }
-
 window.deleteByOrder = async function(orderValue) {
   try {
     // Query for the document with this order value
@@ -152,8 +175,6 @@ window.deleteByOrder = async function(orderValue) {
     alert("❌ Error deleting video: " + err.message);
   }
 }
-
-
 window.swapWithSecondSmallest =  async function(orderValue) {
   try {
     // Get all videos ordered by "order" ascending
@@ -201,20 +222,112 @@ window.swapWithSecondSmallest =  async function(orderValue) {
   }
 }
 
+    // Extract video ID from YouTube URL
+    function extractVideoID(url) {
+      const regExp = /^.*((youtu.be\/)|(v\/)|(u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[7].length === 11) ? match[7] : null;
+    }
+
+    // Play a video in the player
+    function playVideo(url) {
+      const videoID = extractVideoID(url);
+      if (!videoID) return;
+
+      if (!player) {
+        player = new YT.Player('now-playing', {
+          height: '360',
+          width: '640',
+          videoId: videoID,
+          events: {
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      } else {
+        player.loadVideoById(videoID);
+      }
+      currentVideoID = url;
+    }
+
+    // Handle video ended
+    async function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.ENDED && queueDocs.length > 0) {
+        // Remove the first video from Firestore
+        const firstVideoDoc = queueDocs[0];
+        await deleteDoc(doc(db, "videos", firstVideoDoc.id));
+      }
+    }
+
     // Listen for the queue in real-time
     onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
       queueDocs = snapshot.docs;
+
+      // Play next video only if first video changes
+      if (queueDocs.length > 0) {
+        const firstVideo = queueDocs[0].data();
+        if (firstVideo.url !== currentVideoID) {
+          playVideo(firstVideo.url);
+        }
+      } else {
+        currentVideoID = null;
+        nowPlayingDiv.innerHTML = "<p>No videos in the queue</p>";
+      }
+
+      // Render queue list
+      queueList.innerHTML = "";
       var objects_li = [];
       queueDocs.forEach((docItem, index) => {
+        const li = document.createElement("li");
         const data = docItem.data();
         objects_li.push(data);
+        li.textContent = data.url;
+
+        const btn = document.createElement("button");
+        btn.textContent = "Remove";
+        btn.addEventListener("click", async () => {
+          await deleteDoc(doc(db, "videos", docItem.id));
+        });
+
+        li.appendChild(btn);
+        queueList.appendChild(li);
       });
       addMany(objects_li);
     });
 
+    // Add video form
+    document.getElementById("video-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const url = document.getElementById("video-url").value.trim();
+      if (!url) return;
+
+      await addDoc(videosCol, {
+        url,
+        createdAt: serverTimestamp()
+      });
+      e.target.reset();
+    });
+
+    window.addVideoToQueue = async function(videoId) {
+  try {
+    await addDoc(videosCol, {
+      url: "https://www.youtube.com/watch?v=" + videoId,
+      createdAt: serverTimestamp()
+    });
+    alert("Video added to queue!"); // optional for confirmation
+  } catch (err) {
+    alert("Error adding video:");
+  }
+};
   </script>
 
-<!--------------- youtube script --------------->
+  
+
+  <!---------------  YOUTUBE API DOWNLOAD --------------------->
+<!---------------  jQuery  --------------------->
+
+
+    
+
 <script>
     
     ytbutton.addEventListener("click", function () {
@@ -229,6 +342,15 @@ window.swapWithSecondSmallest =  async function(orderValue) {
             
         }
     });
+    checkyt.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+            document.getElementById("video-background").style.display = "block"
+
+        } else {
+            document.getElementById("video-background").style.display = "none"
+            document.getElementById("video-background").src = ""
+            
+        }})
 
     function keyWordsearch(){
         $('#results').append(
@@ -244,6 +366,7 @@ window.swapWithSecondSmallest =  async function(orderValue) {
     }
 
     function makeRequest(){
+        
         var q = $('#query').val();
         $('#results').append(
                     '<pre>' + q + '</pre>'
@@ -298,7 +421,15 @@ window.swapWithSecondSmallest =  async function(orderValue) {
     $('#results').append(container);
   });
 });
-}</script> 
+}
+     // Function to update the video iframe's source
+     function loadVideo(videoId) {
+        document.getElementById("video-background").src = "https://www.youtube.com/embed/" + videoId + "?&autoplay=1&controls=1&loop=1";
+        document.getElementById("ytPopup").classList.remove("show");
+        document.getElementById("video-background").style.display = "block"
+        document.getElementById('checkyt').checked = true
+    }
+     </script> 
 
 
      <script src="script-sortable.js"></script>

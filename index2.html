@@ -69,13 +69,13 @@
       debug("Exchanging code for token...");
 
       try {
-        const res = await fetch("/.netlify/functions/spotify-token", {
-          method: "POST",
-          body: new URLSearchParams({
+        const res = await fetch("/api/spotify-token", {
+        method: "POST",
+        body: new URLSearchParams({
             code,
             redirect_uri: redirectUri,
             code_verifier: codeVerifier,
-          }),
+        }),
         });
 
         debug("Token response status:", res.status);
@@ -180,7 +180,6 @@ player.addListener("player_state_changed", state => {
         if (typeof window.onTrackEnd === "function") {
         window.onTrackEnd(currentTrack);
         }
-
         lastWasPlaying = false;
 }
 

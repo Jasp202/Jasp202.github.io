@@ -285,7 +285,7 @@ async function searchSpotify() {
   $('#results').append('<pre>' + q + '</pre>');
 
   try {
-    const res = await fetch(`https://jasp202.netlify.app/.netlify/functions/spotify-search?q=${encodeURIComponent(q)}`);
+    const res = await fetch(`/api/spotify-search?q=${encodeURIComponent(q)}`);
     $('#results').append('<pre>' + res + '</pre>');
     const tracks = await res.json();
     $('#results').empty(); // clear previous results

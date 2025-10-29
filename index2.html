@@ -155,32 +155,30 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
 // 🔍 Detect when a song ends (more reliable)
 let lastTrackId = null;
-let lastWasPlaying = false;
+let lastTrackPaused = false;
 
 player.addListener("player_state_changed", state => {
     if (!state || !state.track_window?.current_track) return;
 
-    const { paused, position, duration, track_window } = state;
-    const currentTrack = track_window.current_track;
-    const trackId = currentTrack.id;
+    const track = state.track_window.current_track;
+    const trackId = track.id;
+    const { paused, position, duration } = state;
 
-    // Track change
+    // Track changed
     if (trackId !== lastTrackId) {
-        debug(`🎧 Now playing: ${currentTrack.name} (${trackId})`);
+        debug(`🎧 Now playing: ${track.name} (${trackId})`);
         lastTrackId = trackId;
-        lastWasPlaying = true;
+        lastTrackPaused = false;
     }
 
-    // Detect end of song (was playing, now paused, near start)
-    const nearZero = position < 500; // 0.5 second tolerance
-
-    if (lastWasPlaying && paused && nearZero) {
-        debug(`🏁 Track ended: ${currentTrack.name} (${trackId})`);
+    // Detect song finished (paused and near end)
+    const nearEnd = position >= duration - 1000; // last 1 second
+    if (!lastTrackPaused && paused && nearEnd) {
+        debug(`🏁 Track ended: ${track.name} (${trackId})`);
         onPlayerStateChangeNoCheck();
-}
+    }
 
-// Update state flag
-if (!paused) lastWasPlaying = true;
+    lastTrackPaused = paused;
 });
 
   // Connect player (idle)

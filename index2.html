@@ -372,25 +372,55 @@ window.playSong = async function playSong(trackId, startPositionMs = 1) {
     let queueDocs = [];
 
 window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendationToQueue(seedTrackId) {
-  try{
-    var r = "rick astley"
-    const res = await fetch(`/api/spotify-search?q=${encodeURIComponent(r)}`);
-    const tracks = await res.json();
-    debug(tracks[0]);
-    // --- 3️⃣ Add recommended tracks to Firestore
-    
-    await addDoc(videosCol, {
-        platform: "spotify",
-        name: tracks[0].name,
-        url: tracks[0].id,
-        order: 1,
-        createdAt: serverTimestamp(),
+  try {
+    const token = localStorage.getItem("access_token");
+    if (!token) return debug("⚠️ No Spotify token found.");
+
+    // --- 1️⃣ Fetch seed track metadata
+    let seedTrack;
+    try {
+      const trackRes = await fetch(`https://api.spotify.com/v1/tracks/${seedTrackId}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-    debug(`✅ Successfully added ${tracks.length} search-based Spotify tracks to the queue.`);
+      seedTrack = trackRes.ok ? await trackRes.json() : null;
+    } catch {
+      seedTrack = null;
+    }
+
+    if (!seedTrack) {
+      debug("⚠️ Seed track unavailable. Using fallback.");
+      seedTrack = { artists: [{ name: "Rick Astley" }], id: "4PTG3Z6ehGkBFwjybzWkR8" };
+    }
+
+    const seedArtist = seedTrack.artists[0]?.name || "Rick Astley";
+
+    // --- 2️⃣ Search tracks by that artist
+    const searchRes = await fetch(`/api/spotify-search?q=${encodeURIComponent(seedArtist)}`);
+    const tracks = await searchRes.json();
+
+    if (!tracks.length) {
+      debug("⚠️ No tracks found for artist. Using fallback track.");
+      tracks.push({ id: seedTrack.id, name: seedTrack.name });
+    }
+
+    // --- 3️⃣ Pick a random track
+    const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
+
+    // --- 4️⃣ Add to Firestore
+    await addDoc(videosCol, {
+      platform: "spotify",
+      name: randomTrack.name,
+      url: randomTrack.id,
+      order: 1,
+      createdAt: serverTimestamp(),
+    });
+
+    debug(`🌀 Added random track by ${seedArtist}: ${randomTrack.name} (${randomTrack.id})`);
   } catch (err) {
-    debug("❌ Error while adding search-based Spotify recommendations:", err);
+    debug("❌ Error while adding Spotify recommendation:", err);
   }
 };
+
     // Extract video ID from YouTube URL
     function extractVideoID(url) {
       const regExp = /^.*((youtu.be\/)|(v\/)|(u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;

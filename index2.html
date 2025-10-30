@@ -444,6 +444,7 @@ async function onPlayerStateChange(event) {
 window.onPlayerStateChangeNoCheck = async function(){
     if (queueDocs.length > 0) {
         const firstVideoDoc = queueDocs[0];
+        debug("firstvideo", firstVideoDoc)
         recommendID = firstVideoDoc.artist;
         debug("recommend changed to ", recommendID)
         await deleteDoc(doc(db, "videos", firstVideoDoc.id));

@@ -291,14 +291,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     var r = "rick astley"
     const res = await fetch(`/api/spotify-search?q=${encodeURIComponent(r)}`);
     const tracks = await res.json();
-    debug(tracks)
-    // --- 2️⃣ Get current max order in Firestore
-    const getMaxOrder = async () => {
-      const q = query(videosCol, orderBy("order", "desc"), limit(1));
-      const snapshot = await getDocs(q);
-      return snapshot.empty ? 0 : snapshot.docs[0].data().order || 0;
-    };
-    let maxOrder = await getMaxOrder();
+    debug(tracks[0])
     debug("videosCol:", videosCol);
     // --- 3️⃣ Add recommended tracks to Firestore
     
@@ -306,7 +299,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
         platform: "spotify",
         name: tracks[0].name,
         url: tracks[0].id,
-        order: ++maxOrder,
+        order: 1,
         createdAt: serverTimestamp(),
       });
       debug(`🌀 Added recommended track: ${track.name} (${track.id})`);

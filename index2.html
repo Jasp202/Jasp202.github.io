@@ -387,6 +387,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const videosCol = collection(db, "videos");
+    window.videosCol = videosCol;
 
     const nowPlayingDiv = document.getElementById("now-playing");
     const queueList = document.getElementById("video-list");

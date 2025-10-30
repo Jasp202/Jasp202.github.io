@@ -375,6 +375,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
   try {
     
     // --- 2️⃣ Search tracks by that artist
+    debug(`/api/spotify-search?q=${encodeURIComponent(seedArtist)}`, seedArtist)
     const searchRes = await fetch(`/api/spotify-search?q=${encodeURIComponent(seedArtist)}`);
     const tracks = await searchRes.json();
 
@@ -385,7 +386,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
 
     // --- 3️⃣ Pick a random track
     const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
-
+    debug("this",randomTrack.name)
     // --- 4️⃣ Add to Firestore
     await addDoc(videosCol, {
       platform: "spotify",
@@ -443,7 +444,7 @@ async function onPlayerStateChange(event) {
 window.onPlayerStateChangeNoCheck = async function(){
     if (queueDocs.length > 0) {
         const firstVideoDoc = queueDocs[0];
-        recommendID = firstVideoDoc.id;
+        recommendID = firstVideoDoc.artist;
         debug("recommend changed to ", recommendID)
         await deleteDoc(doc(db, "videos", firstVideoDoc.id));
     }

@@ -286,30 +286,6 @@ window.playSong = async function playSong(trackId, startPositionMs = 1) {
     debug("🕊️ Player set to idle (no song loaded)");
 };
 
-window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendationToQueue(seedTrackId) {
-  try{
-    var r = "rick astley"
-    const res = await fetch(`/api/spotify-search?q=${encodeURIComponent(r)}`);
-    const tracks = await res.json();
-    debug(tracks[0]);
-    debug("videosCol:", videosCol);
-    // --- 3️⃣ Add recommended tracks to Firestore
-    
-    await addDoc(videosCol, {
-        platform: "spotify",
-        name: tracks[0].name,
-        url: tracks[0].id,
-        order: 1,
-        createdAt: serverTimestamp(),
-      });
-      debug(`🌀 Added recommended track: ${track.name} (${track.id})`);
-    
-
-    debug(`✅ Successfully added ${tracks.length} search-based Spotify tracks to the queue.`);
-  } catch (err) {
-    debug("❌ Error while adding search-based Spotify recommendations:", err);
-  }
-};
 
 
   // --- Hook buttons
@@ -387,7 +363,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const videosCol = collection(db, "videos");
-    window.videosCol = videosCol;
+    videosCol = videosCol;
 
     const nowPlayingDiv = document.getElementById("now-playing");
     const queueList = document.getElementById("video-list");
@@ -396,7 +372,26 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     let currentVideoID = null;
     let queueDocs = [];
 
-
+window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendationToQueue(seedTrackId) {
+  try{
+    var r = "rick astley"
+    const res = await fetch(`/api/spotify-search?q=${encodeURIComponent(r)}`);
+    const tracks = await res.json();
+    debug(tracks[0]);
+    // --- 3️⃣ Add recommended tracks to Firestore
+    
+    await addDoc(videosCol, {
+        platform: "spotify",
+        name: tracks[0].name,
+        url: tracks[0].id,
+        order: 1,
+        createdAt: serverTimestamp(),
+      });
+    debug(`✅ Successfully added ${tracks.length} search-based Spotify tracks to the queue.`);
+  } catch (err) {
+    debug("❌ Error while adding search-based Spotify recommendations:", err);
+  }
+};
     // Extract video ID from YouTube URL
     function extractVideoID(url) {
       const regExp = /^.*((youtu.be\/)|(v\/)|(u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;

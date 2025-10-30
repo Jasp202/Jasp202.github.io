@@ -428,6 +428,9 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
                 player_yt.loadVideoById(url);
             }
         } else if (platform == "spotify") {
+            if (player_yt) {
+                player_yt.stopVideo();
+            }
             playSong(url);
         }
         currentVideoID = url;

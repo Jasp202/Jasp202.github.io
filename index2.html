@@ -286,6 +286,15 @@ window.playSong = async function playSong(trackId, startPositionMs = 1) {
     debug("🕊️ Player set to idle (no song loaded)");
 };
 
+let seeds = [seedTrackId]; // start with original track
+
+// Add a global fallback track if first seed fails
+const fallbackTrack = "3n3Ppam7vgaVa1iaRUc9Lp"; // Michael Jackson – Billie Jean
+seeds.push(fallbackTrack);
+
+// Optionally, add a popular artist seed
+const fallbackArtist = "3fMbdgg4jU18AjLCKBhRSm"; // Michael Jackson artist ID
+
 window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendationToQueue(seedTrackId) {
   const token = localStorage.getItem("access_token");
   if (!token) {
@@ -293,13 +302,15 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     return;
   }
 
-  const MARKET = "FI"; // Force a known market
-  let effectiveSeed = seedTrackId;
+  const MARKET = "FI"; // You can change to FI or use token market
+  let effectiveSeeds = [seedTrackId];
+  let fallbackTrack = "3n3Ppam7vgaVa1iaRUc9Lp";   // Michael Jackson – Billie Jean
+  let fallbackArtist = "3fMbdgg4jU18AjLCKBhRSm";  // Michael Jackson artist ID
 
   try {
     debug("🎯 Starting recommendation process for seed track:", seedTrackId);
 
-    // --- 0️⃣ Check if seed track exists in market
+    // --- 0️⃣ Check if seed track exists
     const trackCheck = await fetch(
       `https://api.spotify.com/v1/tracks/${seedTrackId}?market=${MARKET}`,
       { headers: { Authorization: `Bearer ${token}` } }
@@ -307,16 +318,16 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
 
     if (!trackCheck.ok) {
       debug(`⚠️ Seed track unavailable in market ${MARKET}. Status:`, trackCheck.status);
-      debug("Attempting fallback seed track...");
-      // Fallback track (choose a globally available one)
-      effectiveSeed = "3n3Ppam7vgaVa1iaRUc9Lp"; // Example: Michael Jackson – Billie Jean
+      debug("Adding fallback track to seeds...");
+      effectiveSeeds = [fallbackTrack];
     } else {
       debug(`✅ Seed track is available in market ${MARKET}.`);
     }
 
-    // --- 1️⃣ Fetch recommendations
+    // --- 1️⃣ Fetch recommendations using multiple seeds
+    debug("🔹 Requesting recommendations with seeds:", effectiveSeeds, "and artist fallback:", fallbackArtist);
     const recRes = await fetch(
-      `https://api.spotify.com/v1/recommendations?limit=3&seed_tracks=${effectiveSeed}&market=${MARKET}`,
+      `https://api.spotify.com/v1/recommendations?limit=5&seed_tracks=${effectiveSeeds.join(",")}&seed_artists=${fallbackArtist}&market=${MARKET}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -330,7 +341,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     debug("🔹 Raw recommendation response:", JSON.stringify(data, null, 2));
 
     if (!data.tracks?.length) {
-      debug("⚠️ No Spotify recommendations returned for:", effectiveSeed);
+      debug("⚠️ No Spotify recommendations returned for seeds:", effectiveSeeds);
       return;
     }
 
@@ -365,6 +376,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     debug("❌ Error while adding Spotify recommendations:", err);
   }
 };
+
 
 
   // --- Hook buttons

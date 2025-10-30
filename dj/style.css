@@ -7,14 +7,19 @@
     margin-bottom: 16px;
   }
 
-  input[name="newItem"]{
-    padding: 8px 10px;
+#query{
+    padding: 8px 1px;
     border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    min-width: 220px;
-    flex: 1;
+    border: 1px solid #2b313d;
+    min-width: 100px;
+    text-align: center;
   }
-
+.youtubeButton{
+    border: 2px red solid;
+}
+.spotifyButton{
+    border: 2px rgb(79, 243, 38) solid;
+}
   button{
     padding: 8px 10px;
     border-radius: 8px;

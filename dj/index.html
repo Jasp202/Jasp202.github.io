@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Collaborative Video Queue</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/dj/style.css">
     <!---------------  Font Aewsome  --------------------->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" 
     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
@@ -15,9 +15,9 @@
 <body>
 <!-- search quorey and buutoons-->
 <div id="searchDiv">
-    <label> <input id="query" value='' autocomplete="off" type="text"/></label>
-    <button id="search-button"  onclick="keyWordsearch()">Search youtube</button>   
-    <button onclick="searchSpotify()">search spotify</button> 
+    <label> <input id="query" value='' placeholder="You query" autocomplete="off" type="text"/></label>
+    <button class="youtubeButton" id="search-button"  onclick="keyWordsearch()">Search youtube</button>   
+    <button class="spotifyButton" onclick="searchSpotify()">search spotify</button> 
 </div>
 
 <ul id="itemList" aria-label="Items list">
@@ -322,6 +322,6 @@ async function searchSpotify() {
 
 </script>
 
-<script src="script-sortable.js"></script>
+<script src="/dj/script-sortable.js"></script>
 </body>
 </html>

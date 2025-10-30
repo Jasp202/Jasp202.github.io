@@ -299,18 +299,18 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
       return snapshot.empty ? 0 : snapshot.docs[0].data().order || 0;
     };
     let maxOrder = await getMaxOrder();
-
+    debug("videosCol:", videosCol);
     // --- 3️⃣ Add recommended tracks to Firestore
-    for (const track of tracks) {
-      await addDoc(videosCol, {
+    
+    await addDoc(videosCol, {
         platform: "spotify",
-        name: track.name,
-        url: track.id,
+        name: tracks[0].name,
+        url: tracks[0].id,
         order: ++maxOrder,
         createdAt: serverTimestamp(),
       });
       debug(`🌀 Added recommended track: ${track.name} (${track.id})`);
-    }
+    
 
     debug(`✅ Successfully added ${tracks.length} search-based Spotify tracks to the queue.`);
   } catch (err) {

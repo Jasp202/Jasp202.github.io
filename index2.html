@@ -291,6 +291,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     var r = "rick astley"
     const res = await fetch(`/api/spotify-search?q=${encodeURIComponent(r)}`);
     const tracks = await res.json();
+    debug(tracks)
     // --- 2️⃣ Get current max order in Firestore
     const getMaxOrder = async () => {
       const q = query(videosCol, orderBy("order", "desc"), limit(1));

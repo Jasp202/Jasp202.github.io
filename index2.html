@@ -200,7 +200,7 @@ player.addListener("player_state_changed", state => {
   player.connect();
 
 // Expose helper functions globally
-window.playSong = async function playSong(trackId, startPositionMs = 0) {
+window.playSong = async function playSong(trackId, startPositionMs = 1) {
   if (!currentDeviceId) {
     debug("Device not ready yet.");
     return;

@@ -459,18 +459,19 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     }
 
     // Handle video ended
-var recommenID = "";
+var recommendID = "0pqnGHJpmpxLKifKRmU6WP";
 async function onPlayerStateChange(event) {
       if (event.data === YT.PlayerState.ENDED && queueDocs.length > 0) {
         // Remove the first video from Firestore
         const firstVideoDoc = queueDocs[0];
-        recommenID = firstVideoDoc.id;
         await deleteDoc(doc(db, "videos", firstVideoDoc.id));
       }
 }
 window.onPlayerStateChangeNoCheck = async function(){
     if (queueDocs.length > 0) {
         const firstVideoDoc = queueDocs[0];
+        recommendID = firstVideoDoc.id;
+        debug("recommend changed to ", recommendID)
         await deleteDoc(doc(db, "videos", firstVideoDoc.id));
     }
 } 
@@ -502,9 +503,10 @@ unsubscribe = onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) =
           playVideo(firstVideo.url, firstVideo.platform);
         }
     } else {
-        if (recommenID) {
+        debug("storage state change length 0", recommendID);
+        if (recommendID) {
         debug("🌀 Queue empty, adding Spotify recommendations...");
-        addSpotifyRecommendationToQueue(recommenID);
+        addSpotifyRecommendationToQueue(recommendID);
     }
     }
 

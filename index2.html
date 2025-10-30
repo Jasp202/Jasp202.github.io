@@ -294,71 +294,49 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     return;
   }
 
-  const MARKET = "FI"; // Adjust as needed
   const FALLBACK_TRACKS = ["3n3Ppam7vgaVa1iaRUc9Lp", "2takcwOaAZWiXQijPHIx7B"]; // globally available
   const FALLBACK_ARTISTS = ["3fMbdgg4jU18AjLCKBhRSm"]; // globally available
   const FALLBACK_GENRES = ["pop", "rock"]; // reliable genre seeds
 
-  let effectiveTracks = [seedTrackId];
-
   try {
-    debug("🎯 Starting recommendation process for seed track:", seedTrackId);
+    debug("🎯 Starting search-based recommendation process for seed track:", seedTrackId);
 
-    // --- 0️⃣ Check if seed track exists in market
-    const trackCheck = await fetch(
-      `https://api.spotify.com/v1/tracks/${seedTrackId}?market=${MARKET}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    if (!trackCheck.ok) {
-      debug(`⚠️ Seed track unavailable in market ${MARKET}. Status:`, trackCheck.status);
-      debug("Using fallback tracks instead:", FALLBACK_TRACKS);
-      effectiveTracks = FALLBACK_TRACKS;
-    } else {
-      debug(`✅ Seed track is available in market ${MARKET}.`);
-      // Add a fallback track too to ensure at least one reliable seed
-      effectiveTracks.push(FALLBACK_TRACKS[0]);
-    }
-
-    // --- 1️⃣ Build recommendation URL
-    const recUrl = new URL("https://api.spotify.com/v1/recommendations");
-    recUrl.search = new URLSearchParams({
-      limit: 5,
-      seed_tracks: effectiveTracks.join(","),
-      seed_artists: FALLBACK_ARTISTS.join(","),
-      seed_genres: FALLBACK_GENRES.join(","),
-      market: MARKET,
-    });
-
-    debug("🔹 Requesting recommendations with URL:", recUrl.toString());
-
-    const recRes = await fetch(recUrl.toString(), {
+    // --- 0️⃣ Fetch seed track metadata
+    let seedTrack;
+    const trackRes = await fetch(`https://api.spotify.com/v1/tracks/${seedTrackId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    if (!recRes.ok) {
-      debug("⚠️ Spotify recommendation request failed:", recRes.status);
-      debug(await recRes.text());
+    if (trackRes.ok) {
+      seedTrack = await trackRes.json();
+      debug(`✅ Seed track found: ${seedTrack.name} by ${seedTrack.artists.map(a => a.name).join(", ")}`);
+    } else {
+      debug(`⚠️ Seed track unavailable. Using fallback track: ${FALLBACK_TRACKS[0]}`);
+      seedTrack = { artists: [{ name: "Michael Jackson" }], id: FALLBACK_TRACKS[0] };
+    }
+
+    // --- 1️⃣ Build search query for recommendations
+    const seedArtistName = seedTrack.artists[0]?.name || "Michael Jackson";
+    const genre = FALLBACK_GENRES[0]; // use a reliable genre
+    const searchQuery = encodeURIComponent(`artist:"${seedArtistName}" genre:"${genre}"`);
+    const searchUrl = `https://api.spotify.com/v1/search?q=${searchQuery}&type=track&limit=5`;
+
+    debug("🔹 Searching Spotify with query:", decodeURIComponent(searchQuery));
+
+    const searchRes = await fetch(searchUrl, { headers: { Authorization: `Bearer ${token}` } });
+
+    if (!searchRes.ok) {
+      debug("⚠️ Search request failed:", searchRes.status);
+      debug(await searchRes.text());
       return;
     }
 
-    const data = await recRes.json();
-    debug("🔹 Raw recommendation response:", JSON.stringify(data, null, 2));
+    const searchData = await searchRes.json();
+    const tracks = searchData.tracks?.items || [];
 
-    if (!data.tracks?.length) {
-      debug("⚠️ No recommendations returned. Using fallback tracks as queue.");
-      // As a last resort, queue the fallback tracks directly
-      for (const fallback of FALLBACK_TRACKS) {
-        await addDoc(videosCol, {
-          platform: "spotify",
-          name: fallback,
-          url: fallback,
-          order: (await getMaxOrder()) + 1,
-          createdAt: serverTimestamp(),
-        });
-        debug(`🌀 Added fallback track to queue: ${fallback}`);
-      }
-      return;
+    if (!tracks.length) {
+      debug("⚠️ No search-based recommendations found. Using fallback tracks.");
+      tracks.push(...FALLBACK_TRACKS.map(id => ({ id, name: id })));
     }
 
     // --- 2️⃣ Get current max order in Firestore
@@ -371,7 +349,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     debug("🔹 Current max order in queue:", maxOrder);
 
     // --- 3️⃣ Add recommended tracks to Firestore
-    for (const track of data.tracks) {
+    for (const track of tracks) {
       await addDoc(videosCol, {
         platform: "spotify",
         name: track.name,
@@ -382,11 +360,12 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
       debug(`🌀 Added recommended track: ${track.name} (${track.id})`);
     }
 
-    debug(`✅ Successfully added ${data.tracks.length} Spotify recommendations to the queue.`);
+    debug(`✅ Successfully added ${tracks.length} search-based Spotify tracks to the queue.`);
   } catch (err) {
-    debug("❌ Error while adding Spotify recommendations:", err);
+    debug("❌ Error while adding search-based Spotify recommendations:", err);
   }
 };
+
 
 
 

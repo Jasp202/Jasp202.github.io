@@ -200,29 +200,39 @@ player.addListener("player_state_changed", state => {
   player.connect();
 
 // Expose helper functions globally
-window.playSong = async function playSong(trackId) {
-if (!currentDeviceId) {
+window.playSong = async function playSong(trackId, startPositionMs = 0) {
+  if (!currentDeviceId) {
     debug("Device not ready yet.");
     return;
-}
+  }
 
-const uri = `spotify:track:${trackId}`;
-debug(`🎵 Playing track ${uri} on device ${currentDeviceId}`);
+  const token = localStorage.getItem("access_token");
+  const uri = `spotify:track:${trackId}`;
+  debug(`🎵 Playing track ${uri} on device ${currentDeviceId} (start at ${startPositionMs}ms)`);
 
-const playRes = await fetch(
+  const playBody = {
+    uris: [uri],
+  };
+
+  // only include position_ms if greater than 0
+  if (startPositionMs > 0) {
+    playBody.position_ms = startPositionMs;
+  }
+
+  const playRes = await fetch(
     `https://api.spotify.com/v1/me/player/play?device_id=${currentDeviceId}`,
     {
-    method: "PUT",
-    headers: {
+      method: "PUT",
+      headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ uris: [uri] }),
+      },
+      body: JSON.stringify(playBody),
     }
-);
+  );
 
-debug("Play response:", playRes.status);
-if (!playRes.ok) debug(await playRes.text());
+  debug("Play response:", playRes.status);
+  if (!playRes.ok) debug(await playRes.text());
 };
 
   window.pausePlayback = async function pausePlayback() {

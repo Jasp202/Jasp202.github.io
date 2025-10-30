@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Spotify Login + Play 🎧</title>
+  <title>Collaboraitve Queue Host</title>
 </head>
 <body>
   <h1>Spotify Full Song Playback</h1>
@@ -414,6 +414,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     function playVideo(url, platform) {
         debug("trying to play", url, platform)
         if(platform == "youtube"){
+            makeIdle();
             if (!player_yt) {
                 player_yt = new YT.Player('now-playing', {
                 height: '360',

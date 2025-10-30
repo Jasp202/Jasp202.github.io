@@ -371,36 +371,16 @@ window.playSong = async function playSong(trackId, startPositionMs = 1) {
     let currentVideoID = null;
     let queueDocs = [];
 
-window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendationToQueue(seedTrackId) {
+window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendationToQueue(seedArtist) {
   try {
-    const token = localStorage.getItem("access_token");
-    if (!token) return debug("⚠️ No Spotify token found.");
-
-    // --- 1️⃣ Fetch seed track metadata
-    let seedTrack;
-    try {
-      const trackRes = await fetch(`https://api.spotify.com/v1/tracks/${seedTrackId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      seedTrack = trackRes.ok ? await trackRes.json() : null;
-    } catch {
-      seedTrack = null;
-    }
-
-    if (!seedTrack) {
-      debug("⚠️ Seed track unavailable. Using fallback.");
-      seedTrack = { artists: [{ name: "Rick Astley" }], id: "4PTG3Z6ehGkBFwjybzWkR8" };
-    }
-
-    const seedArtist = seedTrack.artists[0]?.name || "Rick Astley";
-
+    
     // --- 2️⃣ Search tracks by that artist
     const searchRes = await fetch(`/api/spotify-search?q=${encodeURIComponent(seedArtist)}`);
     const tracks = await searchRes.json();
 
     if (!tracks.length) {
       debug("⚠️ No tracks found for artist. Using fallback track.");
-      tracks.push({ id: seedTrack.id, name: seedTrack.name });
+      tracks.push({ id: "4PTG3Z6ehGkBFwjybzWkR8", name: "Rick Astley" });
     }
 
     // --- 3️⃣ Pick a random track
@@ -413,6 +393,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
       url: randomTrack.id,
       order: 1,
       createdAt: serverTimestamp(),
+      artist: randomTrack.artist,
     });
 
     debug(`🌀 Added random track by ${seedArtist}: ${randomTrack.name} (${randomTrack.id})`);
@@ -451,7 +432,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     }
 
     // Handle video ended
-var recommendID = "4uLU6hMCjMI75M1A2tKUQC";
+var recommendID = "michael jackson";
 async function onPlayerStateChange(event) {
       if (event.data === YT.PlayerState.ENDED && queueDocs.length > 0) {
         // Remove the first video from Firestore

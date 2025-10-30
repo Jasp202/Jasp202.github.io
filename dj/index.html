@@ -66,7 +66,7 @@ const db = getFirestore(app);
 const videosCol = collection(db, "videos");
 let queueDocs = [];
 
-window.addToEnd = async function(name, videoId, platform) {
+window.addToEnd = async function(name, videoId, platform, artist = "") {
      $('#ytPopup').css("display", "none")
   try {
     // Get the video with the highest current order value
@@ -85,7 +85,8 @@ window.addToEnd = async function(name, videoId, platform) {
       name,
       url: videoId,
       order: maxOrder + 1,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+      artist: artist,
     });
   } catch (err) {
     console.error("Error adding video:", err);
@@ -304,7 +305,7 @@ async function searchSpotify() {
         .text('Add to Queue')
         .on('click', e => {
           e.preventDefault();
-          addToEnd(track.name, track.id, 'spotify');
+          addToEnd(track.name, track.id, 'spotify', track.artist);
         });
 
       const container = $('<div>').css({ marginBottom: '1em' });

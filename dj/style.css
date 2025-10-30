@@ -51,6 +51,8 @@
     border-radius: 10px;
     box-shadow: 0 1px 0 rgba(0,0,0,0.04);
     border: 1px solid #eef2f7;
+    padding-top: 2px;
+    padding-bottom: 2px;
   }
   li.item.spotify{
     background: rgb(199, 243, 199)!important;
@@ -59,11 +61,15 @@
     border: 3px solid #5fb36a; /* bright red border */
     box-shadow: 0 0 10px rgba(6, 100, 14, 0.7);
     margin-bottom: 1rem;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 li.item:first-child {
   border: 3px solid #ff4b4b; /* bright red border */
   box-shadow: 0 0 10px rgba(255, 75, 75, 0.7);
   margin-bottom: 1rem;
+  padding-top: 10px;
+    padding-bottom: 10px;
 }
   /* drag visual */
   li.item.dragging{

@@ -284,7 +284,66 @@ window.playSong = async function playSong(trackId, startPositionMs = 1) {
     });
 
     debug("🕊️ Player set to idle (no song loaded)");
-  };
+};
+
+window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendationToQueue(seedTrackId) {
+  const token = localStorage.getItem("access_token");
+  if (!token) {
+    debug("⚠️ No Spotify token found for autoplay.");
+    return;
+  }
+
+  try {
+    // 1️⃣ Get recommendations from Spotify API
+    const res = await fetch(
+      `https://api.spotify.com/v1/recommendations?limit=3&seed_tracks=${seedTrackId}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (!res.ok) {
+      debug("⚠️ Spotify recommendation request failed:", res.status);
+      debug(await res.text());
+      return;
+    }
+
+    const data = await res.json();
+    if (!data.tracks?.length) {
+      debug("No Spotify recommendations found for:", seedTrackId);
+      return;
+    }
+
+    // 2️⃣ Get the current max "order" value in Firestore
+    const q = query(videosCol, orderBy("order", "desc"), limit(1));
+    const querySnapshot = await getDocs(q);
+
+    let maxOrder = 0;
+    if (!querySnapshot.empty) {
+      const topDoc = querySnapshot.docs[0];
+      maxOrder = topDoc.data().order || 0;
+    }
+
+    // 3️⃣ Add recommended tracks to Firestore queue
+    for (const track of data.tracks) {
+      const videoId = track.id;
+      const name = track.name;
+      const platform = "spotify";
+
+      await addDoc(videosCol, {
+        platform,
+        name,
+        url: videoId,
+        order: ++maxOrder,
+        createdAt: serverTimestamp(),
+      });
+
+      debug(`🌀 Added recommended track: ${name} (${videoId})`);
+    }
+
+    debug(`✅ Added ${data.tracks.length} Spotify recommendations to queue.`);
+  } catch (err) {
+    debug("❌ Error adding recommendations:", err);
+  }
+}
 
   // --- Hook buttons
   document.getElementById("play").onclick = () => {
@@ -400,10 +459,12 @@ window.playSong = async function playSong(trackId, startPositionMs = 1) {
     }
 
     // Handle video ended
+var recommenID = "";
 async function onPlayerStateChange(event) {
       if (event.data === YT.PlayerState.ENDED && queueDocs.length > 0) {
         // Remove the first video from Firestore
         const firstVideoDoc = queueDocs[0];
+        recommenID = firstVideoDoc.id;
         await deleteDoc(doc(db, "videos", firstVideoDoc.id));
       }
 }
@@ -414,8 +475,23 @@ window.onPlayerStateChangeNoCheck = async function(){
     }
 } 
 
+// Create a "Start Listening" button
+const startButton = document.createElement("button");
+startButton.textContent = "Start Listening";
+startButton.id = "startListeningBtn";
+document.body.prepend(startButton);
+let unsubscribe = null;
+
+// When button is clicked, start listening
+startButton.addEventListener("click", () => {
+  if (unsubscribe) {
+    console.log("Already listening!");
+    return;
+  }
+
+  console.log("🎧 Starting to listen for queue updates...");
     // Listen for the queue in real-time
-onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
+    unsubscribe = onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
       queueDocs = snapshot.docs;
 
       // Play next video only if first video changes
@@ -425,8 +501,10 @@ onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
           playVideo(firstVideo.url, firstVideo.platform);
         }
     } else {
-        currentVideoID = null;
-        nowPlayingDiv.innerHTML = "<p>No videos in the queue</p>";
+        if (lastSpotifyTrackId) {
+        debug("🌀 Queue empty, adding Spotify recommendations...");
+        addSpotifyRecommendationToQueue(lastSpotifyTrackId);
+    }
     }
 
       // Render queue list
@@ -440,7 +518,7 @@ onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
 
         queueList.appendChild(li);
       });
-    });
+});});
 </script>
 </body>
 </html>

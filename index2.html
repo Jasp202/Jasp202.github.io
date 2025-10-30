@@ -491,11 +491,12 @@ startButton.addEventListener("click", () => {
 
   debug("🎧 Starting to listen for queue updates...");
     // Listen for the queue in real-time
-    unsubscribe = onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
+unsubscribe = onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
       queueDocs = snapshot.docs;
-
+    debug("storage state change");
       // Play next video only if first video changes
     if (queueDocs.length > 0) {
+        debug("lenth, ", queueDocs.length);
         const firstVideo = queueDocs[0].data();
         if (firstVideo.url !== currentVideoID) {
           playVideo(firstVideo.url, firstVideo.platform);

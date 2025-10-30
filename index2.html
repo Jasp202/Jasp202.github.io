@@ -22,29 +22,21 @@
     let currentDeviceId = null;
     let player = null;
 
-// Debug helper
-var previous_args = [];
-function debug(...args) {
-        // Compare current args with previous args
-        const same =
-            args.length === previousArgs.length &&
-            args.every((arg, i) => JSON.stringify(arg) === JSON.stringify(previousArgs[i]));
-
-        if (same) return; // no change, skip logging
-            console.log(...args);
-            previousArgs = args;
+    // Debug helper
+    function debug(...args) {
+      console.log(...args);
       const el = document.getElementById("debug");
       el.textContent += args
         .map(a => (typeof a === "object" ? JSON.stringify(a, null, 2) : a))
         .join(" ") + "\n";
-}
+    }
 
-window.addEventListener("error", e =>
-    debug("Global error:", e.message, e.filename, e.lineno)
-);
-window.addEventListener("unhandledrejection", e =>
-    debug("Unhandled promise rejection:", e.reason)
-);
+    window.addEventListener("error", e =>
+      debug("Global error:", e.message, e.filename, e.lineno)
+    );
+    window.addEventListener("unhandledrejection", e =>
+      debug("Unhandled promise rejection:", e.reason)
+    );
 
     // --- 1️⃣ Login flow (PKCE)
     document.getElementById("login").onclick = async () => {

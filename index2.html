@@ -198,6 +198,14 @@ player.addListener("player_state_changed", state => {
 });
   // Connect player (idle)
   player.connect();
+  document.getElementById("startListeningBtn").addEventListener("click", async () => {
+  try {
+    await player.resume(); // unlocks AudioContext
+    debug("🔓 Audio unlocked via user gesture!");
+  } catch (err) {
+    debug("⚠️ Could not resume player:", err);
+  }
+});
 
 // Expose helper functions globally
 window.playSong = async function playSong(trackId, startPositionMs = 1) {

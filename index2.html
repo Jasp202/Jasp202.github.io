@@ -291,7 +291,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     var r = "rick astley"
     const res = await fetch(`/api/spotify-search?q=${encodeURIComponent(r)}`);
     const tracks = await res.json();
-    debug(tracks[0])
+    debug(tracks[0]);
     debug("videosCol:", videosCol);
     // --- 3️⃣ Add recommended tracks to Firestore
     
@@ -310,6 +310,7 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
     debug("❌ Error while adding search-based Spotify recommendations:", err);
   }
 };
+
 
   // --- Hook buttons
   document.getElementById("play").onclick = () => {

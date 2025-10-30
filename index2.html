@@ -22,21 +22,29 @@
     let currentDeviceId = null;
     let player = null;
 
-    // Debug helper
-    function debug(...args) {
-      console.log(...args);
+// Debug helper
+var previous_args = [];
+function debug(...args) {
+        // Compare current args with previous args
+        const same =
+            args.length === previousArgs.length &&
+            args.every((arg, i) => JSON.stringify(arg) === JSON.stringify(previousArgs[i]));
+
+        if (same) return; // no change, skip logging
+            console.log(...args);
+            previousArgs = args;
       const el = document.getElementById("debug");
       el.textContent += args
         .map(a => (typeof a === "object" ? JSON.stringify(a, null, 2) : a))
         .join(" ") + "\n";
-    }
+}
 
-    window.addEventListener("error", e =>
-      debug("Global error:", e.message, e.filename, e.lineno)
-    );
-    window.addEventListener("unhandledrejection", e =>
-      debug("Unhandled promise rejection:", e.reason)
-    );
+window.addEventListener("error", e =>
+    debug("Global error:", e.message, e.filename, e.lineno)
+);
+window.addEventListener("unhandledrejection", e =>
+    debug("Unhandled promise rejection:", e.reason)
+);
 
     // --- 1️⃣ Login flow (PKCE)
     document.getElementById("login").onclick = async () => {
@@ -485,11 +493,11 @@ let unsubscribe = null;
 // When button is clicked, start listening
 startButton.addEventListener("click", () => {
   if (unsubscribe) {
-    console.log("Already listening!");
+    debug("Already listening!");
     return;
   }
 
-  console.log("🎧 Starting to listen for queue updates...");
+  debug("🎧 Starting to listen for queue updates...");
     // Listen for the queue in real-time
     unsubscribe = onSnapshot(query(videosCol, orderBy("order", "asc")), (snapshot) => {
       queueDocs = snapshot.docs;
@@ -501,9 +509,9 @@ startButton.addEventListener("click", () => {
           playVideo(firstVideo.url, firstVideo.platform);
         }
     } else {
-        if (lastSpotifyTrackId) {
+        if (recommenID) {
         debug("🌀 Queue empty, adding Spotify recommendations...");
-        addSpotifyRecommendationToQueue(lastSpotifyTrackId);
+        addSpotifyRecommendationToQueue(recommenID);
     }
     }
 

@@ -410,6 +410,26 @@ window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendation
       return (match && match[7].length === 11) ? match[7] : null;
     }
 
+    const ytstartButton = document.createElement("button");
+    ytstartButton.textContent = "Start youtube player";
+    ytstartButton.id = "ytstartButton";
+    document.body.prepend(ytstartButton);
+
+// When button is clicked, start listening
+ytstartButton.addEventListener(() => {
+    createOneYtPlayer();
+})
+
+    function createOneYtPlayer() {
+        player_yt = new YT.Player('now-playing', {
+                height: '360',
+                width: '640',
+                videoId: "https://www.youtube.com/watch?v=ESx_hy1n7HA",
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            })
+    }
     // Play a video in the player
     function playVideo(url, platform) {
         debug("trying to play", url, platform)

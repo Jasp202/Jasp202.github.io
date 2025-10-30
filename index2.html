@@ -286,14 +286,6 @@ window.playSong = async function playSong(trackId, startPositionMs = 1) {
     debug("🕊️ Player set to idle (no song loaded)");
 };
 
-let seeds = [seedTrackId]; // start with original track
-
-// Add a global fallback track if first seed fails
-const fallbackTrack = "3n3Ppam7vgaVa1iaRUc9Lp"; // Michael Jackson – Billie Jean
-seeds.push(fallbackTrack);
-
-// Optionally, add a popular artist seed
-const fallbackArtist = "3fMbdgg4jU18AjLCKBhRSm"; // Michael Jackson artist ID
 
 window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendationToQueue(seedTrackId) {
   const token = localStorage.getItem("access_token");

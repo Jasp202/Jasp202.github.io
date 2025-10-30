@@ -287,61 +287,10 @@ window.playSong = async function playSong(trackId, startPositionMs = 1) {
 };
 
 window.addSpotifyRecommendationToQueue = async function addSpotifyRecommendationToQueue(seedTrackId) {
-  const token = localStorage.getItem("access_token");
-  if (!token) {
-    debug("⚠️ No Spotify token found for autoplay.");
-    return;
-  }
-
-  const FALLBACK_TRACKS = ["3n3Ppam7vgaVa1iaRUc9Lp", "2takcwOaAZWiXQijPHIx7B"]; // globally available
-  const FALLBACK_ARTISTS = ["Michael Jackson"]; // safe fallback
-  const FALLBACK_GENRES = ["pop", "rock"];
-
-  try {
-    debug("🎯 Starting search-based recommendation process for seed track:", seedTrackId);
-
-    // --- 0️⃣ Fetch seed track metadata
-    let seedTrack;
-    const trackRes = await fetch(`https://api.spotify.com/v1/tracks/${seedTrackId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (trackRes.ok) {
-      seedTrack = await trackRes.json();
-      debug(`✅ Seed track found: ${seedTrack.name}`);
-    } else {
-      debug(`⚠️ Seed track unavailable. Using fallback track: ${FALLBACK_TRACKS[0]}`);
-      seedTrack = { id: FALLBACK_TRACKS[0], artists: [{ name: FALLBACK_ARTISTS[0] }] };
-    }
-
-    // --- 1️⃣ Sanitize artist name
-    let artistName = seedTrack.artists?.[0]?.name || FALLBACK_ARTISTS[0];
-    // Keep only ASCII letters, numbers, and spaces
-    artistName = artistName.replace(/[^\x00-\x7F]/g, "");
-    if (!artistName) artistName = FALLBACK_ARTISTS[0];
-
-    const genre = FALLBACK_GENRES[0]; // safe genre
-    const searchQuery = encodeURIComponent(`artist:"${artistName}" genre:"${genre}"`);
-    const searchUrl = `https://api.spotify.com/v1/search?q=${searchQuery}&type=track&limit=5`;
-
-    debug("🔹 Searching Spotify via serverless API with keyword:", artistName);
-
-    const searchRes = await fetch(searchUrl, { headers: { Authorization: `Bearer ${token}` } });
-
-    if (!searchRes.ok) {
-      debug("⚠️ Search request failed:", searchRes.status);
-      debug(await searchRes.text());
-      return;
-    }
-
-    const searchData = await searchRes.json();
-    const tracks = searchData.tracks?.items || [];
-
-    if (!tracks.length) {
-      debug("⚠️ No search-based recommendations found. Using fallback tracks.");
-      tracks.push(...FALLBACK_TRACKS.map(id => ({ id, name: id })));
-    }
-
+  try{
+    var r = "rick astley"
+    const res = await fetch(`/api/spotify-search?q=${encodeURIComponent(r)}`);
+    const tracks = await res.json();
     // --- 2️⃣ Get current max order in Firestore
     const getMaxOrder = async () => {
       const q = query(videosCol, orderBy("order", "desc"), limit(1));

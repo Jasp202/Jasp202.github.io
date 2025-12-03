@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GPX Buffer Viewer (Merged)</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>
+    body { margin:0; padding:0; }
+    #map { width:100%; height:100vh; }
+    .distance-control {
+      background: rgba(255,255,255,0.8);
+      padding: 6px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import * as firestore from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBGhh5I4BQOG-wOBzbqatstfe1OVCb9yuY",
+    authDomain: "walkingtracks-f0a9e.firebaseapp.com",
+    projectId: "walkingtracks-f0a9e",
+    storageBucket: "walkingtracks-f0a9e.firebasestorage.app",
+    messagingSenderId: "450365792410",
+    appId: "1:450365792410:web:ebe3504aecacf7c45cbf23"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = firestore.getFirestore(app);
+
+  const map = L.map('map').setView([60.17, 24.94], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+
+  // --- Distance calculation ---
+  function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371000; // meters
+    const toRad = x => x * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+              Math.sin(dLon/2)**2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  function calculateDistance(coords) {
+    let total = 0;
+    for (let i = 1; i < coords.length; i++) {
+      total += haversine(coords[i-1][1], coords[i-1][0], coords[i][1], coords[i][0]);
+    }
+    return total;
+  }
+
+  // --- Leaflet control for distance ---
+  const distanceControl = L.control({ position: 'topright' });
+  let totalDistance = 0;
+
+  distanceControl.onAdd = function(map) {
+    const div = L.DomUtil.create('div', 'distance-control');
+    div.innerHTML = `Distance: 0 km`;
+    return div;
+  };
+  distanceControl.addTo(map);
+
+  async function fetchAndDrawRoutes() {
+    const snapshot = await firestore.getDocs(firestore.collection(db, "gpxTracks"));
+    const allCoords = [];
+    let mergedBuffer = null;
+
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      if (!data.coordinates) continue;
+
+      const coords = data.coordinates.map(c => [c.lon, c.lat]); // GeoJSON [lon, lat]
+      allCoords.push(...coords);
+
+      // Update total distance
+      totalDistance += calculateDistance(coords);
+
+      // Draw red polyline (invisible)
+      const latlngs = data.coordinates.map(c => [c.lat, c.lon]);
+      L.polyline(latlngs, { color: 'red', weight: 2, opacity: 0 }).addTo(map);
+
+      // Generate Turf.js LineString and buffer
+      const line = turf.lineString(coords);
+      const buffered = turf.buffer(line, 25, { units: 'meters' });
+
+      // Merge buffers
+      if (!mergedBuffer) mergedBuffer = buffered;
+      else mergedBuffer = turf.union(mergedBuffer, buffered);
+    }
+
+    // Draw merged buffer with fill and edge
+    if (mergedBuffer) {
+      L.geoJSON(mergedBuffer, { 
+        style: { color: 'darkblue', weight: 2, fillColor: 'blue', fillOpacity: 0.2 } 
+      }).addTo(map);
+    }
+
+    // Fit map to all coordinates
+    if (allCoords.length) {
+      const latlngs = allCoords.map(c => [c[1], c[0]]);
+      map.fitBounds(latlngs);
+    }
+
+    // Update distance display
+    const div = document.querySelector('.distance-control');
+    div.innerHTML = `Distance: ${(totalDistance/1000).toFixed(2)} km`;
+  }
+
+  fetchAndDrawRoutes();
+</script>
+
+</body>
+</html>

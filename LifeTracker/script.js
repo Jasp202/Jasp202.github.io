@@ -134,12 +134,15 @@ var currentSitUps = 0;
 var currentPushUps = 0;
 var currentSquats = 0;
 var currentBike = 0;
+var currentTeeth = 0;
 
 var sitReward = 0;
 var pushReward = 0;
 var squatReward = 0;
 var bikeReward = 0;
+var teethReward = 0;
 var claimedReward = 0;
+
 
 function dailyReward() {
     console.log(claimedReward)
@@ -148,7 +151,7 @@ function dailyReward() {
         console.log(claimedReward)
         return;
     }
-    else if(claimedReward == 0 && bikeReward >= 1 && pushReward >= 1 && sitReward >= 1 && squatReward >= 1){
+    else if(claimedReward == 0 && bikeReward >= 1 && pushReward >= 1 && sitReward >= 1 && squatReward >= 1 && teethReward >= 1){
         document.getElementById("soloButton").classList.add("shinyImage");
         DropChestWith(0,100,100,0);
         claimedReward = 1;
@@ -156,7 +159,7 @@ function dailyReward() {
         console.log("def",claimedReward)
         return;
     }
-    else if(claimedReward == 1 && bikeReward == 2 && pushReward == 2 && sitReward == 2 && squatReward == 2){
+    else if(claimedReward == 1 && bikeReward == 2 && pushReward == 2 && sitReward == 2 && squatReward == 2 && teethReward >= 1){
         DropChestWith(1,100,100,0)
         claimedReward = 2;
         localStorage.claimedReward = 2;
@@ -209,6 +212,13 @@ function incrementCounter(status2, counter, status, key, max) {
           current = currentBike;
           currentReward =  {
             set: (val) => bikeReward = val,
+        };
+          break;
+        case "Teeth":
+          currentTeeth += 1;
+          current = currentTeeth;
+          currentReward =  {
+            set: (val) => teethReward = val,
         };
           break;
       }
@@ -312,7 +322,10 @@ if(localStorage.Bike){
     currentBike = localStorage.Bike -10;
     document.getElementById("counterBike").click();
 }
-
+if(localStorage.Teeth){
+    currentTeeth = localStorage.Teeth -1;
+    document.getElementById("counterTeeth").click();
+}
 
 function checkDateOnFocus() {
     const today = new Date().toLocaleDateString("en-CA");
@@ -332,12 +345,14 @@ function checkDateOnFocus() {
     currentPushUps = -10;
     currentSquats = -10;
     currentBike = -10;
+    currentTeeth = -1;
 
     claimedReward = 0;
     sitReward = 0;
     pushReward = 0;
     squatReward = 0;
     bikeReward = 0;
+    teethReward = 0;
     
     document.getElementById("counterSitUps").click();
     
@@ -346,6 +361,8 @@ function checkDateOnFocus() {
     document.getElementById("counterSquats").click();
    
     document.getElementById("counterBike").click();
+
+    document.getElementById("counterTeeth").click();
 
     localStorage.setItem("lastVisitDate", today);
     }

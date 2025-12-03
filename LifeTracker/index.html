@@ -82,17 +82,17 @@
         <img src="./Images/solo.png"width=100%>
     </button>
     <br>
-    <button id="gameButton" onclick="showProgress()">
+    <button id="gameButton" onclick="showProgress()" style="display:none">
         <img src="./Images/Progress.png" width="100%">
     </button>
     <br>
     <button  id ="weatherButton" onclick="showWeather()"><i class="fa-solid fa-temperature-three-quarters"></i></button>
     <br>
-    <button id="lunchButton" onclick="showButtons()">
+    <button id="lunchButton" onclick="showButtons()"style="display:none">
         <img src="./Images/bread.png"width=100%>
     </button>
     <br>
-    <button id="foodButton">
+    <button id="foodButton" style="display:none">
 
     </button>
     <div class="weatherContainer" id="WeatherContainer" onclick="hideWeather()">
@@ -133,6 +133,10 @@
     </div>
     <div class="content2" style="font-weight: 600; margin-bottom: 10px">
         <span style="color: lightgreen;">GOALS</span>
+    </div>
+    <div class="split-text">
+        <div class="left-text"><span id="statusTeeth2">[Incomplete]</span> TEETH</div>
+        <div class="right-text"><span id="counterTeeth" onclick="incrementCounter(statusTeeth2, counterTeeth, statusTeeth, 'Teeth', 2)">[0/2]</span> <span id="statusTeeth">❌</span></div>
     </div>
     <div class="split-text">
         <div class="left-text"><span id="statusPushUps2">[Incomplete]</span> PUSH-UPS</div>

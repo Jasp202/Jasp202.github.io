@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GPX → Firebase</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    pre { background: #f4f4f4; padding: 10px; border-radius: 5px; }
+  </style>
+  <script type="module">
+    // --- Firebase SDK ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import * as firestore from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    // --- Your Firebase Config ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyBGhh5I4BQOG-wOBzbqatstfe1OVCb9yuY",
+      authDomain: "walkingtracks-f0a9e.firebaseapp.com",
+      projectId: "walkingtracks-f0a9e",
+      storageBucket: "walkingtracks-f0a9e.firebasestorage.app",
+      messagingSenderId: "450365792410",
+      appId: "1:450365792410:web:ebe3504aecacf7c45cbf23"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = firestore.getFirestore(app);
+    window.db = db; // make Firestore globally accessible
+    window.firestore = firestore; // expose firestore namespace
+
+    // --- Ramer–Douglas–Peucker simplification ---
+    function simplify(coords, tolerance = 1.0) {
+      if (coords.length < 3) return coords;
+
+      const [refLat, refLon] = coords[0];
+      const mPerLat = 111320.0;
+      const mPerLon = 111320.0 * Math.cos(refLat * Math.PI / 180);
+
+      const toLocal = ([lat, lon]) => {
+        const dx = (lon - refLon) * mPerLon;
+        const dy = (lat - refLat) * mPerLat;
+        return [dx, dy];
+      };
+
+      const perpDist = (p, a, b) => {
+        const [px, py] = p;
+        const [ax, ay] = a;
+        const [bx, by] = b;
+        if (ax === bx && ay === by) return Math.hypot(px - ax, py - ay);
+        return Math.abs((by - ay)*px - (bx - ax)*py + bx*ay - by*ax)/Math.hypot(bx - ax, by - ay);
+      };
+
+      const rdp = (points, first, last) => {
+        let maxDist = 0, index = first;
+        const a = toLocal(points[first]), b = toLocal(points[last]);
+        for (let i = first+1; i<last; i++) {
+          const dist = perpDist(toLocal(points[i]), a, b);
+          if (dist > maxDist) { maxDist = dist; index = i; }
+        }
+        if (maxDist > tolerance) {
+          const left = rdp(points, first, index);
+          const right = rdp(points, index, last);
+          return left.slice(0,-1).concat(right);
+        } else return [points[first], points[last]];
+      };
+
+      return rdp(coords, 0, coords.length -1);
+    }
+
+    window.simplify = simplify;
+
+  </script>
+</head>
+<body>
+
+<h2>Upload GPX → Save to Firebase Firestore</h2>
+
+<input type="file" id="gpxFile" accept=".gpx"><br><br>
+<button onclick="processGpx()">Upload GPX</button>
+
+<pre id="output">Status messages will appear here...</pre>
+
+<script>
+async function processGpx() {
+  const output = document.getElementById("output");
+  output.textContent = "Processing GPX file...";
+
+  const file = document.getElementById("gpxFile").files[0];
+  if (!file) {
+    output.textContent = "❌ Please select a GPX file.";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const xml = new DOMParser().parseFromString(reader.result, "text/xml");
+      const trkpts = xml.getElementsByTagName("trkpt");
+      if (!trkpts.length) {
+        output.textContent = "❌ No trackpoints found in GPX.";
+        return;
+      }
+
+      let coords = [], firstTime = null;
+      for (let pt of trkpts) {
+        const lat = parseFloat(pt.getAttribute("lat"));
+        const lon = parseFloat(pt.getAttribute("lon"));
+        coords.push([parseFloat(lat.toFixed(5)), parseFloat(lon.toFixed(5))]);
+        if (!firstTime) {
+          const timeElem = pt.getElementsByTagName("time")[0];
+          if (timeElem) firstTime = timeElem.textContent.replace(/:/g,"-");
+        }
+      }
+
+      const simplified = window.simplify(coords, 5);
+      if (!firstTime) firstTime = "unknown_time";
+
+      const data = {
+        filename: `coordinates_${firstTime}.json`,
+        originalCount: coords.length,
+        simplifiedCount: simplified.length,
+        coordinates: simplified.map(([lat, lon]) => ({ lat, lon })),
+        createdAt: window.firestore.serverTimestamp()
+      };
+
+      output.textContent = "Uploading to Firestore...";
+      const docRef = await window.firestore.addDoc(
+        window.firestore.collection(window.db, "gpxTracks"),
+        data
+      );
+
+      output.textContent =
+        `✅ Uploaded successfully!\nDocument ID: ${docRef.id}\n\n` +
+        `Original points: ${coords.length}\nSimplified points: ${simplified.length}`;
+
+    } catch (err) {
+      console.error(err);
+      output.textContent = `❌ Error: ${err.message || err}`;
+    }
+  };
+
+  reader.onerror = (e) => {
+    output.textContent = `❌ File read error: ${e.target.error}`;
+  };
+
+  reader.readAsText(file);
+}
+</script>
+
+</body>
+</html>

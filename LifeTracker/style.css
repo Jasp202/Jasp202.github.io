@@ -376,6 +376,14 @@ th, td {
     left: 4px;
     
 }
+#mapButton{
+    background: none;
+    border: none;
+    width: 65px;
+    position: relative;
+    top: 20px;
+    left: 4px
+}
 .currency{
     position: relative;
     display: flex;

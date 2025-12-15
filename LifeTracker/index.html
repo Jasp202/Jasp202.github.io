@@ -91,9 +91,12 @@
     <button id="lunchButton" onclick="showButtons()"style="display:none">
         <img src="./Images/bread.png"width=100%>
     </button>
-    <br>
-    <button id="foodButton" style="display:none">
 
+    <button id="foodButton" style="display:none">
+    </button>
+    <br>
+    <button onclick="window.location.href='../map_tracking/upload_gpx'" id="mapButton">
+        <img src="./Images/map_icon.png"width=100%>
     </button>
     <div class="weatherContainer" id="WeatherContainer" onclick="hideWeather()">
         <div id="weatherUpperInfo"><img src="./Images/sunrise.svg" width="30px">Sunrise:&nbsp<p class="weatherClock" id="timeRise">19:00</p>,&nbspsunset:&nbsp<p class="weatherClock" id="timeSet"> 20:00</p></div>

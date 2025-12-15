@@ -1802,6 +1802,33 @@ spinBtn.addEventListener("click", () => {
         test_dare =  "1" + String(Math.floor(Math.random() * 24) + 1).padStart(2, '0') + ". " + hiddenDare;
         current_type = "11";
     }
+
+    //this listens to firebase to check for external dares.
+   if (window.firebase_dare !== "") {
+    let safeSlice = 360 / (2 * totalValue);
+    let safeStartAngle = 360 * Math.random();
+    let indices = Array.from({ length: 2 * totalValue }, (_, i) => i);
+    indices = shuffle(indices);
+
+    const target = window.firebase_dare.toLowerCase().trim().replace(/\s+/g, " ").normalize("NFC");
+
+    for (let i = 0; i < indices.length; i++) {
+        rolledDare = indices[i] * safeSlice + safeStartAngle;
+        current_type = pullPieType(rolledDare, totalValue);
+        test_dare = pullPieDare(rolledDare, totalValue);
+
+        const candidate = test_dare.toLowerCase().trim().replace(/\s+/g, " ").normalize("NFC");
+
+        if (candidate == target) {
+            //found target
+            break;
+        }
+    }
+
+    // Reset firebase_dare
+    setFirebaseDare("");
+    }
+
     
     //dare has been rolled 
     if(!(fast_roll == 1)){
@@ -3245,53 +3272,63 @@ time_per_icon = 100,
 indexes = [0, 0, 0];
 
 
-/** 
- * Roll one reel
+/**
+ * Roll one reel with slow settle
  */
 const roll = (reel, offset = 0, target = null) => {	
-	// Minimum of 2 + the reel offset rounds
-	let delta = (offset + 2) * num_icons + Math.round(Math.random() * num_icons); 
+	const baseRounds = 2 + offset;
+
+	let delta = baseRounds * num_icons + Math.round(Math.random() * num_icons); 
 	
 	const style = getComputedStyle(reel),
-					// Current background position
-					backgroundPositionY = parseFloat(style["background-position-y"]);
+		backgroundPositionY = parseFloat(style["background-position-y"]);
 	
-	// Rigged?
-	if (target) {
-		// calculate delta to target
+	// Rigged outcome
+	if (target !== null) {
 		const currentIndex = backgroundPositionY / icon_height;
-		delta = target - currentIndex + (offset + 2) * num_icons;
+		delta = target - currentIndex + baseRounds * num_icons;
 	}
-	
-	// Return promise so we can wait for all reels to finish
-	return new Promise((resolve, reject) => {
-		
-		
-		const
-					// Target background position
-					targetBackgroundPositionY = backgroundPositionY + delta * icon_height,
-					// Normalized background position, for reset
-					normTargetBackgroundPositionY = targetBackgroundPositionY%(num_icons * icon_height);
-		
-		// Delay animation with timeout, for some reason a delay in the animation property causes stutter
-		setTimeout(() => { 
-			// Set transition properties ==> https://cubic-bezier.com/#.41,-0.01,.63,1.09
-			reel.style.transition = `background-position-y ${(8 + 1 * delta) * time_per_icon}ms cubic-bezier(.41,-0.01,.63,1.09)`;
-			// Set background position
-			reel.style.backgroundPositionY = `${backgroundPositionY + delta * icon_height}px`;
-		}, offset * 150);
-			
-		// After animation
+
+	// --- SETTLE CONTROL ---
+	const slowIcons = 3 + offset * 2; // 🔧 increase for slower finish
+	const fastDelta = delta - slowIcons;
+	const slowDelta = slowIcons;
+
+	return new Promise((resolve) => {
+		const fastTargetY =
+			backgroundPositionY + fastDelta * icon_height;
+
+		const finalTargetY =
+			backgroundPositionY + delta * icon_height;
+
+		const normFinalY =
+			finalTargetY % (num_icons * icon_height);
+
+		/* FAST SPIN */
 		setTimeout(() => {
-			// Reset position, so that it doesn't get higher without limit
-			reel.style.transition = `none`;
-			reel.style.backgroundPositionY = `${normTargetBackgroundPositionY}px`;
-			// Resolve this promise
-			resolve(delta%num_icons);
-		}, (8 + 1 * delta) * time_per_icon + offset * 150);
-		
+			reel.style.transition =
+				`background-position-y ${fastDelta * time_per_icon}ms linear`;
+			reel.style.backgroundPositionY =
+				`${fastTargetY}px`;
+		}, offset * 150);
+
+		/* SLOW SETTLE */
+		setTimeout(() => {
+			reel.style.transition =
+				`background-position-y ${slowDelta * time_per_icon * 2}ms cubic-bezier(.22,.61,.36,1)`;
+			reel.style.backgroundPositionY =
+				`${finalTargetY}px`;
+		}, fastDelta * time_per_icon + offset * 150);
+
+		/* CLEANUP */
+		setTimeout(() => {
+			reel.style.transition = "none";
+			reel.style.backgroundPositionY = `${normFinalY}px`;
+			resolve(delta % num_icons);
+		}, fastDelta * time_per_icon + slowDelta * time_per_icon * 2 + offset * 150);
 	});
 };
+
 
 
 /**
@@ -3300,14 +3337,8 @@ const roll = (reel, offset = 0, target = null) => {
 function rollAll() {
 	
 	const reelsList = document.querySelectorAll('.slots > .reel');
-    var mySoundSpin = new alarmSound("spin", 1);
-    mySoundSpin.sound.addEventListener('timeupdate', function(){
-        var buffer = .44
-        if(this.currentTime > this.duration - buffer){
-            this.currentTime = 0
-            this.play()
-        }
-    });
+    let mySoundSpin = new alarmSound("spin", 1);
+    mySoundSpin.sound.loop = true;
     mySoundSpin.play();
 	
 	// rig the outcome for every 3rd roll, if targets is set to null, the outcome will not get rigged by the roll function
@@ -3337,7 +3368,7 @@ function rollAll() {
 		
 		// When all reels done animating (all promises solve)
 		.then((deltas) => {
-            mySoundSpin.stop();
+            mySoundSpin.sound.loop = false;
             mySoundSpin.stop();
             topLever.classList.remove("pull");
 			// add up indexes
@@ -4226,6 +4257,11 @@ window.onload = () => {
         highlightCurrentPlayer(getShotButtonDivs())
         currentPlayer -= 1;
     }
+
+    const labels = dataDaresPie.map(item => item.label);
+
+    // Call only when data is ready
+    initFirebaseLabels(labels);
 
 }
 

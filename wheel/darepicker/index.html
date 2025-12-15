@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Poker Night Dare Selector</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    select, button { font-size: 16px; padding: 5px; margin: 10px 0; }
+    #currentStatus { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Poker Night Dare Selector</h1>
+
+  <label for="dareSelect">Choose a dare:</label>
+  <select id="dareSelect" disabled>
+    <option value="">Loading dares...</option>
+  </select>
+  <br>
+  <button id="confirmBtn" disabled>Confirm Selection</button>
+
+  <div id="currentStatus">Current Status: <span id="statusText">None</span></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      updateDoc,
+      onSnapshot,
+      arrayUnion,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    /* ---------- FIREBASE INIT ---------- */
+    const firebaseConfig = {
+      apiKey: "AIzaSyDPZauivTgjQRsF1_CIPgVYVjj4EuYa3Ko",
+      authDomain: "pokernightwheel.firebaseapp.com",
+      projectId: "pokernightwheel",
+      storageBucket: "pokernightwheel.firebasestorage.app",
+      messagingSenderId: "223478613296",
+      appId: "1:223478613296:web:132b696fb0eeb9e01534f5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    /* ---------- STATE ---------- */
+    const dareSelect = document.getElementById("dareSelect");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const statusText = document.getElementById("statusText");
+    const docRef = doc(db, "games", "pokerNight");
+
+    window.firebase_dare = "";
+
+    /* ---------- FUNCTIONS ---------- */
+    async function loadDares() {
+      const snapshot = await getDoc(docRef);
+      if (!snapshot.exists()) return;
+
+      const labels = snapshot.data().labels || [];
+      dareSelect.innerHTML = "";
+      if (labels.length === 0) {
+        dareSelect.innerHTML = `<option value="">No dares available</option>`;
+        dareSelect.disabled = true;
+        confirmBtn.disabled = true;
+      } else {
+        labels.forEach(dare => {
+          const option = document.createElement("option");
+          option.value = dare;
+          option.textContent = dare;
+          dareSelect.appendChild(option);
+        });
+        dareSelect.disabled = false;
+        confirmBtn.disabled = false;
+      }
+    }
+
+    window.setFirebaseDare = async function (newState) {
+      await updateDoc(docRef, { status: newState });
+    };
+
+    confirmBtn.addEventListener("click", async () => {
+      const selectedDare = dareSelect.value;
+      if (!selectedDare) return alert("Please select a dare.");
+
+      await window.setFirebaseDare(selectedDare);
+    });
+
+    /* ---------- REALTIME LISTENER ---------- */
+    onSnapshot(docRef, (snapshot) => {
+      if (!snapshot.exists()) return;
+
+      const status = snapshot.data().status || "";
+      window.firebase_dare = status;
+
+      if (status === "") {
+        statusText.textContent = "None";
+        dareSelect.value = "";
+      } else {
+        statusText.textContent = status;
+        if ([...dareSelect.options].some(o => o.value === status)) {
+          dareSelect.value = status;
+        } else {
+          dareSelect.value = "";
+        }
+      }
+    });
+
+    /* ---------- INITIAL LOAD ---------- */
+    loadDares();
+
+
+  </script>
+</body>
+</html>

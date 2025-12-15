@@ -1751,8 +1751,19 @@
   <script src="./Dares_used/dares_vergi_psycho.js"></script>
   <script src="./Dares_used/dares_memes.js"></script>
   <script src="./Dares_used/dares_default.js"></script>
-  
-  <script src="script.js"></script> 
+ 
+
+
+    <!-----------   These fallbacks are part of the firebase script and are safe versions if the module fails to load -->
+    <script>
+        window.initFirebaseLabels = async () => {};
+        window.setFirebaseDare = async () => {};
+        window.firebase_dare = "";
+    </script>
+    <script type="module" src="firebase_script.js"></script>
+
+    <script src="script.js"></script> 
+
   
   
 </body>  

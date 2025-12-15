@@ -1805,6 +1805,7 @@ spinBtn.addEventListener("click", () => {
 
     //this listens to firebase to check for external dares.
    if (window.firebase_dare !== "") {
+    console.log("trying to find secret dare")
     let safeSlice = 360 / (2 * totalValue);
     let safeStartAngle = 360 * Math.random();
     let indices = Array.from({ length: 2 * totalValue }, (_, i) => i);

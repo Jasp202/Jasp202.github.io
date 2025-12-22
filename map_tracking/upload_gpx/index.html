@@ -81,6 +81,54 @@
 <pre id="output">Status messages will appear here...</pre>
 
 <script>
+
+ // --- Distance calculation ---
+  function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371000; // meters
+    const toRad = x => x * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+              Math.sin(dLon/2)**2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  function calculateDistance(coords) {
+    let total = 0;
+    for (let i = 1; i < coords.length; i++) {
+      total += haversine(coords[i-1][1], coords[i-1][0], coords[i][1], coords[i][0]);
+    }
+    return total;
+  }
+  function logDistanceToLocalStorage(coords) {
+    let dist = 0
+    try {
+        // Check if the localStorage item exists and is a valid number
+        const storedDist = localStorage.getItem('map_tracking_travelDistance');
+        
+        if (storedDist !== null) {
+            // Parse the value to a number, ensuring it’s a valid number
+            dist = parseFloat(storedDist);
+            
+            // If it's not a valid number, reset to 0
+            if (isNaN(dist)) {
+                dist = 0;
+            }
+        }
+    } catch (error) {
+        console.error('Error accessing localStorage:', error);
+        dist = 0; // Fallback to default value
+    }
+
+    dist += calculateDistance(coords);
+    console.log(calculateDistance(coords))
+    localStorage.map_tracking_travelDistance = dist;
+    console.log("traveldist", dist);
+  }
+
+
 async function processGpx() {
   const output = document.getElementById("output");
   output.textContent = "Processing GPX file...";
@@ -114,6 +162,7 @@ async function processGpx() {
 
       const simplified = window.simplify(coords, 5);
       if (!firstTime) firstTime = "unknown_time";
+      logDistanceToLocalStorage(simplified);
 
       const data = {
         filename: `coordinates_${firstTime}.json`,

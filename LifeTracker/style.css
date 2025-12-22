@@ -377,12 +377,22 @@ th, td {
     
 }
 #mapButton{
-    background: none;
-    border: none;
+    background: white;
+    border: 3px solid rgba(0, 119, 255, 0.492);
+    border-radius: 10px;
     width: 65px;
+    height: max-content;
     position: relative;
     top: 20px;
-    left: 4px
+    left: 10px;
+    padding-top: 10px;
+    font-size: 80%;
+    
+}
+#mapButton img {
+    border: 3px solid rgba(255, 0, 0, 0.649);
+    border-radius: 50%;
+    width: 85%;
 }
 .currency{
     position: relative;
@@ -600,10 +610,12 @@ th, td {
     padding-top: 30px;
 }
 
-#chestRewardButton{
+#chestRewardButton {
     position: absolute;
-    bottom: 0%;
-    transform: translate(40%);
+    bottom: 0;
+    left: 50%;                /* center relative to parent */
+    transform: translateX(-50%); /* pull back half width */
+    
     width: 70px; 
     height: 70px; 
     background: none; 

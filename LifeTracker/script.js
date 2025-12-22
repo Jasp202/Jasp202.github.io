@@ -365,7 +365,33 @@ function checkDateOnFocus() {
     document.getElementById("counterTeeth").click();
 
     localStorage.setItem("lastVisitDate", today);
+
     }
+    if(localStorage.map_tracking_travelDistance){
+        // Retrieve and process the travel distance from localStorage
+        let distance = parseFloat(localStorage.map_tracking_travelDistance);
+        if (!isNaN(distance)) {
+            distance = (distance / 1000).toFixed(0); // Convert to km and round to 0 decimal places
+            document.getElementById("mapDistance").innerHTML = `${distance} km`;
+
+            // Check if last traveled distance exists
+            if(localStorage.lifeTracker_lastTraveledDistance){
+                let lastDistance = parseFloat(localStorage.lifeTracker_lastTraveledDistance);
+                if (!isNaN(lastDistance)) {
+                    let delta = distance - lastDistance;
+                    if(delta >= 100){
+                        // Update last traveled distance and trigger chest drop
+                        localStorage.lifeTracker_lastTraveledDistance = lastDistance + 100;
+                        DropChestWith(1, 1000, 500, 1);
+                    }
+                }
+            } else{
+                // Initialize if not set
+                localStorage.lifeTracker_lastTraveledDistance = 0;
+            }
+        }
+}
+
 }
 
 

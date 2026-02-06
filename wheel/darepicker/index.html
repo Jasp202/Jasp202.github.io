@@ -3,11 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Poker Night Dare Selector</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    select, button { font-size: 16px; padding: 5px; margin: 10px 0; }
-    #currentStatus { margin-top: 20px; font-weight: bold; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Poker Night Dare Selector</h1>
@@ -17,9 +13,9 @@
     <option value="">Loading dares...</option>
   </select>
   <br>
-  <button id="confirmBtn" disabled>Confirm Selection</button>
+  <button id="confirmBtn" disabled>Confirm Dare</button>
 
-  <div id="currentStatus">Current Status: <span id="statusText">None</span></div>
+  <div id="currentStatus">Next Dare: <span id="statusText">None</span></div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";

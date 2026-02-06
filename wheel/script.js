@@ -4259,7 +4259,9 @@ window.onload = () => {
         currentPlayer -= 1;
     }
 
-    const labels = dataDaresPie.map(item => item.label);
+    const labels = dataDaresPie
+        .filter(item => item.value != 0)
+        .map(item => item.label);
 
     // Call only when data is ready
     initFirebaseLabels(labels);

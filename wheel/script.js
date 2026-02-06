@@ -2712,6 +2712,12 @@ const images = {
     "Mohito":    "./Images/icons/mohito_icon.png",
     "Flaming shot":  "./Images/icons/flaming_shot_icon.png",
     "Hand sanitizer": "./Images/icons/hand_sanitizer_icon.png",
+    "Melon Wine": "./Images/icons/melon_juice_wow.png",
+    "Nuka Cola": "./Images/icons/nuka_cola_fallout.png",
+    "Fabsol's vodka": "./Images/icons/fabsols_vodka_terraria.png",
+    "Health potion": "./Images/icons/potion_league.png",
+    "Potion of Poison": "./Images/icons/potion_minecraft.png",
+    "Miku Wine": "./Images/icons/miku_wine.png",
 };
 
 

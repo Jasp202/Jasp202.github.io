@@ -3,7 +3,124 @@
 <head>
   <meta charset="UTF-8">
   <title>Poker Night Dare Selector</title>
-  <link rel="stylesheet" href="stylePicker.css">
+  <style>
+    /* General page styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #1e1e1e;
+  color: #ffffff;
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
+}
+
+/* Title */
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Label */
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+/* Select dropdown */
+select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  margin-bottom: 15px;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #e63946;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #ff4d5a;
+}
+
+/* Status display */
+#currentStatus {
+  margin-top: 25px;
+  padding: 15px;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Status text */
+#statusText {
+  color: #00ffcc;
+}
+select {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 20px auto;
+
+  padding: 12px 40px 12px 15px;
+  font-size: 16px;
+  color: #ffffff;
+
+  background-color: #1b1b1b;
+  border: 2px solid #2ecc71;
+  border-radius: 8px;
+
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #2ecc71 50%),
+    linear-gradient(135deg, #2ecc71 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) calc(50% - 3px),
+    calc(100% - 15px) calc(50% - 3px);
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+}
+
+/* Hover & focus */
+select:hover {
+  border-color: #3aff8f;
+}
+
+select:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.6);
+}
+
+/* Disabled dropdown */
+select:disabled {
+  background-color: #2a2a2a;
+  border-color: #555;
+  color: #888;
+  cursor: not-allowed;
+}
+  </style>
+
 </head>
 <body>
   <h1>Poker Night Dare Selector</h1>

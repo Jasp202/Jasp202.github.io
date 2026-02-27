@@ -3,12 +3,17 @@
    ============================================================ */
 
 window.firebase_dare = "";
+window.firebase_flag = false;
 
 window.setFirebaseDare = async function () {
   // no-op when Firebase is unavailable
 };
 
 window.initFirebaseLabels = async function () {
+  // no-op when Firebase is unavailable
+};
+
+window.resetFirebaseFlag = async function () {
   // no-op when Firebase is unavailable
 };
 
@@ -47,6 +52,7 @@ window.initFirebaseLabels = async function () {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const docRef = doc(db, "games", "pokerNight");
+    const flagDocRef = doc(db, "games", "pokerNightFlag");
 
     /* ---------- REAL IMPLEMENTATIONS ---------- */
 
@@ -67,13 +73,58 @@ window.initFirebaseLabels = async function () {
       await updateDoc(docRef, {
         labels: arrayUnion(...labels)
       });
+
+      await setDoc(
+        flagDocRef,
+        {
+        isActive: false
+        },
+        { merge: true }
+    );
     };
+
+    window.resetFirebaseFlag = async function () {
+        try {
+            await setDoc(
+            flagDocRef,
+            { isActive: false },
+            { merge: true }
+            );
+            console.log("firebase_flag reset to false");
+        } catch (err) {
+            console.error("Failed to reset firebase_flag", err);
+        }
+        };
 
     onSnapshot(docRef, (snapshot) => {
       if (!snapshot.exists()) return;
       window.firebase_dare = snapshot.data().status;
       console.log("firebase_dare updated:", window.firebase_dare);
     });
+
+    onSnapshot(flagDocRef, (snapshot) => {
+    if (!snapshot.exists()) {
+        window.firebase_flag = false;
+        return;
+    }
+
+    const data = snapshot.data();
+    const newValue = !!data.isActive;
+    const oldValue = window.firebase_flag;
+
+    window.firebase_flag = newValue;
+
+    console.log("firebase_flag updated:", newValue);
+
+    // 🔔 Only fire event if it changed
+    if (newValue !== oldValue) {
+        window.dispatchEvent(
+        new CustomEvent("firebaseFlagChanged", {
+            detail: { value: newValue }
+        })
+        );
+    }
+});
 
     console.log("✅ Firebase loaded");
 

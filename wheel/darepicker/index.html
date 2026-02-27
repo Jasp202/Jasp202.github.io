@@ -2,22 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Poker Night Dare Selector</title>
-  <style>
-    /* General page styling */
+ <style>
+/* General page styling */
 body {
   font-family: Arial, sans-serif;
   background-color: #1e1e1e;
   color: #ffffff;
-  padding: 20px;
+  padding: 16px;
   max-width: 500px;
   margin: auto;
+  box-sizing: border-box;
+}
+
+/* Make everything respect padding */
+*, *::before, *::after {
+  box-sizing: inherit;
 }
 
 /* Title */
 h1 {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
+  font-size: 22px;
 }
 
 /* Label */
@@ -25,59 +33,15 @@ label {
   display: block;
   margin-bottom: 8px;
   font-weight: bold;
+  font-size: 14px;
 }
 
 /* Select dropdown */
 select {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: none;
-  margin-bottom: 15px;
-}
-
-/* Button */
-button {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  background-color: #e63946;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-button:disabled {
-  background-color: #555;
-  cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-  background-color: #ff4d5a;
-}
-
-/* Status display */
-#currentStatus {
-  margin-top: 25px;
-  padding: 15px;
-  background-color: #2a2a2a;
-  border-radius: 6px;
-  font-weight: bold;
-  text-align: center;
-}
-
-/* Status text */
-#statusText {
-  color: #00ffcc;
-}
-select {
   display: block;
   width: 100%;
-  max-width: 320px;
-  margin: 0 auto 20px auto;
+  max-width: 100%;
+  margin: 0 auto 16px auto;
 
   padding: 12px 40px 12px 15px;
   font-size: 16px;
@@ -119,7 +83,72 @@ select:disabled {
   color: #888;
   cursor: not-allowed;
 }
-  </style>
+
+/* Button */
+button {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #e63946;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Circular button */
+#setTrueBtn {
+  width: 100px;
+  height: 100px;
+  display: block;
+  margin: 20px auto;
+  background: orange;
+  border-radius: 50%;
+}
+
+/* Button states */
+button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #ff4d5a;
+}
+
+/* Status display */
+#currentStatus {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Status text */
+#statusText {
+  color: #00ffcc;
+}
+
+/* 📱 Extra small devices */
+@media (max-width: 400px) {
+  body {
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  button {
+    font-size: 15px;
+    padding: 12px;
+  }
+}
+</style>
 
 </head>
 <body>
@@ -133,6 +162,8 @@ select:disabled {
   <button id="confirmBtn" disabled>Confirm Dare</button>
 
   <div id="currentStatus">Next Dare: <span id="statusText">None</span></div>
+<br>
+   <button id="setTrueBtn">Spin Wheel</button>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
@@ -163,7 +194,9 @@ select:disabled {
     const dareSelect = document.getElementById("dareSelect");
     const confirmBtn = document.getElementById("confirmBtn");
     const statusText = document.getElementById("statusText");
+    const setTrueBtn = document.getElementById("setTrueBtn");
     const docRef = doc(db, "games", "pokerNight");
+    const flagDocRef = doc(db, "games", "pokerNightFlag");
 
     window.firebase_dare = "";
 
@@ -200,6 +233,13 @@ select:disabled {
 
       await window.setFirebaseDare(selectedDare);
     });
+
+    setTrueBtn.addEventListener("click", async () => {
+    try {
+        await setDoc(flagDocRef, { isActive: true }, { merge: true });
+    } catch (error) {
+    }
+});
 
     /* ---------- REALTIME LISTENER ---------- */
     onSnapshot(docRef, (snapshot) => {

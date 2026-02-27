@@ -4271,6 +4271,27 @@ window.onload = () => {
 
     // Call only when data is ready
     initFirebaseLabels(labels);
+    window.resetFirebaseFlag();
+
+    /* 🔔 React to flag change */
+    window.addEventListener("firebaseFlagChanged", async (event) => {
+        if (event.detail.value === true) {
+            const element = document.elementFromPoint(0, 0);
+
+        if (element) {
+            element.dispatchEvent(new MouseEvent("click", {
+                bubbles: true,
+                cancelable: true,
+                view: window
+            }));
+        }
+        document.querySelector(".slots").style.display = "none";
+        //cleared all so click 
+        spinBtn.click();
+            // Auto-reset after handling
+            await window.resetFirebaseFlag();
+        }
+    });
 
 }
 

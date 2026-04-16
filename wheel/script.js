@@ -134,6 +134,30 @@ function CreateNewDom() {
                 document.getElementById("shotClass").removeChild(clone);
                 img.remove();
             });
+            /*
+            const swi_button = document.getElementById("switchButton")
+            swi_button.addEventListener('click', function () {
+                let index = dataShots.names.indexOf(clone.getElementsByTagName('div')[0].innerHTML);
+               
+                let [n] = dataShots.names.splice(index, 1);
+                let [c] = dataShots.counts.splice(index, 1);
+                let [i] = dataShots.images.splice(index, 1);
+                let [col] = dataShots.colors.splice(index, 1);
+
+                //switch position to 
+                let [p] = peoplePlaying.splice(index, 1);
+                peoplePlaying.push(p);
+
+                document.getElementById("shotClass").removeChild(clone);
+                img.remove();
+
+                counterTextInput.value = n;
+                document.getElementById("mySelect").value = i;
+                let item = CreateNewDom();
+                item.getElementsByTagName('div')[1].innerHTML = c
+                
+                counterTextInput.value = '';
+            });*/
 
             const remove = document.getElementById("removeButton")
             remove.addEventListener('click', function () {

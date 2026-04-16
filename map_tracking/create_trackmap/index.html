@@ -72,6 +72,42 @@
   };
   distanceControl.addTo(map);
 
+// --- Polyline decoder ---
+function decodePolyline(str) {
+  let index = 0, lat = 0, lon = 0;
+  const coords = [];
+
+  while (index < str.length) {
+    let result = 0, shift = 0, b;
+
+    // Decode latitude
+    do {
+      b = str.charCodeAt(index++) - 63;
+      result |= (b & 0x1f) << shift;
+      shift += 5;
+    } while (b >= 0x20);
+
+    const dLat = (result & 1) ? ~(result >> 1) : (result >> 1);
+    lat += dLat;
+
+    // Decode longitude
+    result = 0;
+    shift = 0;
+    do {
+      b = str.charCodeAt(index++) - 63;
+      result |= (b & 0x1f) << shift;
+      shift += 5;
+    } while (b >= 0x20);
+
+    const dLon = (result & 1) ? ~(result >> 1) : (result >> 1);
+    lon += dLon;
+
+    coords.push([lat / 1e5, lon / 1e5]); // [lat, lon]
+  }
+
+  return coords;
+}
+
   async function fetchAndDrawRoutes() {
     const snapshot = await firestore.getDocs(firestore.collection(db, "gpxTracks"));
     const allCoords = [];
@@ -79,16 +115,22 @@
 
     for (const doc of snapshot.docs) {
       const data = doc.data();
-      if (!data.coordinates) continue;
 
-      const coords = data.coordinates.map(c => [c.lon, c.lat]); // GeoJSON [lon, lat]
+      if (!data.polyline) continue;
+
+    // Decode → [lat, lon]
+    const decoded = decodePolyline(data.polyline);
+
+    // Convert to GeoJSON format [lon, lat]
+    const coords = decoded.map(([lat, lon]) => [lon, lat]);
+
       allCoords.push(...coords);
 
       // Update total distance
       totalDistance += calculateDistance(coords);
 
       // Draw red polyline (invisible)
-      const latlngs = data.coordinates.map(c => [c.lat, c.lon]);
+      const latlngs = decoded.map(([lat, lon]) => [lat, lon]);
       L.polyline(latlngs, { color: 'red', weight: 2, opacity: 0 }).addTo(map);
 
       // Generate Turf.js LineString and buffer

@@ -81,7 +81,47 @@
 <pre id="output">Status messages will appear here...</pre>
 
 <script>
+// --- Polyline encoding (Google-style) ---
+function encodePolyline(coords) {
+  let result = "";
+  let prevLat = 0;
+  let prevLon = 0;
 
+  for (const [lat, lon] of coords) {
+    // Step 1: scale
+    const latE5 = Math.round(lat * 1e5);
+    const lonE5 = Math.round(lon * 1e5);
+
+    // Step 2: delta
+    const dLat = latE5 - prevLat;
+    const dLon = lonE5 - prevLon;
+
+    prevLat = latE5;
+    prevLon = lonE5;
+
+    // Step 3: encode each
+    result += encodeSigned(dLat);
+    result += encodeSigned(dLon);
+  }
+
+  return result;
+}
+
+function encodeSigned(value) {
+  // Step 2: ZigZag
+  let sgn = value << 1;
+  if (value < 0) sgn = ~sgn;
+
+  // Step 3: chunk into 5-bit and convert to ASCII
+  let output = "";
+  while (sgn >= 0x20) {
+    output += String.fromCharCode((0x20 | (sgn & 0x1f)) + 63);
+    sgn >>= 5;
+  }
+  output += String.fromCharCode(sgn + 63);
+
+  return output;
+}
  // --- Distance calculation ---
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 6371000; // meters
@@ -161,16 +201,16 @@ async function processGpx() {
       }
 
       const simplified = window.simplify(coords, 5);
+      const encoded = encodePolyline(simplified);
       if (!firstTime) firstTime = "unknown_time";
       logDistanceToLocalStorage(simplified);
 
       const data = {
         filename: `coordinates_${firstTime}.json`,
-        originalCount: coords.length,
-        simplifiedCount: simplified.length,
-        coordinates: simplified.map(([lat, lon]) => ({ lat, lon })),
+        // NEW: compressed string
+        polyline: encoded,
         createdAt: window.firestore.serverTimestamp()
-      };
+        };
 
       output.textContent = "Uploading to Firestore...";
       const docRef = await window.firestore.addDoc(

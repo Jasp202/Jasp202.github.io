@@ -1,9 +1,10 @@
 body {
     margin: 0;
-    height: 100dvh;
+    min-height: 100dvh;
     background-image: linear-gradient(to bottom right, white, lightgreen);
-    overflow: hidden;
-    
+    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   
   .gradient-box {

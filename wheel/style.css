@@ -1574,6 +1574,7 @@ section {
     color: black!important;; /* Black text */
     padding: 6px 16px !important;
     font-size: 15px;
+    text-wrap-mode: nowrap;
   box-shadow: none !important;
   border-radius: 3px;
   width: 9rem;
@@ -1612,8 +1613,9 @@ section {
     overflow: visible;
     right: 100%; /* Center the dropdown menu horizontally */
    /* Adjust for centering */
-   top: 0px;
+   bottom: 0;
     white-space: nowrap;
+
     
     
 }

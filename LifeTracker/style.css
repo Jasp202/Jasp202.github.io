@@ -640,7 +640,8 @@ th, td {
     height: 100%;
    position: absolute;
    top: 0px;
-
+    left: 50%;
+    transform: translateX(-50%);
     
 }
 .skinContainerShop{

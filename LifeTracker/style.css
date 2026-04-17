@@ -638,19 +638,23 @@ width: 100vw;
     align-items: center;
     align-content: center;
     justify-content: center;
-    border: #000 1px solid;
+    
 }
 .skinImg{
     height: 100%;
    position: absolute;
    top: 0px;
 
+
 }
 .skinContainerShop{
     position: relative;
     top: 10%;
-    left: 0px;
-    
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
     filter: 
     drop-shadow(  3px  0px 0 black)
      drop-shadow(  -3px  0px 0 black)

@@ -335,8 +335,9 @@ th, td {
     border: 3px solid salmon;
     border-radius: 20px;
     position: relative;
-    top: 21px;
+    top: 11px;
     left: 15px;
+    margin-bottom: 10px;
 }
 #foodButton{
     background: white;
@@ -349,8 +350,9 @@ th, td {
     border: 3px solid rgb(241, 152, 34);
     border-radius: 20px;
     position: relative;
-    top: 21px;
+    top: 11px;
     left: 15px;
+    margin-bottom: 10px;
 }
 #soloButton{
     background: none;
@@ -358,7 +360,8 @@ th, td {
     width: 65px;
     position: relative;
     top: 20px;
-    left: 4px
+    left: 4px;
+  
 }
 #gameButton{
     background: none;
@@ -384,7 +387,7 @@ th, td {
     width: 65px;
     height: max-content;
     position: relative;
-    top: 20px;
+    top: 10px;
     left: 10px;
     padding-top: 10px;
     font-size: 80%;

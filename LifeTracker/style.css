@@ -626,6 +626,7 @@ th, td {
 
 .skinContainer{
     position: relative;
+    display: flex;
     height: 110vh;
 width: 100vw;
     pointer-events: none;
@@ -633,16 +634,17 @@ width: 100vw;
     drop-shadow(  3px  0px 0 black)
      drop-shadow(  -3px  0px 0 black)
      drop-shadow(  0px  3px 0 black)
-    drop-shadow(  0px  -3px 0 black)
-
+    drop-shadow(  0px  -3px 0 black);
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    border: #000 1px solid;
 }
 .skinImg{
     height: 100%;
    position: absolute;
    top: 0px;
-    left: 50%;
-    transform: translateX(-50%);
-    
+
 }
 .skinContainerShop{
     position: relative;

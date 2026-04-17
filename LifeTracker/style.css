@@ -627,7 +627,7 @@ th, td {
 .skinContainer{
     position: relative;
     height: 110vh;
-    width: 0px;
+
     pointer-events: none;
      filter: 
     drop-shadow(  3px  0px 0 black)
@@ -640,8 +640,8 @@ th, td {
     height: 100%;
    position: absolute;
    top: 0px;
-    left: 50%;
-    transform: translateX(-50%);
+
+    
 }
 .skinContainerShop{
     position: relative;

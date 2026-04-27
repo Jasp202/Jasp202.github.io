@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Upload gpx files</title>
+  <link rel="stylesheet" href="./style4.css">
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
     pre { background: #f4f4f4; padding: 10px; border-radius: 5px; }
@@ -73,9 +74,16 @@
 </head>
 <body>
 
-<h2>Upload GPX → Save to Firebase Firestore</h2>
+<h2>MAPPING YOUR JOURNEY</h2>
 
-<input type="file" id="gpxFile" accept=".gpx"><br><br>
+
+<label class="upload-box">
+    <input type="file" id="gpxFile" accept=".gpx">
+    <span>Select GPX File</span>
+</label>
+
+<br><br>
+
 <button onclick="processGpx()">Upload GPX</button>
 
 <pre id="output">Status messages will appear here...</pre>
@@ -221,6 +229,8 @@ async function processGpx() {
       output.textContent =
         `✅ Uploaded successfully!\nDocument ID: ${docRef.id}\n\n` +
         `Original points: ${coords.length}\nSimplified points: ${simplified.length}`;
+        document.querySelector(".upload-box")
+  .classList.add("success");
 
     } catch (err) {
       console.error(err);

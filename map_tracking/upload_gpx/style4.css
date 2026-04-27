@@ -1,0 +1,127 @@
+body{
+    background: url(./map_bg.png) repeat;
+    background-size: cover;
+    min-height: 100vh;
+    overflow-y: hidden;
+    display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2{
+    text-align: center;
+    margin-top: 3rem;
+    font-family: Arial, sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: 2px;
+
+  color: transparent;
+  -webkit-text-stroke: 2px #67a8e0;
+
+  background: repeating-linear-gradient(
+    45deg,
+    #ffffff,
+    #ffffff 10px,
+    #dcf1ff 10px,
+    #dcf1ff 20px
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  display: inline-block;
+}
+
+.upload-box {
+  width: 80px;
+  height: 80px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  border: 4px solid #7ec8ff;
+  border-radius: 20px;
+
+  /* striped gradient */
+  background: repeating-linear-gradient(
+    45deg,
+    #ffffff,
+    #ffffff 12px,
+    #e6f5ff 12px,
+    #e6f5ff 24px
+  );
+
+  font-family: sans-serif;
+  color: #3399cc;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* hover effect */
+.upload-box:hover {
+  border-color: #1c6386;
+  transform: scale(1.03);
+}
+
+/* hide actual input */
+.upload-box input {
+  display: none;
+}
+
+/* optional text styling */
+.upload-box span {
+  pointer-events: none;
+}
+
+.upload-box--green {
+  border-color: #4caf50;
+  color: #2e7d32;
+
+  background: repeating-linear-gradient(
+    45deg,
+    #ffffff,
+    #ffffff 12px,
+    #e8f5e9 12px,
+    #e8f5e9 24px
+  );
+}
+
+.upload-box--green:hover {
+  border-color: #2e7d32;
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+button{
+     width: 80px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  border: 4px solid #ff8f76;
+  border-radius: 10px;
+
+  /* striped gradient */
+  background: repeating-linear-gradient(
+    45deg,
+    #ffffff,
+    #ffffff 12px,
+    #ffe6da 12px,
+    #ffe2d5 24px
+  );
+
+  font-family: sans-serif;
+  color: #ff603c;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  text-align: center;
+}

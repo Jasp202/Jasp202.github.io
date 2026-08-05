@@ -108,7 +108,7 @@ function decodePolyline(str) {
   return coords;
 }
 
-  async function fetchAndDrawRoutes() {
+async function fetchAndDrawRoutes() {
     const snapshot = await firestore.getDocs(firestore.collection(db, "gpxTracks"));
     const allCoords = [];
     let mergedBuffer = null;
@@ -161,6 +161,147 @@ function decodePolyline(str) {
   }
 
   fetchAndDrawRoutes();
+  startTracking();
+
+  // -----------------------------
+// Live tracking layer (red)
+// -----------------------------
+
+const editPoints = [];
+let editLine = null;
+let editBuffer = null;
+
+let watchId = null;
+let lastPoint = null;
+let hasCenteredMap = false;
+
+const MIN_DISTANCE_METERS = 5;
+const MAX_ACCURACY_METERS = 20;
+
+function distanceMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) ** 2;
+
+  return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+  
+function updateEditBuffer() {
+
+  if (editLine) {
+    map.removeLayer(editLine);
+    editLine = null;
+  }
+
+  if (editBuffer) {
+    map.removeLayer(editBuffer);
+    editBuffer = null;
+  }
+
+  if (editPoints.length < 2)
+    return;
+
+  editLine = L.polyline(editPoints, {
+    color: "red",
+    weight: 2,
+    opacity: 0
+  }).addTo(map);
+
+  const coords = editPoints.map(([lat, lng]) => [lng, lat]);
+
+  const line = turf.lineString(coords);
+
+  const buffered = turf.buffer(line, 25, {
+    units: "meters"
+  });
+
+  editBuffer = L.geoJSON(buffered, {
+    style: {
+      color: "darkred",
+      weight: 2,
+      fillColor: "red",
+      fillOpacity: 0.25
+    }
+  }).addTo(map);
+}
+
+function startTracking() {
+
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported.");
+    return;
+  }
+
+  watchId = navigator.geolocation.watchPosition(
+
+    (position) => {
+
+      const {
+        latitude,
+        longitude,
+        accuracy
+      } = position.coords;
+
+      // Ignore poor GPS fixes
+      if (accuracy > MAX_ACCURACY_METERS)
+        return;
+
+      // Center map once
+      if (!hasCenteredMap) {
+        map.setView([latitude, longitude], 18);
+        hasCenteredMap = true;
+      }
+
+      // First point
+      if (!lastPoint) {
+        lastPoint = [latitude, longitude];
+        editPoints.push(lastPoint);
+        updateEditBuffer();
+        return;
+      }
+
+      // Ignore tiny movements
+      const moved = distanceMeters(
+        lastPoint[0],
+        lastPoint[1],
+        latitude,
+        longitude
+      );
+
+      if (moved < MIN_DISTANCE_METERS)
+        return;
+
+      lastPoint = [latitude, longitude];
+      editPoints.push(lastPoint);
+
+      updateEditBuffer();
+
+      console.log(
+        `Point ${editPoints.length} | ${moved.toFixed(1)} m | ±${accuracy.toFixed(1)} m`
+      );
+
+    },
+
+    (err) => {
+      console.error(err);
+    },
+
+    {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 10000
+    }
+
+  );
+
+}
 </script>
 
 </body>

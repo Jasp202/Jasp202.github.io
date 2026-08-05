@@ -161,7 +161,7 @@ async function fetchAndDrawRoutes() {
   }
 
   fetchAndDrawRoutes();
-  startTracking();
+
 
   // -----------------------------
 // Live tracking layer (red)
@@ -231,120 +231,145 @@ function updateEditBuffer() {
     }
   }).addTo(map);
 }
-
 function startTracking() {
 
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported.");
-    return;
-  }
+    alert("watchPosition() being started");
 
-  watchId = navigator.geolocation.watchPosition(
+    watchId = navigator.geolocation.watchPosition(
 
-    (position) => {
+        (position) => {
 
-      const {
-        latitude,
-        longitude,
-        accuracy
-      } = position.coords;
+            alert(
+                "WATCH UPDATE\n\n" +
+                position.coords.latitude +
+                "\n" +
+                position.coords.longitude +
+                "\nAccuracy: " +
+                position.coords.accuracy
+            );
 
-      // Ignore poor GPS fixes
-      if (accuracy > MAX_ACCURACY_METERS)
-        return;
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
 
-      // Center map once
-      if (!hasCenteredMap) {
-        map.setView([latitude, longitude], 18);
-        hasCenteredMap = true;
-      }
+            if (!lastPoint) {
+                lastPoint = [lat, lng];
+                editPoints.push(lastPoint);
+                updateEditBuffer();
+                return;
+            }
 
-      // First point
-      if (!lastPoint) {
-        lastPoint = [latitude, longitude];
-        editPoints.push(lastPoint);
-        updateEditBuffer();
-        return;
-      }
+            const moved = distanceMeters(
+                lastPoint[0],
+                lastPoint[1],
+                lat,
+                lng
+            );
 
-      // Ignore tiny movements
-      const moved = distanceMeters(
-        lastPoint[0],
-        lastPoint[1],
-        latitude,
-        longitude
-      );
+            alert("Moved " + moved.toFixed(1) + " meters");
 
-      if (moved < MIN_DISTANCE_METERS)
-        return;
+            if (moved < 5)
+                return;
 
-      lastPoint = [latitude, longitude];
-      editPoints.push(lastPoint);
+            lastPoint = [lat, lng];
+            editPoints.push(lastPoint);
 
-      updateEditBuffer();
+            updateEditBuffer();
 
-      console.log(
-        `Point ${editPoints.length} | ${moved.toFixed(1)} m | ±${accuracy.toFixed(1)} m`
-      );
+        },
 
-    },
+        (err) => {
 
-    (err) => {
-      console.error(err);
-    },
+            alert(
+                "WATCH ERROR\n\n" +
+                "Code: " + err.code +
+                "\nMessage: " + err.message
+            );
 
-    {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 10000
-    }
+            console.error(err);
 
-  );
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+
+    );
+
+    alert("watchId = " + watchId);
 
 }
 function requestLocationPermission() {
 
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported.");
-    return;
-  }
+    alert("1. Button clicked");
 
-  navigator.geolocation.getCurrentPosition(
+    alert("2. Protocol: " + location.protocol);
 
-    (position) => {
+    alert("3. navigator.geolocation = " + (navigator.geolocation ? "YES" : "NO"));
 
-      console.log("Location permission granted.");
-
-      // Add the first point immediately
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-
-      editPoints.push([lat, lng]);
-      lastPoint = [lat, lng];
-
-      updateEditBuffer();
-
-      if (!hasCenteredMap) {
-        map.setView([lat, lng], 18);
-        hasCenteredMap = true;
-      }
-
-      // Now begin continuous tracking
-      startTracking();
-    },
-
-    (err) => {
-      alert(`GPS Error ${err.code}: ${err.message}`);
-      console.error(err);
-    },
-
-    {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0
+    if (!navigator.geolocation) {
+        alert("Geolocation API NOT available.");
+        return;
     }
 
-  );
+    navigator.permissions?.query({ name: "geolocation" }).then(result => {
+        alert("4. Permission state: " + result.state);
+    }).catch(e => {
+        alert("4. Permissions API unavailable: " + e);
+    });
+
+    alert("5. Calling getCurrentPosition()...");
+
+    navigator.geolocation.getCurrentPosition(
+
+        (position) => {
+
+            alert(
+                "6. SUCCESS\n\n" +
+                "Latitude: " + position.coords.latitude +
+                "\nLongitude: " + position.coords.longitude +
+                "\nAccuracy: " + position.coords.accuracy + " m"
+            );
+
+            editPoints.push([
+                position.coords.latitude,
+                position.coords.longitude
+            ]);
+
+            lastPoint = [
+                position.coords.latitude,
+                position.coords.longitude
+            ];
+
+            updateEditBuffer();
+
+            startTracking();
+
+            alert("7. watchPosition() started");
+
+        },
+
+        (err) => {
+
+            alert(
+                "ERROR\n\n" +
+                "Code: " + err.code +
+                "\nMessage: " + err.message
+            );
+
+            console.error(err);
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+
+    );
+
 }
 
 requestLocationPermission();

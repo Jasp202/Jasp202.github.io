@@ -302,6 +302,69 @@ function startTracking() {
   );
 
 }
+function requestLocationPermission() {
+
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    (position) => {
+
+      console.log("Location permission granted.");
+
+      // Add the first point immediately
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      editPoints.push([lat, lng]);
+      lastPoint = [lat, lng];
+
+      updateEditBuffer();
+
+      if (!hasCenteredMap) {
+        map.setView([lat, lng], 18);
+        hasCenteredMap = true;
+      }
+
+      // Now begin continuous tracking
+      startTracking();
+    },
+
+    (err) => {
+      alert(`GPS Error ${err.code}: ${err.message}`);
+      console.error(err);
+    },
+
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    }
+
+  );
+}
+
+requestLocationPermission();
+
+</script>
+
+<button id="startGPS"
+style="
+position:absolute;
+top:10px;
+left:10px;
+z-index:1000;
+padding:12px;
+">
+Start GPS
+</button>
+<script>
+    document.getElementById("startGPS").addEventListener("click", () => {
+    requestLocationPermission();
+});
 </script>
 
 </body>

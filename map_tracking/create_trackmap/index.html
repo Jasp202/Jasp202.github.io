@@ -185,6 +185,8 @@ function distanceMeters(lat1, lon1, lat2, lon2) {
     return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+let startPointMarker = null;
+
 function redrawTrack() {
 
     if (editLineLayer)
@@ -193,6 +195,22 @@ function redrawTrack() {
     if (editBufferLayer)
         map.removeLayer(editBufferLayer);
 
+    if (startPointMarker)
+        map.removeLayer(startPointMarker);
+
+    // Draw the first point immediately
+    if (editPoints.length >= 1) {
+
+        startPointMarker = L.circleMarker(editPoints[0], {
+            radius: 6,
+            color: "red",
+            fillColor: "red",
+            fillOpacity: 1
+        }).addTo(map);
+
+    }
+
+    // Need at least two points for a line
     if (editPoints.length < 2)
         return;
 
@@ -219,7 +237,6 @@ function redrawTrack() {
     }).addTo(map);
 
 }
-
 function startTracking() {
 
     if (!navigator.geolocation) {
@@ -256,7 +273,7 @@ function startTracking() {
                 lng
             );
 
-            if (moved < 5)
+            if (moved < 1)///5
                 return;
 
             lastDrawnPoint = [lat, lng];

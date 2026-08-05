@@ -162,209 +162,119 @@ async function fetchAndDrawRoutes() {
 
   fetchAndDrawRoutes();
 
+  const editPoints = [];
 
-  // -----------------------------
-// Live tracking layer (red)
-// -----------------------------
+let editLineLayer = null;
+let editBufferLayer = null;
 
-const editPoints = [];
-let editLine = null;
-let editBuffer = null;
-
+let lastDrawnPoint = null;
 let watchId = null;
-let lastPoint = null;
-let hasCenteredMap = false;
-
-const MIN_DISTANCE_METERS = 5;
-const MAX_ACCURACY_METERS = 20;
 
 function distanceMeters(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
+    const R = 6371000;
 
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
 
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1 * Math.PI / 180) *
-    Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) ** 2;
+    const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) ** 2;
 
-  return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
-  
-function updateEditBuffer() {
 
-  if (editLine) {
-    map.removeLayer(editLine);
-    editLine = null;
-  }
+function redrawTrack() {
 
-  if (editBuffer) {
-    map.removeLayer(editBuffer);
-    editBuffer = null;
-  }
+    if (editLineLayer)
+        map.removeLayer(editLineLayer);
 
-  if (editPoints.length < 2)
-    return;
+    if (editBufferLayer)
+        map.removeLayer(editBufferLayer);
 
-  editLine = L.polyline(editPoints, {
-    color: "red",
-    weight: 2,
-    opacity: 0
-  }).addTo(map);
+    if (editPoints.length < 2)
+        return;
 
-  const coords = editPoints.map(([lat, lng]) => [lng, lat]);
+    editLineLayer = L.polyline(editPoints, {
+        color: "red",
+        weight: 4
+    }).addTo(map);
 
-  const line = turf.lineString(coords);
+    const geo = turf.lineString(
+        editPoints.map(([lat, lng]) => [lng, lat])
+    );
 
-  const buffered = turf.buffer(line, 25, {
-    units: "meters"
-  });
+    const buffer = turf.buffer(geo, 25, {
+        units: "meters"
+    });
 
-  editBuffer = L.geoJSON(buffered, {
-    style: {
-      color: "darkred",
-      weight: 2,
-      fillColor: "red",
-      fillOpacity: 0.25
-    }
-  }).addTo(map);
+    editBufferLayer = L.geoJSON(buffer, {
+        style: {
+            color: "darkred",
+            fillColor: "red",
+            fillOpacity: 0.25,
+            weight: 2
+        }
+    }).addTo(map);
+
 }
+
 function startTracking() {
 
-    alert("watchPosition() being started");
+    if (!navigator.geolocation) {
+        alert("No GPS");
+        return;
+    }
 
     watchId = navigator.geolocation.watchPosition(
 
-        (position) => {
+        pos => {
 
-            alert(
-                "WATCH UPDATE\n\n" +
-                position.coords.latitude +
-                "\n" +
-                position.coords.longitude +
-                "\nAccuracy: " +
-                position.coords.accuracy
-            );
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
 
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
+            console.log(lat, lng, pos.coords.accuracy);
 
-            if (!lastPoint) {
-                lastPoint = [lat, lng];
-                editPoints.push(lastPoint);
-                updateEditBuffer();
+            if (!lastDrawnPoint) {
+
+                lastDrawnPoint = [lat, lng];
+
+                editPoints.push(lastDrawnPoint);
+
+                map.setView(lastDrawnPoint, 18);
+
+                redrawTrack();
+
                 return;
             }
 
             const moved = distanceMeters(
-                lastPoint[0],
-                lastPoint[1],
+                lastDrawnPoint[0],
+                lastDrawnPoint[1],
                 lat,
                 lng
             );
 
-            alert("Moved " + moved.toFixed(1) + " meters");
-
             if (moved < 5)
                 return;
 
-            lastPoint = [lat, lng];
-            editPoints.push(lastPoint);
+            lastDrawnPoint = [lat, lng];
 
-            updateEditBuffer();
+            editPoints.push(lastDrawnPoint);
+
+            redrawTrack();
 
         },
 
-        (err) => {
+        err => {
 
-            alert(
-                "WATCH ERROR\n\n" +
-                "Code: " + err.code +
-                "\nMessage: " + err.message
-            );
-
-            console.error(err);
+            alert(err.message);
 
         },
 
         {
             enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0
-        }
-
-    );
-
-    alert("watchId = " + watchId);
-
-}
-function requestLocationPermission() {
-
-    alert("1. Button clicked");
-
-    alert("2. Protocol: " + location.protocol);
-
-    alert("3. navigator.geolocation = " + (navigator.geolocation ? "YES" : "NO"));
-
-    if (!navigator.geolocation) {
-        alert("Geolocation API NOT available.");
-        return;
-    }
-
-    navigator.permissions?.query({ name: "geolocation" }).then(result => {
-        alert("4. Permission state: " + result.state);
-    }).catch(e => {
-        alert("4. Permissions API unavailable: " + e);
-    });
-
-    alert("5. Calling getCurrentPosition()...");
-
-    navigator.geolocation.getCurrentPosition(
-
-        (position) => {
-
-            alert(
-                "6. SUCCESS\n\n" +
-                "Latitude: " + position.coords.latitude +
-                "\nLongitude: " + position.coords.longitude +
-                "\nAccuracy: " + position.coords.accuracy + " m"
-            );
-
-            editPoints.push([
-                position.coords.latitude,
-                position.coords.longitude
-            ]);
-
-            lastPoint = [
-                position.coords.latitude,
-                position.coords.longitude
-            ];
-
-            updateEditBuffer();
-
-            startTracking();
-
-            alert("7. watchPosition() started");
-
-        },
-
-        (err) => {
-
-            alert(
-                "ERROR\n\n" +
-                "Code: " + err.code +
-                "\nMessage: " + err.message
-            );
-
-            console.error(err);
-
-        },
-
-        {
-            enableHighAccuracy: true,
-            timeout: 15000,
             maximumAge: 0
         }
 
@@ -372,24 +282,8 @@ function requestLocationPermission() {
 
 }
 
-requestLocationPermission();
+startTracking();
 
-</script>
-
-<button id="startGPS"
-style="
-position:absolute;
-top:10px;
-left:10px;
-z-index:1000;
-padding:12px;
-">
-Start GPS
-</button>
-<script>
-    document.getElementById("startGPS").addEventListener("click", () => {
-    requestLocationPermission();
-});
 </script>
 
 </body>

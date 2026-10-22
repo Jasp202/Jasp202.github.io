@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LocalStorage Item Manager</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+    <button id="addnewbutton">
+        add new item
+    </button>
+
+<div class="container">
+
+
+    <!-- ==================================================
+         ADD ITEM INTERFACE
+    ================================================== -->
+
+    <div class="add-panel" id="addnewcontainer">
+
+        <h2>
+            Add new item
+        </h2>
+
+
+        <form id="addItemForm">
+
+
+            <!-- TITLE -->
+
+            <div class="field">
+
+                <label for="itemTitle">
+                    Title
+                </label>
+
+                <input
+                    id="itemTitle"
+                    type="text"
+                    placeholder="Enter item title"
+                    required
+                >
+
+            </div>
+
+
+
+          
+            <!-- POINT MODE -->
+
+            <div class="field">
+
+                <label for="itemPointMode">
+                    Exercise type
+                </label>
+
+                <select id="itemPointMode">
+
+                    <option value="xy">
+                        reps and weight
+                    </option>
+
+                    <option value="one">
+                        reps only
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="add-button"
+            >
+                Add item
+            </button>
+
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+
+        </form>
+
+    </div>
+
+
+    <!-- ==================================================
+         STORED ITEMS
+    ================================================== -->
+
+    <div class="items-title">
+        
+    </div>
+
+
+    <div id="accordion"></div>
+
+
+</div>
+
+
+<script src="script.js"></script>
+</body>
+
+</html>
+

@@ -8,11 +8,18 @@ LOCAL STORAGE
 const STORAGE_KEY = "myAccordionItems";
 
 
+
 /*
 ============================================================
 LOAD
 ============================================================
 */
+let currentDay = new Date().toLocaleDateString(
+    "en-US",
+    {
+        weekday: "long"
+    }
+);
 
 function loadItems() {
 
@@ -119,7 +126,11 @@ addItemForm.addEventListener(
                 .getElementById("itemPointMode")
                 .value;
 
-
+        const selectedDays = Array.from(
+            document.querySelectorAll(
+                'input[name="itemDays"]:checked'
+            )
+        ).map(input => input.value);
         /*
         --------------------------------------------
         Create item
@@ -133,6 +144,8 @@ addItemForm.addEventListener(
             title: title,
 
             pointMode: pointMode,
+
+            days: selectedDays,
 
             points: []
 
@@ -205,12 +218,17 @@ function renderItems() {
     --------------------------------------------
     */
 
-    if (items.length === 0) {
+    const dailyItems = items.filter(item =>
+        Array.isArray(item.days) &&
+        item.days.includes(currentDay)
+    );
+
+    if (dailyItems.length === 0) {
 
         accordion.innerHTML = `
 
             <div class="empty">
-                No items have been created yet.
+                No items for ${currentDay}.
             </div>
 
         `;
@@ -226,9 +244,7 @@ function renderItems() {
     --------------------------------------------
     */
 
-    items.forEach(item => {
-
-
+    dailyItems.forEach(item => {
         /*
         Make sure older data has points.
         */

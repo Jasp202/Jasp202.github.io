@@ -372,3 +372,43 @@
 .add-panel.visible {
     display: block;
 }
+
+
+/*
+============================================
+HOLD COLORS
+============================================
+*/
+
+.accordion-button {
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+/*
+--------------------------------------------
+0.5 SECONDS - GREEN
+--------------------------------------------
+*/
+
+.accordion-button.green-persistent {
+    background-color: green !important;
+    color: white !important;
+}
+
+
+/*
+--------------------------------------------
+5 SECONDS - YELLOW
+--------------------------------------------
+*/
+
+.accordion-button.hold-yellow {
+
+    background-color: yellow !important;
+
+    color: black !important;
+
+}

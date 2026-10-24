@@ -352,6 +352,13 @@ function renderItems() {
                 ".accordion-button"
             );
 
+        if (item.greenDate === getTodayKey()) {
+
+        button.classList.add(
+            "green-persistent"
+        );
+
+}
 
         const content =
             wrapper.querySelector(
@@ -429,66 +436,237 @@ function renderItems() {
         ============================================
         */
 
-        button.addEventListener(
-            "click",
-            () => {
 
-                const isOpen =
-                    content.classList.contains(
-                        "open"
-                    );
+/*
+============================================
+ACCORDION + HOLD TO DELETE
+============================================
+*/
 
+let holdTimerGreen;
+let holdTimerYellow;
+let holdTimerDelete;
 
-                /*
-                Close all
-                */
-
-                document
-                    .querySelectorAll(
-                        ".accordion-content"
-                    )
-                    .forEach(
-                        element => {
-
-                            element.classList
-                                .remove("open");
-
-                        }
-                    );
+let isHolding = false;
+let holdTriggered = false;
 
 
-                document
-                    .querySelectorAll(
-                        ".accordion-button"
-                    )
-                    .forEach(
-                        element => {
+/*
+============================================
+NORMAL CLICK + HOLD
+============================================
+*/
 
-                            element.classList
-                                .remove("active");
+button.addEventListener("pointerdown", event => {
 
-                        }
-                    );
+    // Only use the main mouse button
+    if (event.pointerType === "mouse" && event.button !== 0) {
+        return;
+    }
+
+    isHolding = true;
+    holdTriggered = false;
+
+    /*
+    ----------------------------------------
+    0.5 SECONDS - GREEN
+    ----------------------------------------
+    */
+
+    holdTimerGreen = setTimeout(() => {
+
+    if (!isHolding) return;
+
+    holdTriggered = true;
+
+    /*
+    Save green status for today
+    */
+
+    activateGreen(item);
+
+    /*
+    Apply persistent green
+    */
+
+    button.classList.add("green-persistent");
+
+}, 500);
 
 
-                /*
-                Open clicked item
-                */
+    /*
+    ----------------------------------------
+    5 SECONDS - YELLOW
+    ----------------------------------------
+    */
 
-                if (!isOpen) {
+    holdTimerYellow = setTimeout(() => {
 
-                    content.classList
-                        .add("open");
+        if (!isHolding) return;
+
+        button.classList.remove("hold-green");
+
+        button.classList.add("hold-yellow");
+
+    }, 5000);
 
 
-                    button.classList
-                        .add("active");
+    /*
+    ----------------------------------------
+    7 SECONDS - DELETE ITEM
+    ----------------------------------------
+    */
 
-                }
+    holdTimerDelete = setTimeout(() => {
 
-            }
+        if (!isHolding) return;
+
+        holdTriggered = true;
+
+        isHolding = false;
+
+        /*
+        Remove item from array
+        */
+
+        items = items.filter(
+            existingItem => existingItem.id !== item.id
         );
 
+
+        /*
+        Save updated items
+        */
+
+        saveItems(items);
+
+
+        /*
+        Remove item from interface
+        */
+
+        wrapper.remove();
+
+
+        /*
+        Message
+        */
+
+        message.textContent = "Item deleted.";
+
+    }, 7000);
+
+});
+
+
+/*
+============================================
+RELEASE BUTTON
+============================================
+*/
+
+function stopHolding() {
+
+    isHolding = false;
+
+    clearTimeout(holdTimerGreen);
+    clearTimeout(holdTimerYellow);
+    clearTimeout(holdTimerDelete);
+
+    button.classList.remove("hold-green");
+    button.classList.remove("hold-yellow");
+
+}
+
+
+/*
+============================================
+POINTER RELEASE
+============================================
+*/
+
+button.addEventListener("pointerup", () => {
+
+    stopHolding();
+
+});
+
+
+button.addEventListener("pointercancel", () => {
+
+    stopHolding();
+
+});
+
+
+button.addEventListener("lostpointercapture", () => {
+
+    stopHolding();
+
+});
+
+
+/*
+============================================
+NORMAL ACCORDION CLICK
+============================================
+*/
+
+button.addEventListener("click", () => {
+
+    /*
+    If a hold action started,
+    don't open or close the accordion.
+    */
+
+    if (holdTriggered) {
+
+        holdTriggered = false;
+
+        return;
+
+    }
+
+
+    const isOpen =
+        content.classList.contains("open");
+
+
+    /*
+    Close all
+    */
+
+    document
+        .querySelectorAll(".accordion-content")
+        .forEach(element => {
+
+            element.classList.remove("open");
+
+        });
+
+
+    document
+        .querySelectorAll(".accordion-button")
+        .forEach(element => {
+
+            element.classList.remove("active");
+
+        });
+
+
+    /*
+    Open clicked item
+    */
+
+    if (!isOpen) {
+
+        content.classList.add("open");
+
+        button.classList.add("active");
+
+    }
+
+});
 
 
         /*
@@ -736,6 +914,27 @@ function escapeAttribute(value) {
 
 }
 
+
+function getTodayKey() {
+
+    const date = new Date();
+
+    return (
+        date.getFullYear() + "-" +
+        (date.getMonth() + 1) + "-" +
+        date.getDate()
+    );
+
+}
+
+
+function activateGreen(item) {
+
+    item.greenDate = getTodayKey();
+
+    saveItems(items);
+
+}
 
 /*
 ============================================================
